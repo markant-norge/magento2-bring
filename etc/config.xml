@@ -1,0 +1,17 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <bring>
+                <active>1</active>
+                <sallowspecific>0</sallowspecific>
+                <model>Markant\Bring\Model\Carrier\Bring</model>
+                <name>Markant Bring Fraktguide</name>
+                <title>Markant Bring Fraktguide</title>
+                <type>I</type>
+                <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
+                <posting_at_post_office>1</posting_at_post_office>
+                <edi>1</edi>
+            </bring>
+        </carriers>
+    </default>
+</config>

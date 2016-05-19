@@ -1,0 +1,27 @@
+{
+  "name": "markant/magento-bring",
+  "description": "Bring shipping integration for Magento 2",
+  "type": "magento2-module",
+  "version": "0.0.1",
+  "authors": [
+    {
+      "name": "Petter Kjelkenes",
+      "email": "petter.kjelkenes@markant.no",
+      "homepage": "http://markant.no"
+    }
+  ],
+  "license": [
+  ],
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0",
+    "magento/framework": "~100.0.5"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Markant\\Bring\\": ""
+    }
+  }
+}
