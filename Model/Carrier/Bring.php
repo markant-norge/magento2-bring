@@ -271,8 +271,11 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                 $method->setCarrierTitle($this->getConfigData('title'));
                                 $method->setMethod($bringAlternative['ProductId']);
                                 $method->setMethodTitle($productLabel);
-                                $method->setPrice(ceil($amount));
-                                $method->setCost($amount);
+
+                                $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
+
+                                $method->setPrice(ceil($shippingPrice));
+                                $method->setCost($shippingPrice);
                                 $result->append($method);
                             }
                         }
