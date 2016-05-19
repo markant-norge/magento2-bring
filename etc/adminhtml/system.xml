@@ -34,6 +34,21 @@
                     <source_model>Markant\Bring\Model\Config\Source\AdditionalService</source_model>
                     <can_be_empty>1</can_be_empty>
                 </field>
+                <field id="bring_client_url" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Bring Client URL</label>
+                    <comment>A URL that sort of identifies where you’re using the APIs.</comment>
+                </field>
+                <field id="enable_mybring" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Mybring</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If you are a Mybring user, you can authenticate requests to the Tracking API. Authenticated requests have the following benefits: You get more information about your parcels, for example signatures for proof of develiery. No rate limiting</comment>
+                </field>
+                 <field id="mybring_client_uid" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Mybring login ID</label>
+                </field>
+                <field id="mybring_api_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Mybring login API key</label>
+                </field>
             </group>
         </section>
     </system>
