@@ -8,6 +8,7 @@ use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
 use Markant\Bring\Model\Config\Source\BringMethod;
 use Markant\Bring\Model\Tracking\Tracking;
+use Magento\Shipping\Helper\Carrier as CarrierHelper;
 
 /**
  * Class Bring
@@ -70,6 +71,12 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
      */
     protected $_trackStatusFactory;
 
+    /**
+     * Carrier helper
+     *
+     * @var \Magento\Shipping\Helper\Carrier
+     */
+    protected $_carrierHelper;
 
     /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -88,8 +95,10 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         \Magento\Shipping\Model\Tracking\ResultFactory $trackFactory,
         \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory,
         \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory,
+        CarrierHelper $carrierHelper,
         array $data = []
     ) {
+        $this->_carrierHelper = $carrierHelper;
         $this->_rateResultFactory = $rateResultFactory;
         $this->_rateMethodFactory = $rateMethodFactory;
         $this->_trackFactory = $trackFactory;
@@ -198,6 +207,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         $result = $this->_rateResultFactory->create();
 
 
+
         $r = [
             'from' => null,
             'to' => null,
@@ -235,6 +245,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $weightInG = $request->getPackageWeight() * 1000;
         $r['weightInGrams'] = $weightInG;
+
 
 
         if (!$r['from'] || !$r['to']) {
