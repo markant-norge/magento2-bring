@@ -4,6 +4,7 @@ namespace Markant\Bring\Model\Carrier;
 use GuzzleHttp\Client;
 
 use GuzzleHttp\Exception\RequestException;
+use Magento\Framework\Phrase;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
 use Markant\Bring\Model\Config\Source\BringMethod;
@@ -39,7 +40,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     const XML_PATH = 'carriers/bring/';
 
 
-    const BRING_ENDPOINT = 'https://api.bring.com/shippingguide/products/price.json';
+    const BRING_ENDPOINT = 'https://api.bring.com/shippingguide/products/all.json';
 
     const BRING_TRACKING_ENDPOINT = 'https://tracking.bring.com/tracking.json';
     const MYBRING_TRACKING_ENDPOINT = 'https://www.mybring.com/tracking/api/tracking.json';
@@ -254,6 +255,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
 
         $preFabricatedMethods = [];
+        $preFabricatedOverrides = [];
 
         $custom_prices = $this->getConfigData('custom_method_prices');
         $custom_prices = $custom_prices ? unserialize($custom_prices) : [];
@@ -266,47 +268,63 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             if ($item['max_weight']) {
                 $add &= $item['max_weight'] >= $weightInG;
             }
+
+            if (isset($item['country']) && $item['country']) {
+                $add &= $item['country'] == $request->getDestCountryId();
+            }
+
             if ($add) {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee((float)$item['price']);
                 $preFabricatedMethods[$item['shipping_method']] = array (
                     'price' => ceil($shippingPrice),
-                    'cost' => $shippingPrice
+                    'cost' => $shippingPrice,
+                    'expected_days' => null // Unknown if not API is used..
                 );
+                $preFabricatedOverrides[] = $item['shipping_method'];
             }
         }
 
 
-        try {
-            $bring = $this->request(['query' => $r]);
+        if ($this->getConfigData('activate_api')) {
 
-            if ($bring->getStatusCode() === 200) {
+            try {
+                $bring = $this->request(['query' => $r]);
 
-                $json = json_decode($bring->getBody(), true);
+                if ($bring->getStatusCode() === 200) {
 
-                if (isset($json['Product'])) {
+                    $json = json_decode($bring->getBody(), true);
 
-                    $products = BringMethod::products();
-                    foreach ($json['Product'] as $bringAlternative) {
-                        $shipping_method = $bringAlternative['ProductId'];
-                        if ($this->isBringMethodEnabled($shipping_method)) {
-                            /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                            $amount = $bringAlternative['Price']['PackagePriceWithoutAdditionalServices']['AmountWithVAT'];
-                            $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
+                    if (isset($json['Product'])) {
 
-                            // Do not override prefabricated shipping methods.
-                            if (!isset($preFabricatedMethods[$shipping_method])) {
-                                $preFabricatedMethods[$shipping_method] = array(
-                                    'price' => ceil($shippingPrice),
-                                    'cost' => $shippingPrice
-                                );
+                        $products = BringMethod::products();
+                        foreach ($json['Product'] as $bringAlternative) {
+                            $shipping_method = $bringAlternative['ProductId'];
+                            if ($this->isBringMethodEnabled($shipping_method)) {
+                                /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
+                                $amount = $bringAlternative['Price']['PackagePriceWithoutAdditionalServices']['AmountWithVAT'];
+                                $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
+
+
+                                $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
+
+                                if (!isset($preFabricatedMethods[$shipping_method])) {
+                                    $preFabricatedMethods[$shipping_method] = array();
+                                }
+                                $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
+                                // Do not override prefabricated shipping method prices..
+                                if (!in_array($shipping_method, $preFabricatedOverrides)) {
+                                    $preFabricatedMethods[$shipping_method]['price'] = ceil($shippingPrice);
+                                    $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                                }
+
                             }
                         }
-                    }
 
+                    }
+                } else {
                 }
-            } else {
+            } catch (RequestException $e) {
             }
-        } catch (RequestException $e) {
         }
 
         foreach ($preFabricatedMethods as $shipping_method => $info) {
@@ -316,6 +334,17 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             $method->setCarrierTitle($this->getConfigData('title'));
             $method->setMethod($shipping_method);
             $productLabel = isset($products[$shipping_method]) ? $products[$shipping_method] : $shipping_method;
+
+            if ($this->getConfigData('show_estimated_delivery') && $info['expected_days']) {
+                $days = $info['expected_days'];
+                if ($days > 1) {
+                    $label = new Phrase('%1 days', array($days));
+                } else {
+                    $label = new Phrase('%1 day', array($days));
+                }
+                $productLabel .= " ($label)";
+            }
+
             $method->setMethodTitle($productLabel);
             $method->setPrice($info['price']);
             $method->setCost($info['cost']);

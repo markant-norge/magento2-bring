@@ -17,6 +17,7 @@ class CustomMethodPrice extends \Magento\Config\Block\System\Config\Form\Field\F
      */
     protected $_columns = [];
     protected $_bringMethodRenderer;
+    protected $_countryRenderer;
     /**
      * Enable the "Add after" button or not
      *
@@ -38,11 +39,7 @@ class CustomMethodPrice extends \Magento\Config\Block\System\Config\Form\Field\F
         parent::_construct();
         $this->_addButtonLabel = __('Add');
     }
-    /**
-     * Returns renderer for country element
-     *
-     * @return \Magento\Braintree\Block\Adminhtml\Form\Field\Countries
-     */
+
     protected function getBringMethodRenderer() {
         if (!$this->_bringMethodRenderer) {
             $this->_bringMethodRenderer = $this->getLayout()->createBlock(
@@ -51,6 +48,16 @@ class CustomMethodPrice extends \Magento\Config\Block\System\Config\Form\Field\F
         }
         return $this->_bringMethodRenderer;
     }
+
+    protected function getCountryRenderer() {
+        if (!$this->_countryRenderer) {
+            $this->_countryRenderer = $this->getLayout()->createBlock(
+                '\Markant\Bring\Block\System\Config\Form\Field\CountryType', '', ['data' => ['is_render_to_js_template' => true]]
+            );
+        }
+        return $this->_countryRenderer;
+    }
+
     /**
      * Prepare to render
      *
@@ -63,6 +70,12 @@ class CustomMethodPrice extends \Magento\Config\Block\System\Config\Form\Field\F
                 'renderer' => $this->getBringMethodRenderer(),
             ]
         );
+        $this->addColumn(
+            'country', [
+                'label' => __('Country'),
+                'renderer' => $this->getCountryRenderer(),
+            ]
+        );
         $this->addColumn('price', array('label' => __('Price')));
         $this->addColumn('min_weight', array('label' => __('Min weight (Gr)')));
         $this->addColumn('max_weight', array('label' => __('Max weight (Gr)')));
@@ -71,9 +84,13 @@ class CustomMethodPrice extends \Magento\Config\Block\System\Config\Form\Field\F
     }
     protected function _prepareArrayRow(\Magento\Framework\DataObject $row) {
         $shippingMethod = $row->getShippingMethod();
+        $country = $row->getCountry();
         $options = [];
         if ($shippingMethod) {
             $options['option_' . $this->getBringMethodRenderer()->calcOptionHash($shippingMethod)] = 'selected="selected"';
+        }
+        if ($country) {
+            $options['option_' . $this->getCountryRenderer()->calcOptionHash($country)] = 'selected="selected"';
         }
         $row->setData('option_extra_attrs', $options);
     }

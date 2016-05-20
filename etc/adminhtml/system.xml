@@ -4,6 +4,7 @@
         <section id="carriers" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
             <group id="bring" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Bring</label>
+                <comment><![CDATA[Denne Bring modulen er utviklet av <a href="http://markant.no">Markant Norge AS</a>. Videredistribusjon av noe slag er ikke tillatt kun etter avtale med Markant.<br /><br />Kontakt oss om du har spørsmål rundt løsningen.<br />Epost: support@markant.no]]></comment>
                 <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -21,16 +22,32 @@
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
 
-                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Enabled Bring Products</label>
-                    <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
-                    <can_be_empty>1</can_be_empty>
-                </field>
 
                 <field id="custom_method_prices" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Custom Prices</label>
                     <frontend_model>Markant\Bring\Block\System\Config\Form\Field\CustomMethodPrice</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Add custom prices for each shipping method. You can base the prices on weight (Gram) and Country. These prices overrides the Automatic Shipping Prices.</comment>
+                </field>
+
+                <field id="activate_api" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Activate Automatic Shipping Prices</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Bring's Shipping Guide will be used to add shipping methods and prices dynamically. Prices can be overridden with "Custom Prices".]]></comment>
+                </field>
+
+                <field id="show_estimated_delivery" translate="label" type="select" sortOrder="66" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show estimated delivery time</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="66" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled Bring Products</label>
+                    <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
 
 
@@ -38,32 +55,53 @@
                     <label>EDI</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Flag that tells if the parcel will be registred using EDI when it is shipped. Note that this flag may affect price and which products are available.</comment>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
                 <field id="posting_at_post_office" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Posting at post office</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Flag that tells whether the parcel is delivered at a post office when it is shipped. A surcharge will be applied for the following products: SERVICEPAKKE and BPAKKE_DOR-DOR (Bedriftspakke)</comment>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
                 <field id="additional_services" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Additional Services</label>
                     <source_model>Markant\Bring\Model\Config\Source\AdditionalService</source_model>
                     <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
 
                 <field id="bring_client_url" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Bring Client URL</label>
                     <comment>A URL that sort of identifies where you’re using the APIs.</comment>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
                 <field id="enable_mybring" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Mybring</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>If you are a Mybring user, you can authenticate requests to the Tracking API. Authenticated requests have the following benefits: You get more information about your parcels, for example signatures for proof of develiery. No rate limiting</comment>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
-                 <field id="mybring_client_uid" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="mybring_client_uid" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mybring login ID</label>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
                 <field id="mybring_api_key" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mybring login API key</label>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
                 </field>
 
 

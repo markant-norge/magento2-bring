@@ -14,11 +14,21 @@ namespace Markant\Bring\Block\System\Config\Form\Field;
 use Markant\Bring\Model\Config\Source\BringMethod;
 
 
-class BringMethodType  extends \Magento\Framework\View\Element\Html\Select {
+class CountryType  extends \Magento\Framework\View\Element\Html\Select {
+    /**
+     * methodList
+     *
+     * @var array
+     */
+    protected $countryFactory;
+
     public function __construct(
-        \Magento\Framework\View\Element\Context $context, array $data = []
+        \Magento\Framework\View\Element\Context $context,
+        \Magento\Directory\Model\Config\Source\Country $countryFactory,
+        array $data = []
     ) {
         parent::__construct($context, $data);
+        $this->countryFactory = $countryFactory;
     }
     /**
      * Returns countries array
@@ -31,11 +41,7 @@ class BringMethodType  extends \Magento\Framework\View\Element\Html\Select {
      * @return string
      */
     public function _toHtml() {
-        if (!$this->getOptions()) {
-            foreach (BringMethod::products() as $id => $label) {
-                $this->addOption($id, $label);
-            }
-        }
+        $this->setOptions($this->countryFactory->toOptionArray(false));
         return parent::_toHtml();
     }
     /**
