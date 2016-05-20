@@ -253,6 +253,29 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         }
 
 
+        $preFabricatedMethods = [];
+
+        $custom_prices = $this->getConfigData('custom_method_prices');
+        $custom_prices = $custom_prices ? unserialize($custom_prices) : [];
+
+        foreach ($custom_prices as $item) {
+            $add = true;
+            if ($item['min_weight']) {
+                $add &= $item['min_weight'] <= $weightInG;
+            }
+            if ($item['max_weight']) {
+                $add &= $item['max_weight'] >= $weightInG;
+            }
+            if ($add) {
+                $shippingPrice = $this->getFinalPriceWithHandlingFee((float)$item['price']);
+                $preFabricatedMethods[$item['shipping_method']] = array (
+                    'price' => ceil($shippingPrice),
+                    'cost' => $shippingPrice
+                );
+            }
+        }
+
+
         try {
             $bring = $this->request(['query' => $r]);
 
@@ -264,55 +287,46 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                     $products = BringMethod::products();
                     foreach ($json['Product'] as $bringAlternative) {
-                        if ($this->isBringMethodEnabled($bringAlternative['ProductId'])) {
+                        $shipping_method = $bringAlternative['ProductId'];
+                        if ($this->isBringMethodEnabled($shipping_method)) {
+                            /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
+                            $amount = $bringAlternative['Price']['PackagePriceWithoutAdditionalServices']['AmountWithVAT'];
+                            $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
 
-                            $productLabel = isset($products[$bringAlternative['ProductId']]) ? $products[$bringAlternative['ProductId']] : null;
-
-                            if ($productLabel) {
-
-                                /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
-                                $method = $this->_rateMethodFactory->create();
-
-
-                                /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                $amount = $bringAlternative['Price']['PackagePriceWithoutAdditionalServices']['AmountWithVAT'];
-
-
-                                $method->setCarrier($this->getCarrierCode());
-                                $method->setCarrierTitle($this->getConfigData('title'));
-                                $method->setMethod($bringAlternative['ProductId']);
-                                $method->setMethodTitle($productLabel);
-
-                                $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
-
-                                $method->setPrice(ceil($shippingPrice));
-                                $method->setCost($shippingPrice);
-                                $result->append($method);
+                            // Do not override prefabricated shipping methods.
+                            if (!isset($preFabricatedMethods[$shipping_method])) {
+                                $preFabricatedMethods[$shipping_method] = array(
+                                    'price' => ceil($shippingPrice),
+                                    'cost' => $shippingPrice
+                                );
                             }
                         }
                     }
 
                 }
             } else {
-                $error = $this->_trackErrorFactory->create();
-                $error->setCarrier($this->_code);
-                $error->setCarrierTitle($this->getConfigData('title'));
-                $error->setErrorMessage("test");
-                $result->append($error);
             }
         } catch (RequestException $e) {
-            $error = $this->_trackErrorFactory->create();
-            $error->setCarrier($this->_code);
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage("test");
-            $result->append($error);
         }
 
-
-
+        foreach ($preFabricatedMethods as $shipping_method => $info) {
+            /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
+            $method = $this->_rateMethodFactory->create();
+            $method->setCarrier($this->getCarrierCode());
+            $method->setCarrierTitle($this->getConfigData('title'));
+            $method->setMethod($shipping_method);
+            $productLabel = isset($products[$shipping_method]) ? $products[$shipping_method] : $shipping_method;
+            $method->setMethodTitle($productLabel);
+            $method->setPrice($info['price']);
+            $method->setCost($info['cost']);
+            $result->append($method);
+        }
 
         return $result;
     }
+
+
+
 
     public function isBringMethodEnabled ($method) {
         $methods = $this->getConfig('enabled_methods');

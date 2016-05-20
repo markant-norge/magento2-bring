@@ -4,61 +4,70 @@
         <section id="carriers" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
             <group id="bring" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Bring</label>
-                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
 
-                <field id="handling_type" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="handling_type" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Calculate Handling Fee</label>
                     <source_model>Magento\Shipping\Model\Source\HandlingType</source_model>
                 </field>
-                <field id="handling_fee" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="handling_fee" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Handling Fee</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
 
-                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled Bring Products</label>
                     <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
                     <can_be_empty>1</can_be_empty>
                 </field>
-                <field id="edi" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+
+                <field id="custom_method_prices" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Custom Prices</label>
+                    <frontend_model>Markant\Bring\Block\System\Config\Form\Field\CustomMethodPrice</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+
+
+                <field id="edi" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>EDI</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Flag that tells if the parcel will be registred using EDI when it is shipped. Note that this flag may affect price and which products are available.</comment>
                 </field>
-                <field id="posting_at_post_office" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="posting_at_post_office" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Posting at post office</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Flag that tells whether the parcel is delivered at a post office when it is shipped. A surcharge will be applied for the following products: SERVICEPAKKE and BPAKKE_DOR-DOR (Bedriftspakke)</comment>
                 </field>
-                <field id="additional_services" translate="label" type="multiselect" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="additional_services" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Additional Services</label>
                     <source_model>Markant\Bring\Model\Config\Source\AdditionalService</source_model>
                     <can_be_empty>1</can_be_empty>
                 </field>
-                <field id="bring_client_url" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+
+                <field id="bring_client_url" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Bring Client URL</label>
                     <comment>A URL that sort of identifies where you’re using the APIs.</comment>
                 </field>
-                <field id="enable_mybring" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enable_mybring" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Mybring</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>If you are a Mybring user, you can authenticate requests to the Tracking API. Authenticated requests have the following benefits: You get more information about your parcels, for example signatures for proof of develiery. No rate limiting</comment>
                 </field>
-                 <field id="mybring_client_uid" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                 <field id="mybring_client_uid" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mybring login ID</label>
                 </field>
-                <field id="mybring_api_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="mybring_api_key" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mybring login API key</label>
                 </field>
 
 
-                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sort_order" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
 

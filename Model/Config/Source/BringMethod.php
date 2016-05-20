@@ -31,9 +31,9 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
     const PRODUCT_MINIPAKKE = 'MINIPAKKE';
     const PRODUCT_A_POST = 'A-POST';
     const PRODUCT_B_POST = 'B-POST';
-
     const PRODUCT_SMAAPAKKER_A_POST = 'SMAAPAKKER_A-POST';
     const PRODUCT_SMAAPAKKER_B_POST = 'SMAAPAKKER_B-POST';
+
     const PRODUCT_EXPRESS_NORDIC_SAME_DAY = 'EXPRESS_NORDIC_SAME_DAY';
     const PRODUCT_EXPRESS_INTERNATIONAL_0900 = 'EXPRESS_INTERNATIONAL_0900';
     const PRODUCT_EXPRESS_INTERNATIONAL_1200 = 'EXPRESS_INTERNATIONAL_1200';
@@ -61,7 +61,24 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
             self::PRODUCT_A_POST => 'A-Prioritert',
             self::PRODUCT_B_POST => 'B-Økonomi',
             self::PRODUCT_SMAAPAKKER_A_POST => 'Småpakke A-Post',
-            self::PRODUCT_SMAAPAKKER_B_POST => 'Småpakke B-Økonomi'
+            self::PRODUCT_SMAAPAKKER_B_POST => 'Småpakke B-Økonomi',
+
+            self::PRODUCT_EXPRESS_NORDIC_SAME_DAY => 'Express Nordic Same Day',
+            self::PRODUCT_EXPRESS_INTERNATIONAL_0900 => 'Express International 09:00',
+            self::PRODUCT_EXPRESS_INTERNATIONAL_1200 => 'Express International 12:00',
+            self::PRODUCT_EXPRESS_INTERNATIONAL => 'Express International',
+            self::PRODUCT_EXPRESS_ECONOMY => 'Express Economy',
+            self::PRODUCT_CARGO_GROUPAGE => 'Cargo',
+
+            self::PRODUCT_BUSINESS_PARCEL => 'Business Parcel',
+            self::PRODUCT_PICKUP_PARCEL => 'PickUp Parcel',
+            self::PRODUCT_COURIER_VIP => 'Bud VIP',
+            self::PRODUCT_COURIER_1H => 'Bud 1 time',
+            self::PRODUCT_COURIER_2H => 'Bud 2 timer',
+            self::PRODUCT_COURIER_4H => 'Bud 4 timer',
+            self::PRODUCT_COURIER_6H => 'Bud 6 timer',
+            self::PRODUCT_OIL_EXPRESS => 'Oil Express'
+
         ];
     }
 
