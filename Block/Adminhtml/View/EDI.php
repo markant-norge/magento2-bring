@@ -9,6 +9,12 @@ class EDI extends \Magento\Backend\Block\Template
     const EDI_TEMPLATE = 'order/edi/view.phtml';
 
     /**
+     * @var \Markant\Bring\Model\ResourceModel\Order\Shipment\Edi\CollectionFactory
+     */
+    protected $_ediCollectionFactory;
+
+
+    /**
      * Core registry
      *
      * @var \Magento\Framework\Registry
@@ -18,12 +24,14 @@ class EDI extends \Magento\Backend\Block\Template
 
     public function __construct(Context $context,
                                 array $data,
-                                \Magento\Framework\Registry $registry
+                                \Magento\Framework\Registry $registry,
+                                \Markant\Bring\Model\ResourceModel\Order\Shipment\Edi\CollectionFactory $ediCollectionFactory
     )
     {
         parent::__construct($context, $data);
         $this->setTemplate(self::EDI_TEMPLATE);
         $this->_coreRegistry = $registry;
+        $this->_ediCollectionFactory = $ediCollectionFactory;
     }
 
 
@@ -48,6 +56,8 @@ class EDI extends \Magento\Backend\Block\Template
     {
         return $this->getShipment()->getOrder();
     }
+
+
 
     /**
      * Get submit url

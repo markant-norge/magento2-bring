@@ -1,6 +1,8 @@
 <?php
-// @codingStandardsIgnoreFile
+/** @var \Markant\Bring\Block\Adminhtml\View\BringOrders $block */
 
+$shipment = $block->getShipment();
+$order = $block->getOrder();
 ?>
 <?php /** @var $block Markant\Bring\Block\Adminhtml\View\BringOrders */ ?>
 <div class="admin__control-table-wrapper">
@@ -20,47 +22,41 @@
                 <input class="input-text admin__control-text"
                        type="text"
                        id="bring_edi_weight"
-                       name="number"
-                       value="" />
+                       name="weight"
+                       value="<?php echo $order->getWeight()?>" />
             </td>
             <td class="col-number">
                 <input class="input-text admin__control-text"
                        type="text"
                        id="bring_edi_length"
-                       name="number"
-                       value="" />
+                       name="length"
+                       value="<?php echo (int)$block->getDefaultPackageLength()?>" />
             </td>
             <td class="col-number">
                 <input class="input-text admin__control-text"
                        type="text"
                        id="bring_edi_width"
-                       name="number"
-                       value="" />
+                       name="width"
+                       value="<?php echo (int)$block->getDefaultPackageWidth()?>" />
             </td>
             <td class="col-number">
                 <input class="input-text admin__control-text"
                        type="text"
                        id="bring_edi_height"
-                       name="number"
-                       value="" />
+                       name="height"
+                       value="<?php echo (int)$block->getDefaultPackageHeight()?>" />
             </td>
             <td class="col-delete last"><?php echo $block->getSaveButtonHtml() ?></td>
         </tr>
         </tfoot>
-        <?php if (false): ?>
+        <?php if ($_edis = $block->getAllEdis()): ?>
             <tbody>
-            <?php $i = 0; foreach ($_tracks as $_edi):$i++ ?>
+            <?php $i = 0; foreach ($_edis as $_edi):$i++; /** @var \Markant\Bring\Model\Order\Shipment\Edi $_edi */ ?>
                 <tr class="<?php /* @escapeNotVerified */ echo($i%2 == 0) ? 'even' : 'odd' ?>">
-                    <td class="col-number"><?php echo $block->escapeHtml($block->getCarrierTitle($_edi->getCarrierCode())) ?></td>
-                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getTitle()) ?></td>
-                    <td class="col-number">
-                        <?php if ($_edi->isCustom()): ?>
-                            <?php echo $block->escapeHtml($_edi->getNumber()) ?>
-                        <?php else: ?>
-                            <a href="#" onclick="popWin('<?php /* @escapeNotVerified */ echo $this->helper('Magento\Shipping\Helper\Data')->getTrackingPopupUrlBySalesModel($_edi) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')"><?php echo $block->escapeHtml($_track->getNumber()) ?></a>
-                            <div id="shipment_edi_info_response_<?php /* @escapeNotVerified */ echo $_edi->getId() ?>"></div>
-                        <?php endif; ?>
-                    </td>
+                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getWeight()) ?></td>
+                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getLength()) ?></td>
+                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getWidth()) ?></td>
+                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getHeight()) ?></td>
                     <td class="col-delete last"><button class="action-delete" type="button" onclick="deleteEdi('<?php /* @escapeNotVerified */ echo $block->getRemoveUrl($_edi) ?>'); return false;"><span><?php /* @escapeNotVerified */ echo __('Delete') ?></span></button></td>
                 </tr>
             <?php endforeach; ?>

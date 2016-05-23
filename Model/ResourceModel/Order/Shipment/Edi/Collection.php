@@ -44,8 +44,8 @@ class Collection extends AbstractCollection implements ShipmentTrackSearchResult
     protected function _construct()
     {
         $this->_init(
-            'Markant\Bring\Model\Order\Shipment\Track',
-            'Markant\Bring\Model\ResourceModel\Order\Shipment\Track'
+            'Markant\Bring\Model\Order\Shipment\Edi',
+            'Markant\Bring\Model\ResourceModel\Order\Shipment\Edi'
         );
     }
 

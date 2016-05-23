@@ -37,7 +37,8 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         return true;
     }
 
-    const XML_PATH = 'carriers/bring/';
+    const XML_GLOBAL_PATH = 'carriers/bring/global/';
+    const XML_PATH = 'carriers/bring/calculation/';
 
 
     const BRING_ENDPOINT = 'https://api.bring.com/shippingguide/products/all.json';
@@ -111,6 +112,13 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     public function getConfig ($key) {
         return $this->_scopeConfig->getValue(
             self::XML_PATH . $key,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getData('store')
+        );
+    }
+    public function getGlobalConfig ($key) {
+        return $this->_scopeConfig->getValue(
+            self::XML_GLOBAL_PATH . $key,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $this->getData('store')
         );
@@ -378,7 +386,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $options = array_merge($options, [
             'headers' => [
-                'X-Bring-Client-URL' => $this->getConfig('bring_client_url'),
+                'X-Bring-Client-URL' => $this->getGlobalConfig('bring_client_url'),
                 'Accept'     => 'application/json'
             ]
         ]);
@@ -392,13 +400,13 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $options = array_merge($options, [
             'headers' => [
-                'X-Bring-Client-URL' => $this->getConfig('bring_client_url'),
+                'X-Bring-Client-URL' => $this->getGlobalConfig('bring_client_url'),
                 'Accept'     => 'application/json'
             ]
         ]);
         if ($this->getConfig('enable_mybring')) {
-            $options['headers']['X-MyBring-API-Uid'] = $this->getConfig('mybring_client_uid');;
-            $options['headers']['X-MyBring-API-Key'] = $this->getConfig('mybring_api_key');
+            $options['headers']['X-MyBring-API-Uid'] = $this->getGlobalConfig('mybring_client_uid');;
+            $options['headers']['X-MyBring-API-Key'] = $this->getGlobalConfig('mybring_api_key');
         }
 
         return $client->request("get", $this->getTrackingEndpoint(), $options);

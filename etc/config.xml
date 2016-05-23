@@ -2,21 +2,32 @@
     <default>
         <carriers>
             <bring>
-                <active>1</active>
-                <sallowspecific>0</sallowspecific>
                 <model>Markant\Bring\Model\Carrier\Bring</model>
-                <name>Bring</name>
-                <title>Bring</title>
-                <type>I</type>
-                <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
-                <posting_at_post_office>1</posting_at_post_office>
-                <edi>1</edi>
-                <bring_client_url>http://example.com</bring_client_url>
-                <enable_mybring>0</enable_mybring>
-                <mybring_client_uid></mybring_client_uid>
-                <mybring_api_key></mybring_api_key>
-                <activate_api>1</activate_api>
-                <show_estimated_delivery>1</show_estimated_delivery>
+                <global>
+                    <bring_client_url>http://example.com</bring_client_url>
+                    <enable_mybring>0</enable_mybring>
+                    <mybring_client_uid></mybring_client_uid>
+                    <mybring_api_key></mybring_api_key>
+                </global>
+                <calculation>
+                    <active>1</active>
+                    <sallowspecific>0</sallowspecific>
+                    <name>Bring</name>
+                    <title>Bring</title>
+                    <type>I</type>
+                    <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
+                    <posting_at_post_office>1</posting_at_post_office>
+                    <edi>1</edi>
+                    <activate_api>1</activate_api>
+                    <show_estimated_delivery>1</show_estimated_delivery>
+                </calculation>
+                <booking>
+                    <package>
+                        <width>20</width>
+                        <length>20</length>
+                        <height>20</height>
+                    </package>
+                </booking>
             </bring>
         </carriers>
     </default>

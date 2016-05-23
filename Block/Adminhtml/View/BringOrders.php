@@ -3,6 +3,14 @@ namespace Markant\Bring\Block\Adminhtml\View;
 
 class BringOrders extends \Magento\Backend\Block\Template
 {
+    const XML_GLOBAL_PATH = 'carriers/bring/global/';
+    const XML_PATH = 'carriers/bring/booking/';
+
+    /**
+     * @var \Markant\Bring\Model\ResourceModel\Order\Shipment\Edi\CollectionFactory
+     */
+    protected $_ediCollectionFactory;
+
     /**
      * Core registry
      *
@@ -25,10 +33,12 @@ class BringOrders extends \Magento\Backend\Block\Template
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Shipping\Model\Config $shippingConfig,
         \Magento\Framework\Registry $registry,
+        \Markant\Bring\Model\ResourceModel\Order\Shipment\Edi\CollectionFactory $ediCollectionFactory,
         array $data = []
     ) {
         $this->_shippingConfig = $shippingConfig;
         $this->_coreRegistry = $registry;
+        $this->_ediCollectionFactory = $ediCollectionFactory;
         parent::__construct($context, $data);
     }
 
@@ -43,6 +53,14 @@ class BringOrders extends \Magento\Backend\Block\Template
         return $this->_coreRegistry->registry('current_shipment');
     }
 
+    /**
+     * @return \Magento\Sales\Model\Order
+     */
+    public function getOrder()
+    {
+        return $this->getShipment()->getOrder();
+    }
+
 
     /**
      * Prepares layout of block
@@ -51,11 +69,12 @@ class BringOrders extends \Magento\Backend\Block\Template
      */
     protected function _prepareLayout()
     {
+
         $onclick = "submitAndReloadArea($('shipment_edi_info').parentNode, '" . $this->getSubmitUrl() . "')";
         $this->addChild(
             'save_button',
             'Magento\Backend\Block\Widget\Button',
-            ['label' => __('Order'), 'class' => 'save', 'onclick' => $onclick]
+            ['label' => __('Book shipment'), 'class' => 'save', 'onclick' => $onclick]
         );
     }
 
@@ -79,6 +98,12 @@ class BringOrders extends \Magento\Backend\Block\Template
         return $this->getChildHtml('save_button');
     }
 
+    public function getAllEdis () {
+        $shipment = $this->getShipment();
+        /** @var \Markant\Bring\Model\ResourceModel\Order\Shipment\Edi\Collection $collection */
+        $collection = $this->_ediCollectionFactory->create()->setShipmentFilter($shipment->getId());
+        return $collection;
+    }
     /**
      * Retrieve remove url
      *
@@ -93,18 +118,31 @@ class BringOrders extends \Magento\Backend\Block\Template
         );
     }
 
-    /**
-     * @param string $code
-     * @return \Magento\Framework\Phrase|string|bool
-     */
-    public function getCarrierTitle($code)
-    {
-        $carrier = $this->_carrierFactory->create($code);
-        if ($carrier) {
-            return $carrier->getConfigData('title');
-        } else {
-            return __('Custom Value');
-        }
-        return false;
+    public function getDefaultPackageWidth () {
+        return $this->getConfig('package/width');
+    }
+
+    public function getDefaultPackageLength () {
+        return $this->getConfig('package/length');
+    }
+
+    public function getDefaultPackageHeight () {
+        return $this->getConfig('package/height');
+    }
+
+
+    public function getConfig ($key) {
+        return $this->_scopeConfig->getValue(
+            self::XML_PATH . $key,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getData('store')
+        );
+    }
+    public function getGlobalConfig ($key) {
+        return $this->_scopeConfig->getValue(
+            self::XML_GLOBAL_PATH . $key,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getData('store')
+        );
     }
 }
