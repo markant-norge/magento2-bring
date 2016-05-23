@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<body>
+    <referenceContainer name="content">
+        <block class="Markant\Bring\Block\Adminhtml\View\EDI" name="bring_edi" template="Markant_Bring::order/edi/view.phtml">
+            <block class="Markant\Bring\Block\Adminhtml\View\BringOrders" name="bring_edi_orders" template="Markant_Bring::order/edi/orders.phtml"/>
+        </block>
+    </referenceContainer>
+</body>
+</page>

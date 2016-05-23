@@ -1,0 +1,86 @@
+<?php
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var $block Markant\Bring\Block\Adminhtml\View\BringOrders */ ?>
+<div class="admin__control-table-wrapper">
+    <table class="data-table admin__control-table" id="shipment_edi_info">
+        <thead>
+        <tr class="headings">
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Weight (kg)') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Length (cm)') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Width (cm)') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Height (cm)') ?></th>
+            <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Action') ?></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <td class="col-number">
+                <input class="input-text admin__control-text"
+                       type="text"
+                       id="bring_edi_weight"
+                       name="number"
+                       value="" />
+            </td>
+            <td class="col-number">
+                <input class="input-text admin__control-text"
+                       type="text"
+                       id="bring_edi_length"
+                       name="number"
+                       value="" />
+            </td>
+            <td class="col-number">
+                <input class="input-text admin__control-text"
+                       type="text"
+                       id="bring_edi_width"
+                       name="number"
+                       value="" />
+            </td>
+            <td class="col-number">
+                <input class="input-text admin__control-text"
+                       type="text"
+                       id="bring_edi_height"
+                       name="number"
+                       value="" />
+            </td>
+            <td class="col-delete last"><?php echo $block->getSaveButtonHtml() ?></td>
+        </tr>
+        </tfoot>
+        <?php if (false): ?>
+            <tbody>
+            <?php $i = 0; foreach ($_tracks as $_edi):$i++ ?>
+                <tr class="<?php /* @escapeNotVerified */ echo($i%2 == 0) ? 'even' : 'odd' ?>">
+                    <td class="col-number"><?php echo $block->escapeHtml($block->getCarrierTitle($_edi->getCarrierCode())) ?></td>
+                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getTitle()) ?></td>
+                    <td class="col-number">
+                        <?php if ($_edi->isCustom()): ?>
+                            <?php echo $block->escapeHtml($_edi->getNumber()) ?>
+                        <?php else: ?>
+                            <a href="#" onclick="popWin('<?php /* @escapeNotVerified */ echo $this->helper('Magento\Shipping\Helper\Data')->getTrackingPopupUrlBySalesModel($_edi) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')"><?php echo $block->escapeHtml($_track->getNumber()) ?></a>
+                            <div id="shipment_edi_info_response_<?php /* @escapeNotVerified */ echo $_edi->getId() ?>"></div>
+                        <?php endif; ?>
+                    </td>
+                    <td class="col-delete last"><button class="action-delete" type="button" onclick="deleteEdi('<?php /* @escapeNotVerified */ echo $block->getRemoveUrl($_edi) ?>'); return false;"><span><?php /* @escapeNotVerified */ echo __('Delete') ?></span></button></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        <?php endif; ?>
+    </table>
+</div>
+
+<script>
+    require(['prototype'], function(){
+
+//<![CDATA[
+
+        function deleteEdi(url) {
+            if (confirm('<?php /* @escapeNotVerified */ echo __('Are you sure?') ?>')) {
+                submitAndReloadArea($('shipment_edi_info').parentNode, url)
+            }
+        }
+        window.deleteEdi = deleteEdi;
+//]]>
+
+    });
+</script>
