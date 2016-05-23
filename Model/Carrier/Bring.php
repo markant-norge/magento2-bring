@@ -169,7 +169,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                         foreach ($packageSet['eventSet'] as $eventSet) {
                                             $tracking = $this->_trackStatusFactory->create();
                                             $tracking->setCarrier($this->_code);
-                                            $tracking->setCarrierTitle($this->getConfigData('title'));
+                                            $tracking->setCarrierTitle($this->getConfig('title'));
 
                                             $tracking->setTracking($trackingnumber);
                                             $status = Tracking::humanize($eventSet['status']);
@@ -265,7 +265,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         $preFabricatedMethods = [];
         $preFabricatedOverrides = [];
 
-        $custom_prices = $this->getConfigData('custom_method_prices');
+        $custom_prices = $this->getConfig('custom_method_prices');
         $custom_prices = $custom_prices ? unserialize($custom_prices) : [];
 
         foreach ($custom_prices as $item) {
@@ -293,7 +293,7 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         }
 
 
-        if ($this->getConfigData('activate_api')) {
+        if ($this->getConfig('activate_api')) {
 
             try {
                 $bring = $this->request(['query' => $r]);
@@ -339,11 +339,11 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
             $method = $this->_rateMethodFactory->create();
             $method->setCarrier($this->getCarrierCode());
-            $method->setCarrierTitle($this->getConfigData('title'));
+            $method->setCarrierTitle($this->getConfig('title'));
             $method->setMethod($shipping_method);
             $productLabel = isset($products[$shipping_method]) ? $products[$shipping_method] : $shipping_method;
 
-            if ($this->getConfigData('show_estimated_delivery') && $info['expected_days']) {
+            if ($this->getConfig('show_estimated_delivery') && $info['expected_days']) {
                 $days = $info['expected_days'];
                 if ($days > 1) {
                     $label = new Phrase('%1 days', array($days));

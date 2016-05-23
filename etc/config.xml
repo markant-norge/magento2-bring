@@ -27,6 +27,9 @@
                         <length>20</length>
                         <height>20</height>
                     </package>
+                    <global>
+                        <test>1</test>
+                    </global>
                 </booking>
             </bring>
         </carriers>

@@ -20,6 +20,9 @@
                     <field id="mybring_api_key" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Mybring login API key</label>
                     </field>
+                    <field id="sort_order" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Sort Order</label>
+                    </field>
                 </group>
                 <group id="calculation" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bring Shipping Guide</label>
@@ -109,14 +112,25 @@
 
                 <group id="booking" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bring Booking</label>
+                    <group id="global" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Booking settings</label>
+                        <field id="test" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Test mode</label>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        </field>
 
+                        <field id="default_customer" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Default Customer</label>
+                            <source_model>Markant\Bring\Model\Config\Source\BookingCustomer</source_model>
+                        </field>
+                    </group>
                     <group id="package" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Standard package size</label>
 
-                        <field id="width" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <field id="width" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                             <label>Width (cm)</label>
                         </field>
-                        <field id="length" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <field id="length" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                             <label>Length (cm)</label>
                         </field>
                         <field id="height" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -126,9 +140,6 @@
                 </group>
 
 
-                <field id="sort_order" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Sort Order</label>
-                </field>
 
             </group>
         </section>
