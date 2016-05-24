@@ -29,12 +29,15 @@ class BookingClient
 
     private $_customers = array();
 
+    private $_scopeConfig;
 
-    public function __construct($clientUrl, $clienetId, $apiKey)
+
+    public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
     {
-        $this->clientId = $clienetId;
-        $this->apiKey = $apiKey;
-        $this->clientUrl = $clientUrl;
+        $this->_scopeConfig = $scopeConfig;
+        $this->clientId = $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url');
+        $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid');
+        $this->clientUrl = $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key');
 
         if (!$this->clientId) {
             throw new \Exception("Mybring login ID must not be empty.");
@@ -47,6 +50,24 @@ class BookingClient
         }
     }
 
+    public function customersToOptionArray () {
+        $option = [];
+        foreach ($this->getCustomers() as $customer) {
+            $option[] = ['value' => $customer['customerNumber'], 'label' => $customer['name']];
+        }
+        return $option;
+    }
+
+    public function getCustomers () {
+        if ($this->_customers) return $this->_customers;
+
+        $request = $this->request('get', self::BRING_CUSTOMERS_API);
+        if ($request->getStatusCode() == 200) {
+            $json = json_decode($request->getBody(), true);
+            $this->_customers = $json['customers'];
+            return $json['customers'];
+        }
+    }
 
     private function request ($method, $endpoint, array $options = []) {
         $client = new Client();
@@ -63,22 +84,23 @@ class BookingClient
         return $client->request($method, $endpoint, $options);
     }
 
-    public function getCustomers () {
-        if ($this->_customers) return $this->_customers;
 
-        $request = $this->request('get', self::BRING_CUSTOMERS_API);
-        if ($request->getStatusCode() == 200) {
-            $json = json_decode($request->getBody(), true);
-            $this->_customers = $json['customers'];
-            return $json['customers'];
-        }
+
+    public function bookShipment (
+        $sender,
+        $recipient,
+        $packages,
+        $requestOptions = []
+    ) {
+
+        $request = array_merge($requestOptions, [
+            'testIndicator' => true,
+            'schemaVersion' => 1
+        ]);
+
+
     }
-    public function customersToOptionArray () {
-        $option = [];
-        foreach ($this->getCustomers() as $customer) {
-            $option[] = ['value' => $customer['customerNumber'], 'label' => $customer['name']];
-        }
-        return $option;
-    }
+
+
 
 }

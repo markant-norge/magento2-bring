@@ -25,10 +25,14 @@ class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
 
     protected $_scopeConfig;
 
+    protected $_bookingClient;
+
     public function __construct(
+        \Markant\Bring\Model\Api\BookingClientFactory $bookingClient,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->_scopeConfig = $scopeConfig;
+        $this->_bookingClient = $bookingClient;
     }
 
     /**
@@ -42,11 +46,12 @@ class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
     {
         if (!$this->_options) {
             try {
-                $client = new BookingClient(
+                $client = $this->_bookingClient->create();
+                /*$client = new BookingClient(
                     $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url'),
                     $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid'),
                     $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key')
-                );
+                );*/
                 $this->_options = $client->customersToOptionArray();
             } catch (\Exception $e) {
                 $this->_options = [['value' => '', 'label' => 'ERROR: '.$e->getMessage()]];

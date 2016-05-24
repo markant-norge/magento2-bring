@@ -292,7 +292,6 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             }
         }
 
-
         if ($this->getConfig('activate_api')) {
 
             try {
@@ -304,7 +303,6 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                     if (isset($json['Product'])) {
 
-                        $products = BringMethod::products();
                         foreach ($json['Product'] as $bringAlternative) {
                             $shipping_method = $bringAlternative['ProductId'];
                             if ($this->isBringMethodEnabled($shipping_method)) {
@@ -334,6 +332,8 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             } catch (RequestException $e) {
             }
         }
+
+        $products = BringMethod::products();
 
         foreach ($preFabricatedMethods as $shipping_method => $info) {
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
