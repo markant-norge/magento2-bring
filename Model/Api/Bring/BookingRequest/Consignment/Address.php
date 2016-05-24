@@ -13,6 +13,7 @@ namespace Markant\Bring\Model\Api\Bring\BookingRequest\Consignment;
 
 
 use Markant\Bring\Model\Api\Bring\ApiEntity;
+use Markant\Bring\Model\Api\Bring\DataValidationException;
 
 class Address extends ApiEntity
 {

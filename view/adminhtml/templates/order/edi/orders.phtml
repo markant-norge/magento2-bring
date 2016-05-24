@@ -3,6 +3,11 @@
 
 $shipment = $block->getShipment();
 $order = $block->getOrder();
+
+/** @var array $shippingMethod  [carrier_code] => bring [method] => PA_DOREN */
+$shippingMethod = $order->getShippingMethod(true);
+$shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
+
 ?>
 <?php /** @var $block Markant\Bring\Block\Adminhtml\View\BringOrders */ ?>
 <div class="admin__control-table-wrapper">
@@ -10,9 +15,11 @@ $order = $block->getOrder();
         <thead>
         <tr class="headings">
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Weight (kg)') ?></th>
-            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Length (cm)') ?></th>
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Width (cm)') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Length (cm)') ?></th>
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Height (cm)') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Bring Product') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Shipping Date') ?></th>
             <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Action') ?></th>
         </tr>
         </thead>
@@ -28,13 +35,6 @@ $order = $block->getOrder();
             <td class="col-number">
                 <input class="input-text admin__control-text"
                        type="text"
-                       id="bring_edi_length"
-                       name="length"
-                       value="<?php echo (int)$block->getDefaultPackageLength()?>" />
-            </td>
-            <td class="col-number">
-                <input class="input-text admin__control-text"
-                       type="text"
                        id="bring_edi_width"
                        name="width"
                        value="<?php echo (int)$block->getDefaultPackageWidth()?>" />
@@ -42,9 +42,31 @@ $order = $block->getOrder();
             <td class="col-number">
                 <input class="input-text admin__control-text"
                        type="text"
+                       id="bring_edi_length"
+                       name="length"
+                       value="<?php echo (int)$block->getDefaultPackageLength()?>" />
+            </td>
+            <td class="col-number">
+                <input class="input-text admin__control-text"
+                       type="text"
                        id="bring_edi_height"
                        name="height"
                        value="<?php echo (int)$block->getDefaultPackageHeight()?>" />
+            </td>
+            <td class="col-number">
+                <select name="product" class="select admin__control-select">
+                    <?php foreach ($block->getBringProducts() as $key => $value):?>
+                        <option value="<?php echo $key?>" <?php echo $key == $shippingMethodCurrent ? 'selected':''?>><?php echo $value?></option>
+                    <?php endforeach?>
+                </select>
+            </td>
+            <td class="col-number">
+                <input type="text"
+                       name="shipping_date_time"
+                       id="bring_edi_shipping_date_time"
+                       value="<?php $d = $block->getCurrentTime(); $d->modify("+1 hours"); echo $d->format('Y-m-d H:i')?>"
+                       title="Shipment date"
+                       data-mage-init='{"calendar": {"showsTime": true, "dateFormat": "yyyy-MM-dd", "timeFormat": "HH:mm", "ampm": false}}' />
             </td>
             <td class="col-delete last"><?php echo $block->getSaveButtonHtml() ?></td>
         </tr>
@@ -54,9 +76,11 @@ $order = $block->getOrder();
             <?php $i = 0; foreach ($_edis as $_edi):$i++; /** @var \Markant\Bring\Model\Order\Shipment\Edi $_edi */ ?>
                 <tr class="<?php /* @escapeNotVerified */ echo($i%2 == 0) ? 'even' : 'odd' ?>">
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getWeight()) ?></td>
-                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getLength()) ?></td>
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getWidth()) ?></td>
+                    <td class="col-number"><?php echo $block->escapeHtml($_edi->getLength()) ?></td>
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getHeight()) ?></td>
+                    <td></td>
+                    <td></td>
                     <td class="col-delete last"><button class="action-delete" type="button" onclick="deleteEdi('<?php /* @escapeNotVerified */ echo $block->getRemoveUrl($_edi) ?>'); return false;"><span><?php /* @escapeNotVerified */ echo __('Delete') ?></span></button></td>
                 </tr>
             <?php endforeach; ?>

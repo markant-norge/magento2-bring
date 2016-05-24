@@ -29,10 +29,6 @@ class BookingRequest extends ApiEntity
     public function addConsignment(Consignment $consignment) {
         return $this->addData('consignments', $consignment);
     }
-    public function addPackage(Consignment $consignment) {
-        return $this->addData('consignments', $consignment);
-    }
-
     public function validate()
     {
         if (!$this->getData('consignments')) {

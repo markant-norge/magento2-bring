@@ -4,6 +4,7 @@ namespace Markant\Bring\Model\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Markant\Bring\Model\Api\Bring\BookingRequest;
 
 /**
  * Copyright (C) Markant Norge AS - All Rights Reserved
@@ -29,15 +30,13 @@ class BookingClient
 
     private $_customers = array();
 
-    private $_scopeConfig;
 
 
-    public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
+    public function __construct($clientId, $apiKey, $clientUrl)
     {
-        $this->_scopeConfig = $scopeConfig;
-        $this->clientId = $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url');
-        $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid');
-        $this->clientUrl = $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key');
+        $this->clientId = $clientId;
+        $this->apiKey = $apiKey;
+        $this->clientUrl = $clientUrl;
 
         if (!$this->clientId) {
             throw new \Exception("Mybring login ID must not be empty.");
@@ -69,6 +68,24 @@ class BookingClient
         }
     }
 
+    public function bookShipment (
+        BookingRequest $req
+    ) {
+        $data = $req->toArray();
+
+        $options = [
+            'json' => $data
+        ];
+        $request = $this->request('post', self::BRING_BOOKING_API, $options);
+        if ($request->getStatusCode() == 200) {
+            $json = json_decode($request->getBody(), true);
+            return $json;
+        } else {
+            throw new \Exception("Could not get 200 response from bring booking API.");
+        }
+    }
+
+
     private function request ($method, $endpoint, array $options = []) {
         $client = new Client();
 
@@ -83,24 +100,4 @@ class BookingClient
 
         return $client->request($method, $endpoint, $options);
     }
-
-
-
-    public function bookShipment (
-        $sender,
-        $recipient,
-        $packages,
-        $requestOptions = []
-    ) {
-
-        $request = array_merge($requestOptions, [
-            'testIndicator' => true,
-            'schemaVersion' => 1
-        ]);
-
-
-    }
-
-
-
 }

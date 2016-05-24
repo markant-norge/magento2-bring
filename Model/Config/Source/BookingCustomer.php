@@ -47,11 +47,6 @@ class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
         if (!$this->_options) {
             try {
                 $client = $this->_bookingClient->create();
-                /*$client = new BookingClient(
-                    $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url'),
-                    $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid'),
-                    $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key')
-                );*/
                 $this->_options = $client->customersToOptionArray();
             } catch (\Exception $e) {
                 $this->_options = [['value' => '', 'label' => 'ERROR: '.$e->getMessage()]];

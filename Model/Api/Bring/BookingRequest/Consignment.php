@@ -2,6 +2,7 @@
 namespace Markant\Bring\Model\Api\Bring\BookingRequest;
 use Markant\Bring\Model\Api\Bring\ApiEntity;
 use Markant\Bring\Model\Api\Bring\BookingRequest\Consignment\Address;
+use Markant\Bring\Model\Api\Bring\BookingRequest\Consignment\Package;
 use Markant\Bring\Model\Api\Bring\BookingRequest\Consignment\Product;
 use Markant\Bring\Model\Api\Bring\DataValidationException;
 
@@ -25,7 +26,8 @@ class Consignment extends ApiEntity
             'sender' => null,
             'recipient' => null,
             'pickupPoint' => null
-        ]
+        ],
+        'packages' => []
     ];
 
 
@@ -56,19 +58,30 @@ class Consignment extends ApiEntity
         return $this->setPartiesData('pickupPoint', $pickupPoint);
     }
 
+    public function addPackage(Package $consignment) {
+        return $this->addData('packages', $consignment);
+    }
+
     public function validate()
     {
         if (!$this->getData('product')) {
             throw new DataValidationException('BookingRequest\Consignment requires "product" to be set.');
         }
+
         if (!$this->getData('shippingDateTime')) {
             throw new DataValidationException('BookingRequest\Consignment requires "shippingDateTime" to be set.');
         }
+
         if (!$this->getPartiesData('recipient')) {
             throw new DataValidationException('BookingRequest\Consignment requires "recipient" to be set.');
         }
+
         if (!$this->getPartiesData('sender')) {
             throw new DataValidationException('BookingRequest\Consignment requires "sender" to be set.');
+        }
+
+        if (!$this->getData('packages')) {
+            throw new DataValidationException('BookingRequest\Consignment requires "packages" to be set.');
         }
     }
 
@@ -80,8 +93,5 @@ class Consignment extends ApiEntity
 
     private function getPartiesData($key) {
         return $this->_data['parties'][$key];
-    }
-    private function containsPartiesData($key) {
-        return isset($this->_data['parties']) && isset($this->_data['parties'][$key]);
     }
 }

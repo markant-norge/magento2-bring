@@ -1,6 +1,8 @@
 <?php
 namespace Markant\Bring\Block\Adminhtml\View;
 
+use Markant\Bring\Model\Config\Source\BringMethod;
+
 class BringOrders extends \Magento\Backend\Block\Template
 {
     const XML_GLOBAL_PATH = 'carriers/bring/global/';
@@ -61,6 +63,10 @@ class BringOrders extends \Magento\Backend\Block\Template
         return $this->getShipment()->getOrder();
     }
 
+    public function getCurrentTime () {
+        return $this->_localeDate->date();
+    }
+
 
     /**
      * Prepares layout of block
@@ -103,6 +109,9 @@ class BringOrders extends \Magento\Backend\Block\Template
         /** @var \Markant\Bring\Model\ResourceModel\Order\Shipment\Edi\Collection $collection */
         $collection = $this->_ediCollectionFactory->create()->setShipmentFilter($shipment->getId());
         return $collection;
+    }
+    public function getBringProducts () {
+        return BringMethod::products();
     }
     /**
      * Retrieve remove url

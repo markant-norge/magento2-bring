@@ -13,6 +13,7 @@ namespace Markant\Bring\Model\Api\Bring\BookingRequest\Consignment;
 
 
 use Markant\Bring\Model\Api\Bring\ApiEntity;
+use Markant\Bring\Model\Api\Bring\DataValidationException;
 
 class Package extends ApiEntity
 {
@@ -56,8 +57,46 @@ class Package extends ApiEntity
         return $this->setData('correlationId', $correlationId);
     }
 
+    public function setDimensionHeightInCm ($heightInCm) {
+        return $this->setDimensionsData('heightInCm', $heightInCm);
+    }
+
+
+    public function setDimensionWidthInCm ($widthInCm) {
+        return $this->setDimensionsData('widthInCm', $widthInCm);
+    }
+
+
+    public function setDimensionLengthInCm ($lengthInCm) {
+        return $this->setDimensionsData('lengthInCm', $lengthInCm);
+    }
+
+
 
     public function validate()
     {
+        if ($this->getData('weightInKg') <= 0) {
+            throw new DataValidationException('BookingRequest\Consignment\Package requires "weightInKg" to be greater then zero.');
+        }
+        if ($this->getDimensionsData('heightInCm') <= 0) {
+            throw new DataValidationException('BookingRequest\Consignment\Package requires "heightInCm" to be greater then zero.');
+        }
+        if ($this->getDimensionsData('widthInCm') <= 0) {
+            throw new DataValidationException('BookingRequest\Consignment\Package requires "widthInCm" to be greater then zero.');
+        }
+        if ($this->getDimensionsData('lengthInCm') <= 0) {
+            throw new DataValidationException('BookingRequest\Consignment\Package requires "lengthInCm" to be greater then zero.');
+        }
+    }
+
+
+    private function setDimensionsData($key, $value) {
+        if (!isset($this->_data['dimensions'])) $this->_data['dimensions'] = [];
+        $this->_data['dimensions'][$key] = $value;
+        return $this;
+    }
+
+    private function getDimensionsData($key) {
+        return $this->_data['dimensions'][$key];
     }
 }
