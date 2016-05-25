@@ -7,7 +7,9 @@
 namespace Markant\Bring\Controller\Adminhtml\Order\Shipment;
 
 use Magento\Backend\App\Action;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Sales\Model\Order\Shipment;
+use Markant\Bring\Model\Carrier;
 use Peec\Bring\API\Contract\Booking\BookingRequest;
 
 class AddEdi extends \Magento\Backend\App\Action
@@ -140,7 +142,7 @@ class AddEdi extends \Magento\Backend\App\Action
                 $recipient->setName($shippingAddress->getName());
                 $recipient->setPostalCode($shippingAddress->getPostcode());
                 $recipient->setReference($shippingAddress->getCustomerId());
-
+                $recipient->setReference($shipment->getOrderId()); // order id as reference.
 
 
                 $sender = new BookingRequest\Consignment\Address();
@@ -150,6 +152,9 @@ class AddEdi extends \Magento\Backend\App\Action
                 $sender->setCity($this->getConfig('booking/origin/city'));
                 $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
                 $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
+                $sender->setReference($shipment->getId());
+
+
 
                 $contact = new BookingRequest\Consignment\Contact();
                 $contact->setName($this->getConfig('booking/origin/name'));
@@ -182,26 +187,75 @@ class AddEdi extends \Magento\Backend\App\Action
                 /** @var \Peec\Bring\API\Client\BookingClient $client */
                 $client = $clientFactory->getBookingClient();
 
-                $client->bookShipment($message);
+                $result = $client->bookShipment($message);
 
-                /** @var \Markant\Bring\Model\Order\Shipment\Edi $edi */
-                $edi = $this->_objectManager->create(
-                    'Markant\Bring\Model\Order\Shipment\Edi'
-                );
-                $edi = $edi->setWeight(
-                    $weight
-                )->setLength(
-                    $length
-                )->setWidth(
-                    $width
-                )->setHeight(
-                    $height
-                );
-                $this->addEdi($shipment, $edi)->save();
+                $consignment = $result['consignments'][0];
 
-                $this->_view->loadLayout();
-                $this->_view->getPage()->getConfig()->getTitle()->prepend(__('EDI Bookings'));
-                $response = $this->_view->getLayout()->getBlock('bring_edi_orders')->toHtml();
+                if (empty($consignment['errors'])) {
+
+
+
+                    /** @var \Markant\Bring\Model\Order\Shipment\Edi $edi */
+                    $edi = $this->_objectManager->create(
+                        'Markant\Bring\Model\Order\Shipment\Edi'
+                    );
+                    $edi = $edi->setWeight(
+                        $weight
+                    )->setLength(
+                        $length
+                    )->setWidth(
+                        $width
+                    )->setHeight(
+                        $height
+                    );
+
+                    $conf = $consignment['confirmation'];
+                    $consignmentNumber = $conf['consignmentNumber'];
+                    $labels = $conf['links']['labels'];
+                    $waybill = $conf['links']['waybill'];
+                    $tracking = $conf['links']['tracking'];
+                    $earliestPickup = $conf['dateAndTimes']['earliestPickup']; // Unknown.
+                    $expectedDelivery = $conf['dateAndTimes']['expectedDelivery']; // Unix time + 1000
+                    $packages = [];
+                    foreach($conf['packages'] as $package) {
+                        $packages[] = $package['packageNumber'];
+                    }
+
+                    $edi->setConsignmentNumber($consignmentNumber)
+                        ->setLabelUrl($labels);
+                    $edi->setWaybill($waybill);
+                    $edi->setTrackingUrl($tracking);
+                    if ($expectedDelivery) {
+                        $dt = new \DateTime();
+                        $dt->setTimestamp($expectedDelivery / 1000);
+                        $edi->setExpectedDelivery($dt);
+                    }
+                    $edi->setPackageNumbers($packages);
+
+                    $this->addEdi($shipment, $edi)->save();
+
+
+                    // ADD TRACKING TO SHIPMENT....
+                    /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
+                    $track = $this->_objectManager->create(
+                        'Magento\Sales\Model\Order\Shipment\Track'
+                    )->setNumber(
+                        $consignmentNumber
+                    )->setCarrierCode(
+                        Carrier::CARRIER_CODE
+                    )->setTitle(
+                        $consignmentNumber
+                    );
+                    $shipment->addTrack($track)->save();
+
+
+                    $this->_view->loadLayout();
+                    $this->_view->getPage()->getConfig()->getTitle()->prepend(__('EDI Bookings'));
+                    $response = $this->_view->getLayout()->getBlock('bring_edi_orders')->toHtml();
+                } else {
+                    throw new \Exception("Could not book consignment due to errors. " . var_export($consignment['errors'], true));
+                }
+
 
 
 

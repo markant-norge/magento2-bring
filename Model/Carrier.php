@@ -1,5 +1,5 @@
 <?php
-namespace Markant\Bring\Model\Carrier;
+namespace Markant\Bring\Model;
 
 use GuzzleHttp\Client;
 
@@ -21,15 +21,18 @@ use Peec\Bring\API\Contract\ShippingGuide\PriceRequest;
  *
  * @package Markant\Bring\Model\Carrier
  */
-class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
+class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     \Magento\Shipping\Model\Carrier\CarrierInterface
 {
+
+    const CARRIER_CODE = 'bring';
+
     /**
      * Carrier's code
      *
      * @var string
      */
-    protected $_code = 'bring';
+    protected $_code = self::CARRIER_CODE;
 
     protected $_isFixed = false;
 

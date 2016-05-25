@@ -325,4 +325,88 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
     {
         return $this->setData(ShipmentEdiInterface::HEIGHT, $height);
     }
+
+
+
+
+
+
+
+
+
+
+
+    public function getLabelUrl()
+    {
+        return $this->getData(ShipmentEdiInterface::LABEL_URL);
+    }
+
+    public function setLabelUrl($value)
+    {
+        return $this->setData(ShipmentEdiInterface::LABEL_URL, $value);
+    }
+
+    public function getWaybill()
+    {
+        return $this->getData(ShipmentEdiInterface::WAYBILL);
+    }
+
+    public function setWaybill($value)
+    {
+        return $this->setData(ShipmentEdiInterface::WAYBILL, $value);
+    }
+
+    public function getTrackingUrl()
+    {
+        return $this->getData(ShipmentEdiInterface::TRACKING_URL);
+    }
+
+    public function setTrackingUrl($value)
+    {
+        return $this->setData(ShipmentEdiInterface::TRACKING_URL, $value);
+    }
+
+    public function getConsignmentNumber()
+    {
+        return $this->getData(ShipmentEdiInterface::CONSIGNMENT_NUMBER);
+    }
+
+    public function setConsignmentNumber($value)
+    {
+        return $this->setData(ShipmentEdiInterface::CONSIGNMENT_NUMBER, $value);
+    }
+
+    public function getPackageNumbers()
+    {
+        $v = $this->getData(ShipmentEdiInterface::PACKAGE_NUMBERS);
+        if ($v) {
+            $v = unserialize($v);
+        }
+        return $v;
+    }
+
+    public function setPackageNumbers($value)
+    {
+        return $this->setData(ShipmentEdiInterface::PACKAGE_NUMBERS, serialize($value));
+    }
+
+    public function getEarliestPickup()
+    {
+        return $this->getData(ShipmentEdiInterface::EARLIEST_PICKUP);
+    }
+
+    public function setEarliestPickup($value)
+    {
+        return $this->setData(ShipmentEdiInterface::EARLIEST_PICKUP, $value);
+    }
+
+    public function getExpectedDelivery()
+    {
+        return $this->getData(ShipmentEdiInterface::EXPECTED_DELIVERY);
+    }
+
+    public function setExpectedDelivery($value)
+    {
+        return $this->setData(ShipmentEdiInterface::EXPECTED_DELIVERY, $value);
+    }
 }

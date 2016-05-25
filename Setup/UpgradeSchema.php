@@ -7,6 +7,8 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
+    const TABLE_NAME = 'sales_shipment_edi';
+
     /**
      * {@inheritdoc}
      */
@@ -101,6 +103,47 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'Sales Flat Shipment EDI'
             );
             $installer->getConnection()->createTable($table);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.6') < 0) {
+            $connection = $table = $installer->getConnection();
+
+            $connection
+                ->addColumn(
+                    $installer->getTable(self::TABLE_NAME),
+                    'label_url',
+                    ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Label URL']
+                );
+            $connection->addColumn(
+                $installer->getTable(self::TABLE_NAME),
+                'waybill',
+                ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Waybill']
+            );
+            $connection->addColumn(
+                $installer->getTable(self::TABLE_NAME),
+                'tracking',
+                ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Tracking URL']
+            );
+            $connection->addColumn(
+                $installer->getTable(self::TABLE_NAME),
+                'consignment_number',
+                ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Consignment number']
+            );
+            $connection->addColumn(
+                $installer->getTable(self::TABLE_NAME),
+                'package_numbers',
+                ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Package numbers (serialized)']
+            );
+            $connection->addColumn(
+                $installer->getTable(self::TABLE_NAME),
+                'earliest_pickup',
+                ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, 'nullable' => true, 'comment' => 'From bring: Earliest pickup']
+            );
+            $connection->addColumn(
+                $installer->getTable(self::TABLE_NAME),
+                'expected_delivery',
+                ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, 'nullable' => true, 'comment' => 'From bring: Expected delivery']
+            );
         }
 
         $installer->endSetup();

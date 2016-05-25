@@ -38,14 +38,30 @@ interface ShipmentEdiInterface
     const UPDATED_AT = 'updated_at';
 
 
-    /*
-     * Weight.
-     */
+
     const WEIGHT = 'weight';
 
     const LENGTH = 'length';
+
     const WIDTH = 'width';
+
     const HEIGHT = 'height';
+
+    // Outputs
+
+    const LABEL_URL = 'label_url';
+
+    const WAYBILL = 'waybill';
+
+    const TRACKING_URL = 'tracking';
+
+    const CONSIGNMENT_NUMBER = 'consignment_number';
+
+    const PACKAGE_NUMBERS = 'package_numbers';
+
+    const EARLIEST_PICKUP = 'earliest_pickup';
+
+    const EXPECTED_DELIVERY = 'expected_delivery';
 
 
     public function getLength();
@@ -55,6 +71,21 @@ interface ShipmentEdiInterface
     public function getHeight();
     public function setHeight($height);
 
+
+    public function getLabelUrl();
+    public function setLabelUrl($value);
+    public function getWaybill();
+    public function setWaybill($value);
+    public function getTrackingUrl();
+    public function setTrackingUrl($value);
+    public function getConsignmentNumber();
+    public function setConsignmentNumber($value);
+    public function getPackageNumbers();
+    public function setPackageNumbers($value);
+    public function getEarliestPickup();
+    public function setEarliestPickup($value);
+    public function getExpectedDelivery();
+    public function setExpectedDelivery($value);
 
 
     /**

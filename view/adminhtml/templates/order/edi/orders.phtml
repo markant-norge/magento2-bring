@@ -68,6 +68,7 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
                        title="Shipment date"
                        data-mage-init='{"calendar": {"showsTime": true, "dateFormat": "yyyy-MM-dd", "timeFormat": "HH:mm", "ampm": false}}' />
             </td>
+
             <td class="col-delete last"><?php echo $block->getSaveButtonHtml() ?></td>
         </tr>
         </tfoot>
@@ -79,9 +80,17 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getWidth()) ?></td>
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getLength()) ?></td>
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getHeight()) ?></td>
+
+                    <td><a href="<?php echo $_edi->getTrackingUrl()?>"><?php echo $_edi->getConsignmentNumber()?></a></td>
                     <td></td>
-                    <td></td>
+                    <td>
+                        <?php if ($_edi->getLabelUrl()): ?>
+                            <a target="_blank" href="<?php echo $_edi->getLabelUrl()?>"><?php echo __('Shipping Label (PDF)')?></a>
+                        <?php endif ?>
+                    </td>
+                    <!--
                     <td class="col-delete last"><button class="action-delete" type="button" onclick="deleteEdi('<?php /* @escapeNotVerified */ echo $block->getRemoveUrl($_edi) ?>'); return false;"><span><?php /* @escapeNotVerified */ echo __('Delete') ?></span></button></td>
+                    -->
                 </tr>
             <?php endforeach; ?>
             </tbody>

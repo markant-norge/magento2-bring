@@ -3,7 +3,7 @@
         <carriers>
             <bring>
                 <active>1</active>
-                <model>Markant\Bring\Model\Carrier\Bring</model>
+                <model>Markant\Bring\Model\Carrier</model>
                 <name>Bring</name>
                 <title>Bring</title>
                 <type>I</type>
