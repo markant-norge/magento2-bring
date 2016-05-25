@@ -33,9 +33,9 @@ class BookingClientService
     public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
     {
         $this->_scopeConfig = $scopeConfig;
-        $this->clientUrl = $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url');
-        $this->clientId = $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid');
-        $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key');
+        $this->clientUrl = $this->_scopeConfig->getValue('carriers/bring/bring_client_url');
+        $this->clientId = $this->_scopeConfig->getValue('carriers/bring/mybring_client_uid');
+        $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/mybring_api_key');
 
         if (!$this->clientId) {
             throw new \Exception("Mybring login ID must not be empty.");

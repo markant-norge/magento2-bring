@@ -43,7 +43,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         return true;
     }
 
-    const XML_GLOBAL_PATH = 'carriers/bring/global/';
+    const XML_GLOBAL_PATH = 'carriers/bring/';
     const XML_PATH = 'carriers/bring/calculation/';
 
 
