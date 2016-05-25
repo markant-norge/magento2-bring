@@ -5,7 +5,7 @@ use Markant\Bring\Model\Config\Source\BringMethod;
 
 class BringOrders extends \Magento\Backend\Block\Template
 {
-    const XML_GLOBAL_PATH = 'carriers/bring/global/';
+    const XML_GLOBAL_PATH = 'carriers/bring/';
     const XML_PATH = 'carriers/bring/booking/';
 
     /**
@@ -111,8 +111,28 @@ class BringOrders extends \Magento\Backend\Block\Template
         return $collection;
     }
     public function getBringProducts () {
-        return BringMethod::products();
+        $allowed = $this->getBringEnabledProducts();
+        $prods = BringMethod::products();
+        foreach ($prods as $k => $v) {
+            if (!in_array($k, $allowed)) {
+                unset($prods[$k]);
+            }
+        }
+        return $prods;
     }
+
+
+    public function getBringEnabledProducts () {
+        $methods = $this->getGlobalConfig('enabled_methods');
+        if (!$methods) {
+            $methods = array_keys(BringMethod::products()); // enable all.
+        } else {
+            $methods = explode(",", $methods);
+        }
+        return $methods;
+    }
+
+
     /**
      * Retrieve remove url
      *

@@ -24,26 +24,32 @@
                 </field>
 
 
-                <field id="sort_order" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="bring_client_url" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Bring Client URL</label>
+                    <comment>Your website domain.</comment>
+                </field>
+                <field id="mybring_client_uid" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Mybring login ID</label>
+                </field>
+                <field id="mybring_api_key" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Mybring login API key</label>
+                    <comment>Please save settings once you have changed the My Bring Login details, so it's possible to configure My Bring customer ID.</comment>
+                </field>
+
+                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled Bring Products</label>
+                    <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="activate_api">1</field>
+                    </depends>
+                </field>
+
+                <field id="sort_order" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
 
 
-                <group id="global" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Global</label>
-
-                    <field id="bring_client_url" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Bring Client URL</label>
-                        <comment>Your website domain.</comment>
-                    </field>
-                    <field id="mybring_client_uid" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Mybring login ID</label>
-                    </field>
-                    <field id="mybring_api_key" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Mybring login API key</label>
-                        <comment>Please save settings once you have changed the My Bring Login details, so it's possible to configure My Bring customer ID.</comment>
-                    </field>
-                </group>
                 <group id="calculation" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bring Shipping Guide</label>
 
@@ -75,14 +81,6 @@
                         </depends>
                     </field>
 
-                    <field id="enabled_methods" translate="label" type="multiselect" sortOrder="66" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Enabled Bring Products</label>
-                        <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
-                        <can_be_empty>1</can_be_empty>
-                        <depends>
-                            <field id="activate_api">1</field>
-                        </depends>
-                    </field>
 
                     <field id="edi" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>EDI</label>

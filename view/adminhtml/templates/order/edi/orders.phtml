@@ -8,6 +8,7 @@ $order = $block->getOrder();
 $shippingMethod = $order->getShippingMethod(true);
 $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
 
+
 ?>
 <?php /** @var $block Markant\Bring\Block\Adminhtml\View\BringOrders */ ?>
 <div class="admin__control-table-wrapper">
@@ -54,11 +55,12 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
                        value="<?php echo (int)$block->getDefaultPackageHeight()?>" />
             </td>
             <td class="col-number">
-                <select name="product" class="select admin__control-select">
+                <select name="product" class="select admin__control-select" onchange="selectBringProduct(this)">
                     <?php foreach ($block->getBringProducts() as $key => $value):?>
                         <option value="<?php echo $key?>" <?php echo $key == $shippingMethodCurrent ? 'selected':''?>><?php echo $value?></option>
                     <?php endforeach?>
                 </select>
+                <span class="price" id="bring_estimated_price"></span>
             </td>
             <td class="col-number">
                 <input type="text"
@@ -99,16 +101,24 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
 </div>
 
 <script>
-    require(['prototype'], function(){
+    require(['jquery','prototype'], function($){
 
 //<![CDATA[
 
+        function selectBringProduct(elem) {
+            var option = elem.options[elem.selectedIndex];
+            var product = option.value;
+
+            // TODO
+        }
+
         function deleteEdi(url) {
             if (confirm('<?php /* @escapeNotVerified */ echo __('Are you sure?') ?>')) {
-                submitAndReloadArea($('shipment_edi_info').parentNode, url)
+               //submitAndReloadArea($('shipment_edi_info').parentNode, url)
             }
         }
         window.deleteEdi = deleteEdi;
+        window.selectBringProduct = selectBringProduct;
 //]]>
 
     });

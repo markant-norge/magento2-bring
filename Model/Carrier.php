@@ -425,7 +425,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
 
     public function getBringEnabledProducts () {
-        $methods = $this->getConfig('enabled_methods');
+        $methods = $this->getConfigData('enabled_methods');
         if (!$methods) {
             $methods = array_keys(BringMethod::products()); // enable all.
         } else {
