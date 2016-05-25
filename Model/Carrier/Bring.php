@@ -10,6 +10,9 @@ use Magento\Shipping\Model\Rate\Result;
 use Markant\Bring\Model\Config\Source\BringMethod;
 use Markant\Bring\Model\Tracking\Tracking;
 use Magento\Shipping\Helper\Carrier as CarrierHelper;
+use Peec\Bring\API\Client\ShippingGuideClientException;
+use Peec\Bring\API\Contract\ContractValidationException;
+use Peec\Bring\API\Contract\ShippingGuide\PriceRequest;
 
 /**
  * Class Bring
@@ -80,6 +83,8 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
      */
     protected $_carrierHelper;
 
+    protected $_bookingClient;
+
     /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
@@ -98,8 +103,10 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory,
         \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory,
         CarrierHelper $carrierHelper,
+        \Markant\Bring\Model\BookingClientServiceFactory $bookingClient,
         array $data = []
     ) {
+        $this->_bookingClient = $bookingClient;
         $this->_carrierHelper = $carrierHelper;
         $this->_rateResultFactory = $rateResultFactory;
         $this->_rateMethodFactory = $rateMethodFactory;
@@ -200,6 +207,99 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         return false;
     }
 
+    public function hydrateRequestData() {
+        /** @var RateRequest $request */
+        $request = $this->_request;
+        $r = [
+            'from' => $request->getOrigPostcode(),
+            'fromCountry' => $request->getOrigCountryId(),
+            'to' => null,
+            'toCountry' => null,
+            'weightInGram' => $request->getPackageWeight() * 1000,
+            'width' => $request->getPackageWidth(),
+            'length' => $request->getPackageHeight(),
+            'height' => $request->getPackageDepth()
+
+        ];
+
+        // Bring ship origin setting.
+        if (!$r['from']) {
+            $r['from'] = $this->getStoreConfig('carriers/bring/booking/origin/postcode', $request);
+        }
+        // Fallback to ship origin settings.
+        if (!$r['from']) {
+            $r['from'] = $this->getStoreConfig(\Magento\Sales\Model\Order\Shipment::XML_PATH_STORE_ZIP, $request);
+        }
+
+
+        // Bring ship origin setting.
+        if (!$r['fromCountry']) {
+            $r['fromCountry'] = $this->getStoreConfig('carriers/bring/booking/origin/country_id', $request);
+        }
+        // Fallback to ship origin settings.
+        if (!$r['fromCountry']) {
+            $r['fromCountry'] = $this->getStoreConfig(\Magento\Sales\Model\Order\Shipment::XML_PATH_STORE_COUNTRY_ID, $request);
+        }
+        if (!$r['fromCountry']) {
+            $r['fromCountry'] = 'no';
+        }
+
+        if ($request->getDestCountryId()) {
+            $r['toCountry'] = strtolower($request->getDestCountryId());
+        }
+        if (!$r['toCountry']) {
+            $r['toCountry'] = 'no';
+        }
+
+
+        if ($request->getDestPostcode()) {
+            $r['to'] = $request->getDestPostcode();
+        }
+
+        if (!$r['width']) {
+            $r['width'] = $this->getStoreConfig('carriers/bring/booking/package/width', $request);
+        }
+
+        if (!$r['length']) {
+            $r['length'] = $this->getStoreConfig('carriers/bring/booking/package/length', $request);
+        }
+        if (!$r['height']) {
+            $r['height'] = $this->getStoreConfig('carriers/bring/booking/package/height', $request);
+        }
+
+        return $r;
+    }
+
+    private function generateOfflineBringShippingMethods (array $data) {
+        $methods = [];
+
+        $custom_prices = $this->getConfig('custom_method_prices');
+        $custom_prices = $custom_prices ? unserialize($custom_prices) : [];
+
+        foreach ($custom_prices as $item) {
+            $add = true;
+            if ($item['min_weight']) {
+                $add &= $item['min_weight'] <= $data['weightInGram'];
+            }
+            if ($item['max_weight']) {
+                $add &= $item['max_weight'] >= $data['weightInGram'];
+            }
+
+            if (isset($item['country']) && $item['country']) {
+                $add &= $item['country'] == $data['toCountry'];
+            }
+
+            if ($add) {
+                $shippingPrice = $this->getFinalPriceWithHandlingFee((float)$item['price']);
+                $methods[$item['shipping_method']] = array (
+                    'price' => ceil($shippingPrice),
+                    'cost' => $shippingPrice,
+                    'expected_days' => null // Unknown if not API is used..
+                );
+            }
+        }
+        return $methods;
+    }
 
     /**
      * @param RateRequest $request
@@ -212,128 +312,86 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         }
 
         $this->_request = $request;
-        /** @var \Magento\Shipping\Model\Rate\Result $result */
-        $result = $this->_rateResultFactory->create();
+
+        $data = $this->hydrateRequestData();
+
+        $preFabricatedMethods = $this->generateOfflineBringShippingMethods($data);
+        $preFabricatedOverrides = array_keys($preFabricatedMethods);
 
 
-
-        $r = [
-            'from' => null,
-            'to' => null,
-            'fromCountry' => 'NO',
-            'toCountry' => 'NO',
-            'edi' => $this->getConfig('edi') ? 'true' : 'false',
-            'postingAtPostOffice' => $this->getConfig('posting_at_post_office') ? 'true' : 'false',
-            'language' => 'no',
-            'additional' => explode(',', $this->getConfig('additional_services'))
-        ];
-
-        if ($request->getOrigPostcode()) {
-            $r['from'] = $request->getOrigPostcode();
-        } else {
-            $r['from'] = $this->_scopeConfig->getValue(
-                \Magento\Sales\Model\Order\Shipment::XML_PATH_STORE_ZIP,
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $request->getStoreId()
-            );
-        }
-        if ($request->getOrigCountryId()) {
-            $r['fromCountry'] = $request->getOrigCountryId();
-        }
+        // Require post codes from / to to use api ...
+        if ($this->getConfig('activate_api') && $data['to'] && $data['from']) {
 
 
-        if ($request->getDestCountryId()) {
-            $r['toCountry'] = $request->getDestCountryId();
-        }
+            /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
+            $clientFactory =  $this->_bookingClient->create();
+            /** @var \Peec\Bring\API\Client\ShippingGuideClient $client */
+            $client = $clientFactory->getShippingGuideClient();
 
-        if ($request->getDestPostcode()) {
-            $r['to'] = $request->getDestPostcode();
-        } else {
-            $r['to'] = $r['from']; // Just fallback to where it is from.. just to show some prices.
-        }
+            $priceRequest = new PriceRequest();
+            $priceRequest
+                ->setWeightInGrams($data['weightInGram'])
+                ->setEdi($this->getConfig('edi'))
+                ->setFromCountry(strtoupper($data['fromCountry']))
+                ->setFrom($data['from'])
+                ->setToCountry(strtoupper($data['toCountry']))
+                ->setTo($data['to'])
+                ->setPostingAtPostOffice($this->getConfig('posting_at_post_office'))
+                ->setLanguage('no');
 
-        $weightInG = $request->getPackageWeight() * 1000;
-        $r['weightInGrams'] = $weightInG;
-
-
-
-        if (!$r['from'] || !$r['to']) {
-            return $result;
-        }
-
-
-        $preFabricatedMethods = [];
-        $preFabricatedOverrides = [];
-
-        $custom_prices = $this->getConfig('custom_method_prices');
-        $custom_prices = $custom_prices ? unserialize($custom_prices) : [];
-
-        foreach ($custom_prices as $item) {
-            $add = true;
-            if ($item['min_weight']) {
-                $add &= $item['min_weight'] <= $weightInG;
+            if ($this->getConfig('use_packagesize')) {
+                $priceRequest->setLength($data['length']);
+                $priceRequest->setWidth($data['width']);
+                $priceRequest->setHeight($data['height']);
             }
-            if ($item['max_weight']) {
-                $add &= $item['max_weight'] >= $weightInG;
+            foreach (explode(',', $this->getConfig('additional_services')) as $service) {
+                $priceRequest->addAdditional($service);
+            }
+            foreach ($this->getBringEnabledProducts() as $product) {
+                $priceRequest->addProduct(strtolower($product));
             }
 
-            if (isset($item['country']) && $item['country']) {
-                $add &= $item['country'] == $request->getDestCountryId();
-            }
-
-            if ($add) {
-                $shippingPrice = $this->getFinalPriceWithHandlingFee((float)$item['price']);
-                $preFabricatedMethods[$item['shipping_method']] = array (
-                    'price' => ceil($shippingPrice),
-                    'cost' => $shippingPrice,
-                    'expected_days' => null // Unknown if not API is used..
-                );
-                $preFabricatedOverrides[] = $item['shipping_method'];
-            }
-        }
-
-        if ($this->getConfig('activate_api')) {
 
             try {
-                $bring = $this->request(['query' => $r]);
-
-                if ($bring->getStatusCode() === 200) {
-
-                    $json = json_decode($bring->getBody(), true);
-
-                    if (isset($json['Product'])) {
-
-                        foreach ($json['Product'] as $bringAlternative) {
-                            $shipping_method = $bringAlternative['ProductId'];
-                            if ($this->isBringMethodEnabled($shipping_method)) {
-                                /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                $amount = $bringAlternative['Price']['PackagePriceWithoutAdditionalServices']['AmountWithVAT'];
-                                $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
 
 
-                                $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
 
-                                if (!isset($preFabricatedMethods[$shipping_method])) {
-                                    $preFabricatedMethods[$shipping_method] = array();
-                                }
-                                $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
-                                // Do not override prefabricated shipping method prices..
-                                if (!in_array($shipping_method, $preFabricatedOverrides)) {
-                                    $preFabricatedMethods[$shipping_method]['price'] = ceil($shippingPrice);
-                                    $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
-                                }
+                $json = $client->getPrices($priceRequest);
 
-                            }
+                foreach ($json['Product'] as $bringAlternative) {
+                    $shipping_method = $bringAlternative['ProductId'];
+                    if ($this->isBringMethodEnabled($shipping_method)) {
+                        /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
+                        $amount = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
+                        $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
+
+
+                        $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
+
+                        if (!isset($preFabricatedMethods[$shipping_method])) {
+                            $preFabricatedMethods[$shipping_method] = array();
                         }
-
+                        $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
+                        // Do not override prefabricated shipping method prices..
+                        if (!in_array($shipping_method, $preFabricatedOverrides)) {
+                            $preFabricatedMethods[$shipping_method]['price'] = ceil($shippingPrice);
+                            $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                        }
                     }
-                } else {
                 }
-            } catch (RequestException $e) {
+            } catch (ShippingGuideClientException $e) {
+                // Silent
+                throw $e;
+            } catch (ContractValidationException $e) {
+                // Silent...
+                throw $e;
             }
         }
 
         $products = BringMethod::products();
+
+        /** @var \Magento\Shipping\Model\Rate\Result $result */
+        $result = $this->_rateResultFactory->create();
 
         foreach ($preFabricatedMethods as $shipping_method => $info) {
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
@@ -363,15 +421,19 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     }
 
 
-
-
-    public function isBringMethodEnabled ($method) {
+    public function getBringEnabledProducts () {
         $methods = $this->getConfig('enabled_methods');
         if (!$methods) {
             $methods = array_keys(BringMethod::products()); // enable all.
         } else {
             $methods = explode(",", $methods);
         }
+        return $methods;
+    }
+
+
+    public function isBringMethodEnabled ($method) {
+        $methods = $this->getBringEnabledProducts();
         return in_array($method, $methods);
     }
 
@@ -411,4 +473,14 @@ class Bring extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         return $client->request("get", $this->getTrackingEndpoint(), $options);
     }
+
+
+    public function getStoreConfig($id, RateRequest $request) {
+        return $this->_scopeConfig->getValue(
+            $id,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $request->getStoreId()
+        );
+    }
+
 }

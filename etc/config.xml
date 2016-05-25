@@ -2,19 +2,18 @@
     <default>
         <carriers>
             <bring>
+                <active>1</active>
                 <model>Markant\Bring\Model\Carrier\Bring</model>
+                <name>Bring</name>
+                <title>Bring</title>
+                <type>I</type>
                 <global>
                     <bring_client_url>http://example.com</bring_client_url>
-                    <enable_mybring>0</enable_mybring>
                     <mybring_client_uid></mybring_client_uid>
                     <mybring_api_key></mybring_api_key>
                 </global>
                 <calculation>
-                    <active>1</active>
-                    <sallowspecific>0</sallowspecific>
-                    <name>Bring</name>
-                    <title>Bring</title>
-                    <type>I</type>
+                    <enable_mybring>0</enable_mybring>
                     <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
                     <posting_at_post_office>1</posting_at_post_office>
                     <edi>1</edi>
@@ -23,9 +22,9 @@
                 </calculation>
                 <booking>
                     <package>
-                        <width>20</width>
-                        <length>20</length>
-                        <height>20</height>
+                        <width>31</width>
+                        <length>21</length>
+                        <height>6</height>
                     </package>
                     <global>
                         <activate_booking>0</activate_booking>

@@ -2,6 +2,7 @@
 namespace Markant\Bring\Model;
 use Peec\Bring\API\Client\BookingClient;
 use Peec\Bring\API\Client\Credentials;
+use Peec\Bring\API\Client\ShippingGuideClient;
 
 
 /**
@@ -49,6 +50,13 @@ class BookingClientService
 
     public function getBookingClient() {
         return new BookingClient(new Credentials($this->clientUrl, $this->clientId, $this->apiKey));
+    }
+
+    /**
+     * @return ShippingGuideClient
+     */
+    public function getShippingGuideClient() {
+        return new ShippingGuideClient(new Credentials($this->clientUrl, $this->clientId, $this->apiKey));
     }
 
     public function customersToOptionArray (BookingClient $client) {

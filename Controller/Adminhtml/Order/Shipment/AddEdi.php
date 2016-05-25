@@ -179,7 +179,7 @@ class AddEdi extends \Magento\Backend\App\Action
 
                 /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
                 $clientFactory =  $this->_bookingClient->create();
-                /** @var \Peec\Bring\API\BookingClient $client */
+                /** @var \Peec\Bring\API\Client\BookingClient $client */
                 $client = $clientFactory->getBookingClient();
 
                 $client->bookShipment($message);
