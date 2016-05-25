@@ -28,8 +28,20 @@
                         <height>20</height>
                     </package>
                     <global>
+                        <activate_booking>0</activate_booking>
                         <test>1</test>
+                        <default_customer></default_customer>
                     </global>
+                    <origin>
+                        <name></name>
+                        <country_id></country_id>
+                        <street_line_1></street_line_1>
+                        <street_line_2></street_line_2>
+                        <postcode></postcode>
+                        <city></city>
+                        <email></email>
+                        <phone_number></phone_number>
+                    </origin>
                 </booking>
             </bring>
         </carriers>

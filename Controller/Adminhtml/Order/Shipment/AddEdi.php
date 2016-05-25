@@ -8,7 +8,7 @@ namespace Markant\Bring\Controller\Adminhtml\Order\Shipment;
 
 use Magento\Backend\App\Action;
 use Magento\Sales\Model\Order\Shipment;
-use Markant\Bring\Model\Api\Bring\BookingRequest;
+use Peec\Bring\API\Contract\Booking\BookingRequest;
 
 class AddEdi extends \Magento\Backend\App\Action
 {
@@ -34,7 +34,7 @@ class AddEdi extends \Magento\Backend\App\Action
         Action\Context $context,
         \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader $shipmentLoader,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Markant\Bring\Model\Api\BookingClientFactory $bookingClient
+        \Markant\Bring\Model\BookingClientServiceFactory $bookingClient
     ) {
         $this->_bookingClient = $bookingClient;
         $this->shipmentLoader = $shipmentLoader;
@@ -98,7 +98,6 @@ class AddEdi extends \Magento\Backend\App\Action
 
             if ($shipment) {
                 $bringCustomerNumber = $this->getConfig('booking/global/default_customer');
-                $bringCustomerNumber = 'testing321';
                 $bringTestMode = (bool)$this->getConfig('booking/global/test');
                 $bringProductId = $this->getRequest()->getPost('product');
 
@@ -129,8 +128,13 @@ class AddEdi extends \Magento\Backend\App\Action
 
 
                 $recipient = new BookingRequest\Consignment\Address();
-                $recipient->setAddressLine($shippingAddress->getStreetLine(0));
-                $recipient->setAddressLine2($shippingAddress->getStreetLine(1));
+                $addresses = $shippingAddress->getStreet();
+                if (isset($addresses[0])) {
+                    $recipient->setAddressLine($addresses[0]);
+                }
+                if (isset($addresses[1])) {
+                    $recipient->setAddressLine2($addresses[1]);
+                }
                 $recipient->setCity($shippingAddress->getCity());
                 $recipient->setCountryCode($shippingAddress->getCountryId());
                 $recipient->setName($shippingAddress->getName());
@@ -138,15 +142,28 @@ class AddEdi extends \Magento\Backend\App\Action
                 $recipient->setReference($shippingAddress->getCustomerId());
 
 
-                $sender = new BookingRequest\Consignment\Address();
-                $sender->setAddressLine($this->_scopeConfig->getValue('shipping/origin/street_line1'));
-                $sender->setAddressLine2($this->_scopeConfig->getValue('shipping/origin/street_line2'));
-                $sender->setCity($this->_scopeConfig->getValue('shipping/origin/city'));
-                $sender->setCountryCode($this->_scopeConfig->getValue('shipping/origin/country_id'));
-                $name = $this->_scopeConfig->getValue('general/store/information/name')  ? $this->_scopeConfig->getValue('general/store/information/name') : 'general/store/information/name';
-                $sender->setName($name);
-                $sender->setPostalCode($this->_scopeConfig->getValue('shipping/origin/postcode'));
 
+                $sender = new BookingRequest\Consignment\Address();
+                $sender->setName($this->getConfig('booking/origin/name'));
+                $sender->setAddressLine($this->getConfig('booking/origin/street_line_1'));
+                $sender->setAddressLine2($this->getConfig('booking/origin/street_line_2'));
+                $sender->setCity($this->getConfig('booking/origin/city'));
+                $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
+                $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
+
+                $contact = new BookingRequest\Consignment\Contact();
+                $contact->setName($this->getConfig('booking/origin/name'));
+                $contact->setEmail($this->getConfig('booking/origin/email'));
+                $contact->setPhoneNumber($this->getConfig('booking/origin/phone_number'));
+
+                $sender->setContact($contact);
+
+                // Lets validate sender, since these settings must be displayed in a much nicer manner....
+                try {
+                    $sender->validate();
+                } catch (\Peec\Bring\API\Contract\ContractValidationException $e) {
+                    throw new \Magento\Framework\Exception\LocalizedException(__('Shipping Origin is required. Configure sender information under Bring -> Booking.'));
+                }
 
 
                 $consignment->setRecipient($recipient);
@@ -160,41 +177,33 @@ class AddEdi extends \Magento\Backend\App\Action
                 $message->setTestIndicator($bringTestMode);
 
 
+                /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
+                $clientFactory =  $this->_bookingClient->create();
+                /** @var \Peec\Bring\API\BookingClient $client */
+                $client = $clientFactory->getBookingClient();
 
-                /** @var \Markant\Bring\Model\Api\BookingClient $client */
-                $client = $this->_bookingClient->create();
+                $client->bookShipment($message);
 
-                try {
-                    $client->bookShipment($message);
+                /** @var \Markant\Bring\Model\Order\Shipment\Edi $edi */
+                $edi = $this->_objectManager->create(
+                    'Markant\Bring\Model\Order\Shipment\Edi'
+                );
+                $edi = $edi->setWeight(
+                    $weight
+                )->setLength(
+                    $length
+                )->setWidth(
+                    $width
+                )->setHeight(
+                    $height
+                );
+                $this->addEdi($shipment, $edi)->save();
+
+                $this->_view->loadLayout();
+                $this->_view->getPage()->getConfig()->getTitle()->prepend(__('EDI Bookings'));
+                $response = $this->_view->getLayout()->getBlock('bring_edi_orders')->toHtml();
 
 
-
-
-                    /** @var \Markant\Bring\Model\Order\Shipment\Edi $edi */
-                    $edi = $this->_objectManager->create(
-                        'Markant\Bring\Model\Order\Shipment\Edi'
-                    );
-                    $edi = $edi->setWeight(
-                        $weight
-                    )->setLength(
-                        $length
-                    )->setWidth(
-                        $width
-                    )->setHeight(
-                        $height
-                    );
-                    $this->addEdi($shipment, $edi)->save();
-
-                    $this->_view->loadLayout();
-                    $this->_view->getPage()->getConfig()->getTitle()->prepend(__('EDI Bookings'));
-                    $response = $this->_view->getLayout()->getBlock('bring_edi_orders')->toHtml();
-
-                } catch (\Exception $e) {
-                    $response = [
-                        'error' => true,
-                        'message' => __('Bring error:') . " {$e->getMessage()}.",
-                    ];
-                }
 
             } else {
                 $response = [
@@ -202,10 +211,20 @@ class AddEdi extends \Magento\Backend\App\Action
                     'message' => __('We can\'t initialize shipment for adding edi.'),
                 ];
             }
+        } catch (\Peec\Bring\API\Client\BookingClientException $e) {
+            $response = [
+                'error' => true,
+                'message' => __('Bring API Error:') . " {$e->getDetaildMessage()}.",
+            ];
+        } catch (\Peec\Bring\API\Contract\ContractValidationException $e) {
+            $response = [
+                'error' => true,
+                'message' => __('Configuration error:') . " {$e->getMessage()}.",
+            ];
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $response = ['error' => true, 'message' => $e->getMessage()];
         } catch (\Exception $e) {
-            $response = ['error' => true, 'message' => __('Cannot book EDI.')];
+            $response = ['error' => true, 'message' => __('Cannot book EDI.')  . " {$e->getMessage()}."];
         }
         if (is_array($response)) {
             $response = $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($response);

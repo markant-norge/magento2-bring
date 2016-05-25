@@ -10,6 +10,7 @@ namespace Markant\Bring\Model\Config\Source;
  * @author petterk
  * @date 5/18/16 1:34 PM
  */
+use Peec\Bring\API\Data\ShippingGuideData;
 
 /**
  * @codeCoverageIgnore
@@ -23,26 +24,19 @@ class AdditionalService implements \Magento\Framework\Option\ArrayInterface
      */
     protected $_options;
 
-    const EVARSLING = 'EVARSLING';
-    const POSTOPPKRAV = 'POSTOPPKRAV';
-    const LORDAGSUTKJORING = 'LORDAGSUTKJORING';
-    const ENVELOPE = 'ENVELOPE';
-    const ADVISERING = 'ADVISERING';
-    const PICKUP_POINT = 'PICKUP_POINT';
-    const EVE_DELIVERY = 'EVE_DELIVERY';
 
 
 
 
     static public function products () {
         return [
-            self::EVARSLING => __('Recipient notification over SMS or E-Mail'),
-            self::POSTOPPKRAV =>  __('Cash on Delivery'),
-            self::LORDAGSUTKJORING =>  __('Delivery on Saturdays'),
-            self::ENVELOPE =>  __('Express Envelope'),
-            self::ADVISERING =>  __('Bring contacts recipient'),
-            self::PICKUP_POINT =>  __('	Delivery to pickup point'),
-            self::EVE_DELIVERY =>  __('Evening delivery')
+            ShippingGuideData::EVARSLING => __('Recipient notification over SMS or E-Mail'),
+            ShippingGuideData::POSTOPPKRAV =>  __('Cash on Delivery'),
+            ShippingGuideData::LORDAGSUTKJORING =>  __('Delivery on Saturdays'),
+            ShippingGuideData::ENVELOPE =>  __('Express Envelope'),
+            ShippingGuideData::ADVISERING =>  __('Bring contacts recipient'),
+            ShippingGuideData::PICKUP_POINT =>  __('	Delivery to pickup point'),
+            ShippingGuideData::EVE_DELIVERY =>  __('Evening delivery')
         ];
     }
 

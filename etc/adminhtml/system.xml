@@ -19,6 +19,7 @@
                     </field>
                     <field id="mybring_api_key" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Mybring login API key</label>
+                        <comment>Please save settings once you have changed the My Bring Login details, so it's possible to configure My Bring customer ID.</comment>
                     </field>
                     <field id="sort_order" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Sort Order</label>
@@ -114,14 +115,28 @@
                     <label>Bring Booking</label>
                     <group id="global" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Booking settings</label>
-                        <field id="test" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                            <label>Test mode</label>
+
+                        <field id="activate_booking" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Activate Bring Booking</label>
                             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                            <comment><![CDATA[Allows to book shipping from Bring directly via editing of "Shipping" on a order.]]></comment>
                         </field>
 
-                        <field id="default_customer" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+
+                        <field id="test" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Test mode</label>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                            <depends>
+                                <field id="activate_booking">1</field>
+                            </depends>
+                        </field>
+
+                        <field id="default_customer" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                             <label>Default Customer</label>
                             <source_model>Markant\Bring\Model\Config\Source\BookingCustomer</source_model>
+                            <depends>
+                                <field id="activate_booking">1</field>
+                            </depends>
                         </field>
                     </group>
                     <group id="package" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -135,6 +150,36 @@
                         </field>
                         <field id="height" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                             <label>Height (cm)</label>
+                        </field>
+                    </group>
+                    <group id="origin" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Shipping Origin</label>
+
+                        <field id="name" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Name</label>
+                        </field>
+                        <field id="country_id" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Country</label>
+                            <frontend_class>countries</frontend_class>
+                            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                        </field>
+                        <field id="street_line_1" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Street Address</label>
+                        </field>
+                        <field id="street_line_2" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Street Address Line 2</label>
+                        </field>
+                        <field id="postcode" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>ZIP/Postal Code</label>
+                        </field>
+                        <field id="city" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>City</label>
+                        </field>
+                        <field id="email" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Email</label>
+                        </field>
+                        <field id="phone_number" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Phone number</label>
                         </field>
                     </group>
                 </group>

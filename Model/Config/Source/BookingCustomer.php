@@ -12,8 +12,6 @@
 namespace Markant\Bring\Model\Config\Source;
 
 
-use Markant\Bring\Model\Api\BookingClient;
-
 class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
 {
     /**
@@ -28,7 +26,7 @@ class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
     protected $_bookingClient;
 
     public function __construct(
-        \Markant\Bring\Model\Api\BookingClientFactory $bookingClient,
+        \Markant\Bring\Model\BookingClientServiceFactory $bookingClient,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->_scopeConfig = $scopeConfig;
@@ -46,8 +44,11 @@ class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
     {
         if (!$this->_options) {
             try {
-                $client = $this->_bookingClient->create();
-                $this->_options = $client->customersToOptionArray();
+                /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
+                $clientFactory =  $this->_bookingClient->create();
+                /** @var \Peec\Bring\API\Client\BookingClient $client */
+                $client = $clientFactory->getBookingClient();
+                $this->_options = $clientFactory->customersToOptionArray($client);
             } catch (\Exception $e) {
                 $this->_options = [['value' => '', 'label' => 'ERROR: '.$e->getMessage()]];
             }

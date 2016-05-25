@@ -1,6 +1,7 @@
 <?php
 namespace Markant\Bring\Model;
-
+use Peec\Bring\API\Client\BookingClient;
+use Peec\Bring\API\Client\Credentials;
 
 
 /**
@@ -31,9 +32,9 @@ class BookingClientService
     public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
     {
         $this->_scopeConfig = $scopeConfig;
-        $this->clientId = $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url');
-        $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid');
-        $this->clientUrl = $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key');
+        $this->clientUrl = $this->_scopeConfig->getValue('carriers/bring/global/bring_client_url');
+        $this->clientId = $this->_scopeConfig->getValue('carriers/bring/global/mybring_client_uid');
+        $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/global/mybring_api_key');
 
         if (!$this->clientId) {
             throw new \Exception("Mybring login ID must not be empty.");
@@ -47,10 +48,10 @@ class BookingClientService
     }
 
     public function getBookingClient() {
-
+        return new BookingClient(new Credentials($this->clientUrl, $this->clientId, $this->apiKey));
     }
 
-    public function customersToOptionArray ($client) {
+    public function customersToOptionArray (BookingClient $client) {
         $option = [];
         foreach ($client->getCustomers() as $customer) {
             $option[] = ['value' => $customer['customerNumber'], 'label' => $customer['name']];
