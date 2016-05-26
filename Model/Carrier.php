@@ -13,6 +13,7 @@ use Magento\Shipping\Helper\Carrier as CarrierHelper;
 use Peec\Bring\API\Client\ShippingGuideClientException;
 use Peec\Bring\API\Contract\ContractValidationException;
 use Peec\Bring\API\Contract\ShippingGuide\PriceRequest;
+use Peec\Bring\API\Contract\Tracking\TrackingRequest;
 
 /**
  * Class Bring
@@ -36,21 +37,10 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
     protected $_isFixed = false;
 
-
-
-    public function isTrackingAvailable()
-    {
-        return true;
-    }
-
     const XML_GLOBAL_PATH = 'carriers/bring/';
     const XML_PATH = 'carriers/bring/calculation/';
 
 
-    const BRING_ENDPOINT = 'https://api.bring.com/shippingguide/products/all.json';
-
-    const BRING_TRACKING_ENDPOINT = 'https://tracking.bring.com/tracking.json';
-    const MYBRING_TRACKING_ENDPOINT = 'https://www.mybring.com/tracking/api/tracking.json';
 
     /**
      * @var \Magento\Shipping\Model\Rate\ResultFactory
@@ -143,6 +133,36 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     }
 
 
+    /**
+     * @return bool true
+     */
+    public function isTrackingAvailable()
+    {
+        return true;
+    }
+
+    /**
+     * Get tracking information
+     *
+     * @param string $tracking
+     * @return string|false
+     * @api
+     */
+    public function getTrackingInfo($tracking)
+    {
+        $result = $this->getTracking($tracking);
+
+        if ($result instanceof \Magento\Shipping\Model\Tracking\Result) {
+            $trackings = $result->getAllTrackings();
+            if ($trackings) {
+                return $trackings[0];
+            }
+        } elseif (is_string($result) && !empty($result)) {
+            return $result;
+        }
+
+        return false;
+    }
 
     /**
      * Get tracking
@@ -150,64 +170,78 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
      * @param string|string[] $trackings
      * @return Result|null
      */
-    public function getTrackingInfo($trackings)
+    public function getTracking($trackings)
     {
-        $result = $this->_trackFactory->create();;
-
         if (!is_array($trackings)) {
             $trackings = [$trackings];
         }
+        return $this->_bringTracking($trackings);
+    }
+
+
+    /**
+     * @param array $trackings
+     * @return \Magento\Shipping\Model\Tracking\Result
+     */
+    public function _bringTracking(array $trackings)
+    {
+        $result = $this->_trackFactory->create();
+
+        /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
+        $clientFactory =  $this->_bookingClient->create();
+        /** @var \Peec\Bring\API\Client\TrackingClient $client */
+        $client = $clientFactory->getTrackingClient();
 
         foreach ($trackings as $trackingnumber) {
 
-            $r = [
-                'q' => $trackingnumber
-            ];
+
+            $request = new TrackingRequest();
+            $request->setQuery($trackingnumber);
+            $request->setLanguage(\Peec\Bring\API\Data\BringData::LANG_NORWEGIAN);
+
 
             try {
-                $bring = $this->trackRequest(['query' => $r]);
 
-                if ($bring->getStatusCode() === 200) {
+                $trackingInfo = $client->getTracking($request);
 
-                    $json = json_decode($bring->getBody(), true);
-
-                    if (isset($json['consignmentSet'])) {
-                        foreach ($json['consignmentSet'] as $consignmentSet) {
-                            if (isset($consignmentSet['packageSet'])) {
-                                foreach ($consignmentSet['packageSet'] as $packageSet) {
-                                    if (isset($packageSet['eventSet'])) {
-                                        foreach ($packageSet['eventSet'] as $eventSet) {
-                                            $tracking = $this->_trackStatusFactory->create();
-                                            $tracking->setCarrier($this->_code);
-                                            $tracking->setCarrierTitle($this->getConfig('title'));
-
-                                            $tracking->setTracking($trackingnumber);
-                                            $status = Tracking::humanize($eventSet['status']);
-                                            $summary = "$status - {$eventSet['displayDate']} {$eventSet['displayTime']}";
-                                            $tracking->setTrackSummary($summary);
-                                            $result->append($tracking);
-                                        }
-                                    }
+                foreach ($trackingInfo['consignmentSet'] as $consignmentSet) {
+                    // There was an error in this consignment set.
+                    if (isset($consignmentSet['error'])) {
+                        $error = $this->_trackErrorFactory->create();
+                        $error->setCarrier($this->_code);
+                        $error->setCarrierTitle($this->getConfig('title'));
+                        $error->setTracking($trackingnumber);
+                        $error->setErrorMessage(implode(', ', $consignmentSet['error']));
+                        $result->append($error);
+                    } else {
+                        foreach ($consignmentSet['packageSet'] as $packageSet) {
+                            if (isset($packageSet['eventSet'])) {
+                                foreach ($packageSet['eventSet'] as $eventSet) {
+                                    $tracking = $this->_trackStatusFactory->create();
+                                    $tracking->setCarrier($this->_code);
+                                    $tracking->setCarrierTitle($this->getConfig('title'));
+                                    $tracking->setTracking($trackingnumber);
+                                    $status = $eventSet['description'] ?: $eventSet['status'];
+                                    $summary = "{$status} - {$eventSet['displayDate']} {$eventSet['displayTime']}";
+                                    $tracking->setTrackSummary($summary);
+                                    $result->append($tracking);
                                 }
                             }
                         }
                     }
-                } else {
                 }
-            } catch (RequestException $e) {
-            }
 
-
-        }
-
-
-        if ($result instanceof \Magento\Shipping\Model\Tracking\Result) {
-            $trackings = $result->getAllTrackings();
-            if ($trackings) {
-                return $trackings[0];
+            } catch (\Exception $e) {
+                $error = $this->_trackErrorFactory->create();
+                $error->setCarrier($this->_code);
+                $error->setCarrierTitle($this->getConfig('title'));
+                $error->setTracking($trackingnumber);
+                $error->setErrorMessage($e->getMessage());
+                $result->append($error);
             }
         }
-        return false;
+
+        return $result;
     }
 
     public function hydrateRequestData() {
@@ -438,43 +472,6 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     public function isBringMethodEnabled ($method) {
         $methods = $this->getBringEnabledProducts();
         return in_array($method, $methods);
-    }
-
-
-    private function getTrackingEndpoint () {
-        return $this->getConfig('enable_mybring') ? self::MYBRING_TRACKING_ENDPOINT : self::BRING_TRACKING_ENDPOINT;
-    }
-
-
-    private function request (array $options) {
-        $client = new Client();
-
-        $options = array_merge($options, [
-            'headers' => [
-                'X-Bring-Client-URL' => $this->getGlobalConfig('bring_client_url'),
-                'Accept'     => 'application/json'
-            ]
-        ]);
-
-        return $client->request("get", self::BRING_ENDPOINT, $options);
-    }
-
-
-    private function trackRequest (array $options) {
-        $client = new Client();
-
-        $options = array_merge($options, [
-            'headers' => [
-                'X-Bring-Client-URL' => $this->getGlobalConfig('bring_client_url'),
-                'Accept'     => 'application/json'
-            ]
-        ]);
-        if ($this->getConfig('enable_mybring')) {
-            $options['headers']['X-MyBring-API-Uid'] = $this->getGlobalConfig('mybring_client_uid');;
-            $options['headers']['X-MyBring-API-Key'] = $this->getGlobalConfig('mybring_api_key');
-        }
-
-        return $client->request("get", $this->getTrackingEndpoint(), $options);
     }
 
 

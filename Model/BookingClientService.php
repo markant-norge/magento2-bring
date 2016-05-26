@@ -3,6 +3,7 @@ namespace Markant\Bring\Model;
 use Peec\Bring\API\Client\BookingClient;
 use Peec\Bring\API\Client\Credentials;
 use Peec\Bring\API\Client\ShippingGuideClient;
+use Peec\Bring\API\Client\TrackingClient;
 
 
 /**
@@ -37,15 +38,6 @@ class BookingClientService
         $this->clientId = $this->_scopeConfig->getValue('carriers/bring/mybring_client_uid');
         $this->apiKey = $this->_scopeConfig->getValue('carriers/bring/mybring_api_key');
 
-        if (!$this->clientId) {
-            throw new \Exception("Mybring login ID must not be empty.");
-        }
-        if (!$this->apiKey) {
-            throw new \Exception("Mybring login API KEY must not be empty.");
-        }
-        if (!$this->clientUrl) {
-            throw new \Exception("Bring Client URL must not be empty.");
-        }
     }
 
     public function getBookingClient() {
@@ -58,6 +50,15 @@ class BookingClientService
     public function getShippingGuideClient() {
         return new ShippingGuideClient(new Credentials($this->clientUrl, $this->clientId, $this->apiKey));
     }
+
+
+    /**
+     * @return ShippingGuideClient
+     */
+    public function getTrackingClient() {
+        return new TrackingClient(new Credentials($this->clientUrl, $this->clientId, $this->apiKey));
+    }
+
 
     public function customersToOptionArray (BookingClient $client) {
         $option = [];
