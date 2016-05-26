@@ -60,6 +60,7 @@ class AddEdi extends \Magento\Backend\App\Action
      */
     public function execute()
     {
+
         try {
             $weight = (float)$this->getRequest()->getPost('weight');
             $length = (float)$this->getRequest()->getPost('length');
@@ -99,6 +100,8 @@ class AddEdi extends \Magento\Backend\App\Action
 
 
             if ($shipment) {
+
+
                 $bringCustomerNumber = $this->getConfig('booking/global/default_customer');
                 $bringTestMode = (bool)$this->getConfig('booking/global/test');
                 $bringProductId = $this->getRequest()->getPost('product');
@@ -248,10 +251,24 @@ class AddEdi extends \Magento\Backend\App\Action
                     );
                     $shipment->addTrack($track)->save();
 
+                    $response = $this->resultRedirectFactory->create();
+                    $response->setPath('sales/shipment/view/shipment_id/' . $shipment->getId());
 
+
+                    $this->getMessageManager()->addSuccess(__("Successfully ordered EDI shipment from Bring. Consignment number: $consignmentNumber. Print out labels below."));
+
+                    // Reload the whole page
+                    // Now...
+                    // This is undocumented API.... If this does not work we need to rewrite to using regular post form...
+                    $response = [
+                        'ajaxRedirect' => $this->_backendUrl->getRedirectUrl('sales/shipment/view/shipment_id/' . $shipment->getId()),
+                        'ajaxExpired' => true
+                    ];
+                    /*
                     $this->_view->loadLayout();
                     $this->_view->getPage()->getConfig()->getTitle()->prepend(__('EDI Bookings'));
                     $response = $this->_view->getLayout()->getBlock('bring_edi_orders')->toHtml();
+                    */
                 } else {
                     throw new \Exception("Could not book consignment due to errors. " . var_export($consignment['errors'], true));
                 }
