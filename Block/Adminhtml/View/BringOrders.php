@@ -3,6 +3,7 @@ namespace Markant\Bring\Block\Adminhtml\View;
 
 use Markant\Bring\Model\Config\Source\BringMethod;
 
+
 class BringOrders extends \Magento\Backend\Block\Template
 {
     const XML_GLOBAL_PATH = 'carriers/bring/';
@@ -76,11 +77,19 @@ class BringOrders extends \Magento\Backend\Block\Template
     protected function _prepareLayout()
     {
 
-        $onclick = "submitAndReloadArea($('shipment_edi_info').parentNode, '" . $this->getSubmitUrl() . "')";
+        $confirmMessage = __("Are you sure you want to send order to Bring?");
+
         $this->addChild(
             'save_button',
             'Magento\Backend\Block\Widget\Button',
-            ['label' => __('Book shipment'), 'class' => 'save', 'onclick' => $onclick]
+
+            [
+                'label' => __('Book shipment'),
+                'class' => 'save primary',
+                'type' => 'submit',
+                'on_click' => 'return deleteConfirm(\'' . $confirmMessage . '\', \'' . $this->getInvalidateTokenUrl() . '\')',
+
+            ]
         );
     }
 
@@ -92,6 +101,17 @@ class BringOrders extends \Magento\Backend\Block\Template
     public function getSubmitUrl()
     {
         return $this->getUrl('adminhtml/*/addEdi/', ['shipment_id' => $this->getShipment()->getId()]);
+    }
+
+
+    /**
+     * Retrieve save url
+     *
+     * @return string
+     */
+    public function getEstimationUrl()
+    {
+        return $this->getUrl('adminhtml/*/estimateEdi/', ['shipment_id' => $this->getShipment()->getId()]);
     }
 
     /**
@@ -132,20 +152,6 @@ class BringOrders extends \Magento\Backend\Block\Template
         return $methods;
     }
 
-
-    /**
-     * Retrieve remove url
-     *
-     * @param \Markant\Bring\Model\Order\Shipment\Edi $edi
-     * @return string
-     */
-    public function getRemoveUrl($edi)
-    {
-        return $this->getUrl(
-            'adminhtml/*/removeEdi/',
-            ['shipment_id' => $this->getShipment()->getId(), 'edi_id' => $edi->getId()]
-        );
-    }
 
     public function getDefaultPackageWidth () {
         return $this->getConfig('package/width');

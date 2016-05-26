@@ -255,14 +255,13 @@ class AddEdi extends \Magento\Backend\App\Action
                     $response->setPath('sales/shipment/view/shipment_id/' . $shipment->getId());
 
 
-                    $this->getMessageManager()->addSuccess(__("Successfully ordered EDI shipment from Bring. Consignment number: $consignmentNumber. Print out labels below."));
 
                     // Reload the whole page
                     // Now...
                     // This is undocumented API.... If this does not work we need to rewrite to using regular post form...
                     $response = [
-                        'ajaxRedirect' => $this->_backendUrl->getRedirectUrl('sales/shipment/view/shipment_id/' . $shipment->getId()),
-                        'ajaxExpired' => true
+                        'error' => false,
+                        'message' => __("Successfully ordered EDI shipment from Bring. Consignment number: $consignmentNumber. Print out labels below.")
                     ];
                     /*
                     $this->_view->loadLayout();
@@ -297,12 +296,19 @@ class AddEdi extends \Magento\Backend\App\Action
         } catch (\Exception $e) {
             $response = ['error' => true, 'message' => __('Cannot book EDI.')  . " {$e->getMessage()}."];
         }
-        if (is_array($response)) {
-            $response = $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($response);
-            $this->getResponse()->representJson($response);
+
+        // SET MESSAGE
+
+        if ($response['error']) {
+            $this->getMessageManager()->addError($response['message']);
         } else {
-            $this->getResponse()->setBody($response);
+            $this->getMessageManager()->addSuccess($response['message']);
         }
+
+        // REDIRECT.
+
+        $this->_redirect('sales/shipment/view/shipment_id/' . $shipment->getId());
+
     }
 
     public function getConfig ($key) {

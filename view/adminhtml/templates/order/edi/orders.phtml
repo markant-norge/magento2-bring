@@ -24,56 +24,6 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
             <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Action') ?></th>
         </tr>
         </thead>
-        <tfoot>
-        <tr>
-            <td class="col-number">
-                <input class="input-text admin__control-text"
-                       type="text"
-                       id="bring_edi_weight"
-                       name="weight"
-                       value="<?php echo $order->getWeight()?>" />
-            </td>
-            <td class="col-number">
-                <input class="input-text admin__control-text"
-                       type="text"
-                       id="bring_edi_width"
-                       name="width"
-                       value="<?php echo (int)$block->getDefaultPackageWidth()?>" />
-            </td>
-            <td class="col-number">
-                <input class="input-text admin__control-text"
-                       type="text"
-                       id="bring_edi_length"
-                       name="length"
-                       value="<?php echo (int)$block->getDefaultPackageLength()?>" />
-            </td>
-            <td class="col-number">
-                <input class="input-text admin__control-text"
-                       type="text"
-                       id="bring_edi_height"
-                       name="height"
-                       value="<?php echo (int)$block->getDefaultPackageHeight()?>" />
-            </td>
-            <td class="col-number">
-                <select name="product" class="select admin__control-select" onchange="selectBringProduct(this)">
-                    <?php foreach ($block->getBringProducts() as $key => $value):?>
-                        <option value="<?php echo $key?>" <?php echo $key == $shippingMethodCurrent ? 'selected':''?>><?php echo $value?></option>
-                    <?php endforeach?>
-                </select>
-                <span class="price" id="bring_estimated_price"></span>
-            </td>
-            <td class="col-number">
-                <input type="text"
-                       name="shipping_date_time"
-                       id="bring_edi_shipping_date_time"
-                       value="<?php $d = $block->getCurrentTime(); $d->modify("+1 hours"); echo $d->format('Y-m-d H:i')?>"
-                       title="Shipment date"
-                       data-mage-init='{"calendar": {"showsTime": true, "dateFormat": "yyyy-MM-dd", "timeFormat": "HH:mm", "ampm": false}}' />
-            </td>
-
-            <td class="col-delete last"><?php echo $block->getSaveButtonHtml() ?></td>
-        </tr>
-        </tfoot>
         <?php if ($_edis = $block->getAllEdis()): ?>
             <tbody>
             <?php $i = 0; foreach ($_edis as $_edi):$i++; /** @var \Markant\Bring\Model\Order\Shipment\Edi $_edi */ ?>
@@ -98,28 +48,169 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
             </tbody>
         <?php endif; ?>
     </table>
+
 </div>
 
+<form id="edi_form" method="post" action="<?php /* @escapeNotVerified */ echo $block->getSubmitUrl() ?>">
+    <input type="hidden" name="shipment_id" value="<?php echo $shipment->getId()?>" />
+    <?php echo $block->getBlockHtml('formkey')?>
+    <div class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?php /* @escapeNotVerified */ echo __('Order Bring Shipment') ?></span>
+        </div>
+        <div class="admin__page-section-content">
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="bring_edi_weight">
+                    <span><?php /* @escapeNotVerified */ echo __('Weight (kg)') ?></span></label>
+                <div class="admin__field-control">
+                    <input class="input-text admin__control-text"
+                           type="text"
+                           id="bring_edi_weight"
+                           name="weight"
+                           value="<?php echo $order->getWeight()?>" />
+                </div>
+            </div>
+
+
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="bring_edi_width">
+                    <span><?php /* @escapeNotVerified */ echo __('Width (cm)') ?></span></label>
+                <div class="admin__field-control">
+                    <input class="input-text admin__control-text"
+                           type="text"
+                           id="bring_edi_width"
+                           name="width"
+                           value="<?php echo (int)$block->getDefaultPackageWidth()?>" />
+                </div>
+            </div>
+
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="bring_edi_length">
+                    <span><?php /* @escapeNotVerified */ echo __('Length (cm)') ?></span></label>
+                <div class="admin__field-control">
+                    <input class="input-text admin__control-text"
+                           type="text"
+                           id="bring_edi_length"
+                           name="length"
+                           value="<?php echo (int)$block->getDefaultPackageLength()?>" />
+                </div>
+            </div>
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="bring_edi_height">
+                    <span><?php /* @escapeNotVerified */ echo __('Height (cm)') ?></span></label>
+                <div class="admin__field-control">
+                    <input class="input-text admin__control-text"
+                           type="text"
+                           id="bring_edi_height"
+                           name="height"
+                           value="<?php echo (int)$block->getDefaultPackageHeight()?>" />
+                </div>
+            </div>
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="bring_edi_product">
+                    <span><?php /* @escapeNotVerified */ echo __('Bring Product') ?></span></label>
+                <div class="admin__field-control">
+                    <select id="bring_edi_product" name="product" class="select admin__control-select">
+                        <?php foreach ($block->getBringProducts() as $key => $value):?>
+                            <option value="<?php echo $key?>" <?php echo $key == $shippingMethodCurrent ? 'selected':''?>><?php echo $value?></option>
+                        <?php endforeach?>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="shipping_date_time">
+                    <span><?php /* @escapeNotVerified */ echo __('Shipping Date') ?></span></label>
+                <div class="admin__field-control">
+                    <input type="text"
+                           class="input-date admin__control-datetime"
+                           name="shipping_date_time"
+                           id="bring_edi_shipping_date_time"
+                           value="<?php $d = $block->getCurrentTime(); $d->modify("+1 hours"); echo $d->format('Y-m-d H:i')?>"
+                           title="Shipment date"
+                           data-mage-init='{"calendar": {"showsTime": true, "dateFormat": "yyyy-MM-dd", "timeFormat": "HH:mm", "ampm": false}}' />
+                </div>
+            </div>
+            <div style="margin-top: 20px">
+                <div id="bring_estimation_panel">
+                    <button id="bring_estimation_panel_trigger"><?php echo __('Estimate Price')?></button>
+                </div>
+                <div id="bring_estimated_loading" style="display: none;">
+                    <p>
+                        Laster priser fra bring....
+                    </p>
+                </div>
+                <div id="bring_estimated_price">
+                </div>
+                <div id="bring_estimated_error">
+                </div>
+            </div>
+
+            <div style="margin-top: 20px">
+                <?php echo $block->getSaveButtonHtml()?>
+            </div>
+
+
+        </div>
+    </div>
+</form>
+
 <script>
-    require(['jquery','prototype'], function($){
-
+require([
+    "jquery",
+    "mage/mage",
+    "prototype"
+], function(jQuery){
 //<![CDATA[
+    jQuery('#edi_form').mage('form').mage('validation');
 
 
-        function selectBringProduct(elem) {
-            var option = elem.options[elem.selectedIndex];
-            var product = option.value;
+    function loadData() {
 
-            // TODO
-        }
-
-        function deleteEdi(url) {
-            if (confirm('<?php /* @escapeNotVerified */ echo __('Are you sure?') ?>')) {
-               //submitAndReloadArea($('shipment_edi_info').parentNode, url)
+        var loader = jQuery('#bring_estimated_loading');
+        jQuery('#bring_estimated_price').hide();
+        jQuery('#bring_estimated_error').hide();
+        loader.show();
+        jQuery.ajax({
+            url:  '<?php echo $block->getEstimationUrl() ?>',
+            type: 'POST',
+            data: jQuery('#edi_form').serialize(),
+            success: function (data) {
+                loader.hide();
+                if (data.error) {
+                    jQuery('#bring_estimated_price').hide();
+                    jQuery('#bring_estimated_error').show();
+                    jQuery('#bring_estimated_error').html('<div class="message message-error error" data-ui-id="messages-message-error">'+data.message+'</div>');
+                } else {
+                    jQuery('#bring_estimated_price').show();
+                    jQuery('#bring_estimated_error').hide();
+                    jQuery('#bring_estimated_price').html('<div class="message message-success success" data-ui-id="messages-message-error"><?php echo __('Estimated shipping costs:')?> <strong>'+data.message['AmountWithVAT']+' KR</strong></div>');
+                }
             }
-        }
-        window.deleteEdi = deleteEdi;
-        window.selectBringProduct = selectBringProduct;
+        });
+    }
+
+    jQuery('#bring_estimation_panel_trigger').click(function (e) {
+        e.preventDefault();
+        loadData();
+    });
+
+
+    jQuery('#edi_form').find('input,select').change(function () {
+        loadData();
+    });
 //]]>
 
     });
