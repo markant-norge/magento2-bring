@@ -303,6 +303,10 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             $r['height'] = $this->getStoreConfig('carriers/bring/booking/package/height', $request);
         }
 
+        if (!$r['weightInGram']) {
+            $r['weightInGram'] = (float)$this->getStoreConfig('carriers/bring/default_product_weight', $request) * 1000;
+        }
+
         return $r;
     }
 
@@ -424,6 +428,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     }
                 }
             } catch (ShippingGuideClientException $e) {
+                /** @var \Magento\Quote\Model\Quote\Address\RateResult\Error $error */
                 $error = $this->_rateErrorFactory->create();
                 $error->setCarrier(self::CARRIER_CODE);
                 $error->setCarrierTitle($this->getConfigData('title'));

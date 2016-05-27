@@ -14,29 +14,35 @@
                     <label>Title</label>
                 </field>
 
-                <field id="handling_type" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="handling_type" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Calculate Handling Fee</label>
                     <source_model>Magento\Shipping\Model\Source\HandlingType</source_model>
                 </field>
-                <field id="handling_fee" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="handling_fee" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Handling Fee</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
 
 
-                <field id="bring_client_url" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="bring_client_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Bring Client URL</label>
                     <comment>Your website domain.</comment>
                 </field>
-                <field id="mybring_client_uid" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="mybring_client_uid" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mybring login ID</label>
                 </field>
-                <field id="mybring_api_key" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="mybring_api_key" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mybring login API key</label>
                     <comment>Please save settings once you have changed the My Bring Login details, so it's possible to configure My Bring customer ID.</comment>
                 </field>
 
-                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="default_product_weight" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Default Product Weight (kg)</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <comment><![CDATA[Default weight if no weight is set on the product. Example: 0.5 which equals 500 gram. Bring can not calculate shipping when the cart have a total of zero in product weight. This is recommended to set as a fallback.]]></comment>
+                </field>
+
+                <field id="enabled_methods" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled Bring Products</label>
                     <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
                     <can_be_empty>1</can_be_empty>
@@ -45,12 +51,12 @@
                     </depends>
                 </field>
 
-                <field id="sort_order" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sort_order" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
 
 
-                <group id="calculation" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <group id="calculation" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bring Shipping Guide</label>
 
                     <field id="custom_method_prices" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -109,7 +115,7 @@
 
                 </group>
 
-                <group id="booking" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <group id="booking" translate="label" type="text" sortOrder="800" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bring Booking</label>
                     <group id="global" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Booking settings</label>

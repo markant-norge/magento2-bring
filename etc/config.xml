@@ -9,9 +9,11 @@
                 <type>I</type>
                 <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
                 <bring_client_url>http://example.com</bring_client_url>
+                <default_product_weight>0.25</default_product_weight>
                 <mybring_client_uid></mybring_client_uid>
                 <mybring_api_key></mybring_api_key>
                 <calculation>
+                    <use_packagesize>0</use_packagesize>
                     <posting_at_post_office>0</posting_at_post_office>
                     <edi>1</edi>
                     <activate_api>1</activate_api>
