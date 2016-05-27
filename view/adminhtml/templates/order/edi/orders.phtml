@@ -19,9 +19,8 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Width (cm)') ?></th>
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Length (cm)') ?></th>
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Height (cm)') ?></th>
-            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Bring Product') ?></th>
-            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Shipping Date') ?></th>
-            <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Action') ?></th>
+            <th class="col-number"><?php /* @escapeNotVerified */ echo __('Tracking') ?></th>
+            <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Label') ?></th>
         </tr>
         </thead>
         <?php if ($_edis = $block->getAllEdis()): ?>
@@ -34,7 +33,6 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
                     <td class="col-number"><?php echo $block->escapeHtml($_edi->getHeight()) ?></td>
 
                     <td><a href="<?php echo $_edi->getTrackingUrl()?>"><?php echo $_edi->getConsignmentNumber()?></a></td>
-                    <td></td>
                     <td>
                         <?php if ($_edi->getLabelUrl()): ?>
                             <a target="_blank" href="<?php echo $_edi->getLabelUrl()?>"><?php echo __('Shipping Label (PDF)')?></a>
