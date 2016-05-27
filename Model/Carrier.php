@@ -349,6 +349,9 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $this->_request = $request;
 
+        /** @var \Magento\Shipping\Model\Rate\Result $result */
+        $result = $this->_rateResultFactory->create();
+
         $data = $this->hydrateRequestData();
 
         $preFabricatedMethods = $this->generateOfflineBringShippingMethods($data);
@@ -394,40 +397,52 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                 $json = $client->getPrices($priceRequest);
 
-                foreach ($json['Product'] as $bringAlternative) {
-                    $shipping_method = $bringAlternative['ProductId'];
-                    if ($this->isBringMethodEnabled($shipping_method)) {
-                        /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                        $amount = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
-                        $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
+                if (isset($json['Product'])) {
+
+                    $bringProducts = $json['Product'];
+
+                    foreach ($bringProducts as $bringAlternative) {
+                        $shipping_method = $bringAlternative['ProductId'];
+                        if ($this->isBringMethodEnabled($shipping_method)) {
+                            /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
+                            $amount = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
+                            $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
 
 
-                        $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
+                            $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
 
-                        if (!isset($preFabricatedMethods[$shipping_method])) {
-                            $preFabricatedMethods[$shipping_method] = array();
-                        }
-                        $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
-                        // Do not override prefabricated shipping method prices..
-                        if (!in_array($shipping_method, $preFabricatedOverrides)) {
-                            $preFabricatedMethods[$shipping_method]['price'] = ceil($shippingPrice);
-                            $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                            if (!isset($preFabricatedMethods[$shipping_method])) {
+                                $preFabricatedMethods[$shipping_method] = array();
+                            }
+                            $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
+                            // Do not override prefabricated shipping method prices..
+                            if (!in_array($shipping_method, $preFabricatedOverrides)) {
+                                $preFabricatedMethods[$shipping_method]['price'] = ceil($shippingPrice);
+                                $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                            }
                         }
                     }
                 }
             } catch (ShippingGuideClientException $e) {
-                // Silent
-                throw $e;
+                $error = $this->_rateErrorFactory->create();
+                $error->setCarrier(self::CARRIER_CODE);
+                $error->setCarrierTitle($this->getConfigData('title'));
+                /** @var \GuzzleHttp\Exception\RequestException $requestException */
+                $requestException = $e->getPrevious();
+                $error->setErrorMessage($requestException->getResponse()->getBody());
+                $result->append($error);
+                return $result;
             } catch (ContractValidationException $e) {
-                // Silent...
-                throw $e;
+                $error = $this->_rateErrorFactory->create();
+                $error->setCarrier(self::CARRIER_CODE);
+                $error->setCarrierTitle($this->getConfigData('title'));
+                $error->setErrorMessage($e->getMessage());
+                $result->append($error);
+                return $result;
             }
         }
 
         $products = BringMethod::products();
-
-        /** @var \Magento\Shipping\Model\Rate\Result $result */
-        $result = $this->_rateResultFactory->create();
 
         foreach ($preFabricatedMethods as $shipping_method => $info) {
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */

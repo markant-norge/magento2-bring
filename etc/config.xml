@@ -12,8 +12,7 @@
                 <mybring_client_uid></mybring_client_uid>
                 <mybring_api_key></mybring_api_key>
                 <calculation>
-                    <enable_mybring>0</enable_mybring>
-                    <posting_at_post_office>1</posting_at_post_office>
+                    <posting_at_post_office>0</posting_at_post_office>
                     <edi>1</edi>
                     <activate_api>1</activate_api>
                     <show_estimated_delivery>1</show_estimated_delivery>

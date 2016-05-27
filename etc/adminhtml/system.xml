@@ -107,14 +107,6 @@
                         </depends>
                     </field>
 
-                    <field id="enable_mybring" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Enable Mybring</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment>If you are a Mybring user, you can authenticate requests to the Tracking API. Authenticated requests have the following benefits: You get more information about your parcels, for example signatures for proof of develiery. No rate limiting</comment>
-                        <depends>
-                            <field id="activate_api">1</field>
-                        </depends>
-                    </field>
                 </group>
 
                 <group id="booking" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
