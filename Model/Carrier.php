@@ -8,7 +8,6 @@ use Magento\Framework\Phrase;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
 use Markant\Bring\Model\Config\Source\BringMethod;
-use Markant\Bring\Model\Tracking\Tracking;
 use Magento\Shipping\Helper\Carrier as CarrierHelper;
 use Peec\Bring\API\Client\ShippingGuideClientException;
 use Peec\Bring\API\Contract\ContractValidationException;
