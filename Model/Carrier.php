@@ -252,9 +252,9 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             'to' => null,
             'toCountry' => null,
             'weightInGram' => $request->getPackageWeight() * 1000,
-            'width' => $request->getPackageWidth(),
-            'length' => $request->getPackageHeight(),
-            'height' => $request->getPackageDepth()
+            'width' => null,
+            'length' => null,
+            'height' => null
 
         ];
 
@@ -291,16 +291,32 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         if ($request->getDestPostcode()) {
             $r['to'] = $request->getDestPostcode();
         }
-
-        if (!$r['width']) {
-            $r['width'] = $this->getStoreConfig('carriers/bring/booking/package/width', $request);
+        
+        
+        // Fallback to origin addresses:
+        
+        // Bring ship origin setting.
+        if (!$r['to']) {
+            $r['to'] = $this->getStoreConfig('carriers/bring/booking/origin/postcode', $request);
         }
-
-        if (!$r['length']) {
-            $r['length'] = $this->getStoreConfig('carriers/bring/booking/package/length', $request);
+        // Fallback to ship origin settings.
+        if (!$r['to']) {
+            $r['to'] = $this->getStoreConfig(\Magento\Sales\Model\Order\Shipment::XML_PATH_STORE_ZIP, $request);
         }
-        if (!$r['height']) {
-            $r['height'] = $this->getStoreConfig('carriers/bring/booking/package/height', $request);
+        
+        if ($this->getConfig('use_packagesize')) {
+
+            if (!$r['width']) {
+                $r['width'] = $this->getStoreConfig('carriers/bring/booking/package/width', $request);
+            }
+
+            if (!$r['length']) {
+                $r['length'] = $this->getStoreConfig('carriers/bring/booking/package/length', $request);
+            }
+            if (!$r['height']) {
+                $r['height'] = $this->getStoreConfig('carriers/bring/booking/package/height', $request);
+            }
+        
         }
 
         if (!$r['weightInGram']) {
