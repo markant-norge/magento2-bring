@@ -55,7 +55,6 @@
                     <comment>Add rules that must be fulfilled to enable a specific Bring Products. Forexample: "Minipakken" can have max 2 kg.</comment>
                 </field>
 
-
                 <field id="sort_order" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
@@ -177,6 +176,25 @@
                         </field>
                     </group>
                 </group>
+
+
+
+                <group id="package_management" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Package Management</label>
+
+                    <field id="packages" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Package Configuration</label>
+                        <frontend_model>Markant\Bring\Block\System\Config\Form\Field\PackageType</frontend_model>
+                        <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                        <comment>Configure standard shipping packages.</comment>
+                    </field>
+
+
+                </group>
+
+
+
+
             </group>
         </section>
     </system>
