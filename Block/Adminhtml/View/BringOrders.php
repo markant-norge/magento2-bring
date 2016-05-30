@@ -87,8 +87,7 @@ class BringOrders extends \Magento\Backend\Block\Template
                 'label' => __('Book shipment'),
                 'class' => 'save primary',
                 'type' => 'submit',
-                'on_click' => 'return deleteConfirm(\'' . $confirmMessage . '\', \'' . $this->getInvalidateTokenUrl() . '\')',
-
+                'on_click' => 'return confirm(\'' . $confirmMessage . '\')',
             ]
         );
     }
