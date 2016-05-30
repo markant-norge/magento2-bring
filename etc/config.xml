@@ -20,16 +20,14 @@
                     <show_estimated_delivery>1</show_estimated_delivery>
                 </calculation>
                 <booking>
+                    <activate_booking>0</activate_booking>
+                    <test>1</test>
+                    <default_customer></default_customer>
                     <package>
                         <width>31</width>
                         <length>21</length>
                         <height>6</height>
                     </package>
-                    <global>
-                        <activate_booking>0</activate_booking>
-                        <test>1</test>
-                        <default_customer></default_customer>
-                    </global>
                     <origin>
                         <name></name>
                         <country_id></country_id>

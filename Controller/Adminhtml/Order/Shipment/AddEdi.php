@@ -102,8 +102,8 @@ class AddEdi extends \Magento\Backend\App\Action
             if ($shipment) {
 
 
-                $bringCustomerNumber = $this->getConfig('booking/global/default_customer');
-                $bringTestMode = (bool)$this->getConfig('booking/global/test');
+                $bringCustomerNumber = $this->getConfig('booking/default_customer');
+                $bringTestMode = (bool)$this->getConfig('booking/test');
                 $bringProductId = $this->getRequest()->getPost('product');
 
 

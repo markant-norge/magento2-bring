@@ -307,7 +307,6 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         }
         
         if ($this->getConfig('use_packagesize')) {
-
             if (!$r['width']) {
                 $r['width'] = $this->getStoreConfig('carriers/bring/booking/package/width', $request);
             }
@@ -318,7 +317,6 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             if (!$r['height']) {
                 $r['height'] = $this->getStoreConfig('carriers/bring/booking/package/height', $request);
             }
-        
         }
 
         if (!$r['weightInGram']) {
