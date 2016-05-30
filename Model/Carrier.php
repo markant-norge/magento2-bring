@@ -222,7 +222,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                     $tracking->setCarrier($this->_code);
                                     $tracking->setCarrierTitle($this->getConfig('title'));
                                     $tracking->setTracking($trackingnumber);
-                                    $status = $eventSet['description'] ?: $eventSet['status'];
+                                    $status = $eventSet['description'] ? $eventSet['description'] : $eventSet['status'];
                                     $summary = "{$status} - {$eventSet['displayDate']} {$eventSet['displayTime']}";
                                     $tracking->setTrackSummary($summary);
                                     $result->append($tracking);
@@ -538,7 +538,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                 throw new \Exception("No such bring comparison type handler: '{$rule['comparison']}'' in getBringEnabledProducts");
                                 break;
                         }
-                        $do = isset($ruleAggregates[$rule['bring_product']]) ?: true;
+                        $do = isset($ruleAggregates[$rule['bring_product']]) ? $ruleAggregates[$rule['bring_product']] : true;
                         $ruleAggregates[$rule['bring_product']] = $do && $logicalResult;
                     }
                 }
