@@ -7,6 +7,8 @@ use GuzzleHttp\Exception\RequestException;
 use Magento\Framework\Phrase;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Rate\Result;
+use Markant\Bring\Block\System\Config\Form\Field\ComparisonType;
+use Markant\Bring\Block\System\Config\Form\Field\RuleType;
 use Markant\Bring\Model\Config\Source\BringMethod;
 use Magento\Shipping\Helper\Carrier as CarrierHelper;
 use Peec\Bring\API\Client\ShippingGuideClientException;
@@ -379,7 +381,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
 
         // Require post codes from / to to use api ...
-        if ($this->getConfig('activate_api') && $data['to'] && $data['from']) {
+        if ($data['to'] && $data['from']) {
 
 
             /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
@@ -406,7 +408,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             foreach (explode(',', $this->getConfig('additional_services')) as $service) {
                 $priceRequest->addAdditional($service);
             }
-            foreach ($this->getBringEnabledProducts() as $product) {
+            foreach ($this->getBringEnabledProducts($data) as $product) {
                 $priceRequest->addProduct(strtolower($product));
             }
 
@@ -423,7 +425,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                     foreach ($bringProducts as $bringAlternative) {
                         $shipping_method = $bringAlternative['ProductId'];
-                        if ($this->isBringMethodEnabled($shipping_method)) {
+                        if ($this->isBringMethodEnabled($data, $shipping_method)) {
                             /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
                             $amount = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
                             $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
@@ -493,19 +495,70 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     }
 
 
-    public function getBringEnabledProducts () {
+    public function getBringEnabledProducts (array $hydratedRequestData) {
         $methods = $this->getConfigData('enabled_methods');
+        $rules = $this->getConfigData('bring_product_rules');
         if (!$methods) {
             $methods = array_keys(BringMethod::products()); // enable all.
         } else {
             $methods = explode(",", $methods);
         }
+
+        $ruleAggregates = [];
+        if ($rules) {
+            $rules = unserialize($rules);
+            if ($rules) {
+                foreach ($rules as $rule) {
+                    if (in_array($rule['bring_product'], $methods)) {
+
+                        $logicalResult = false;
+                        $valueToTest = null;
+                        switch ($rule['rule']) {
+                            case RuleType::CART_WEIGHT:
+                                $valueToTest = $hydratedRequestData['weightInGram'] / 1000;
+                                break;
+                            default:
+                                throw new \Exception("No such bring rule type handler: '{$rule['rule']}'' in getBringEnabledProducts");
+                        }
+                        $valueToTestAgainst = (float)$rule['value'];
+                        switch($rule['comparison']) {
+                            case ComparisonType::GT:
+                                $logicalResult = $valueToTest > $valueToTestAgainst;
+                                break;
+                            case ComparisonType::LT:
+                                $logicalResult = $valueToTest < $valueToTestAgainst;
+                                break;
+                            case ComparisonType::LTE:
+                                $logicalResult = $valueToTest <= $valueToTestAgainst;
+                                break;
+                            case ComparisonType::GTE:
+                                $logicalResult = $valueToTest >= $valueToTestAgainst;
+                                break;
+                            default:
+                                throw new \Exception("No such bring comparison type handler: '{$rule['comparison']}'' in getBringEnabledProducts");
+                                break;
+                        }
+                        $do = isset($ruleAggregates[$rule['bring_product']]) ?: true;
+                        $ruleAggregates[$rule['bring_product']] = $do && $logicalResult;
+                    }
+                }
+            }
+        }
+
+        foreach ($ruleAggregates as $productkey => $keep) {
+            if ($keep === false) {
+                if(($key = array_search($productkey, $methods)) !== false) {
+                    unset($methods[$key]);
+                }
+            }
+        }
+
         return $methods;
     }
 
 
-    public function isBringMethodEnabled ($method) {
-        $methods = $this->getBringEnabledProducts();
+    public function isBringMethodEnabled (array $hydratedRequestData, $method) {
+        $methods = $this->getBringEnabledProducts($hydratedRequestData);
         return in_array($method, $methods);
     }
 

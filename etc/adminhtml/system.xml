@@ -46,10 +46,15 @@
                     <label>Enabled Bring Products</label>
                     <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
                     <can_be_empty>1</can_be_empty>
-                    <depends>
-                        <field id="activate_api">1</field>
-                    </depends>
                 </field>
+
+                <field id="bring_product_rules" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Bring Product Rules</label>
+                    <frontend_model>Markant\Bring\Block\System\Config\Form\Field\BringProductRuleType</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Add rules that must be fulfilled to enable a specific Bring Products. Forexample: "Minipakken" can have max 2 kg.</comment>
+                </field>
+
 
                 <field id="sort_order" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
@@ -72,19 +77,11 @@
                         <comment><![CDATA[Enable using of default package sizes when calculating shipping price. See Booking section to configure package size.]]></comment>
                     </field>
 
-                    <field id="activate_api" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Activate Automatic Shipping Prices</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment><![CDATA[Bring's Shipping Guide will be used to add shipping methods and prices dynamically. Prices can be overridden with "Custom Prices".]]></comment>
-                    </field>
 
 
                     <field id="show_estimated_delivery" translate="label" type="select" sortOrder="66" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Show estimated delivery time</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <depends>
-                            <field id="activate_api">1</field>
-                        </depends>
                     </field>
 
 
@@ -92,25 +89,16 @@
                         <label>EDI</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <comment>Flag that tells if the parcel will be registred using EDI when it is shipped. Note that this flag may affect price and which products are available.</comment>
-                        <depends>
-                            <field id="activate_api">1</field>
-                        </depends>
                     </field>
                     <field id="posting_at_post_office" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Posting at post office</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <comment>Flag that tells whether the parcel is delivered at a post office when it is shipped. A surcharge will be applied for the following products: SERVICEPAKKE and BPAKKE_DOR-DOR (Bedriftspakke)</comment>
-                        <depends>
-                            <field id="activate_api">1</field>
-                        </depends>
                     </field>
                     <field id="additional_services" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Additional Services</label>
                         <source_model>Markant\Bring\Model\Config\Source\AdditionalService</source_model>
                         <can_be_empty>1</can_be_empty>
-                        <depends>
-                            <field id="activate_api">1</field>
-                        </depends>
                     </field>
 
                 </group>
@@ -188,9 +176,6 @@
                         </field>
                     </group>
                 </group>
-
-
-
             </group>
         </section>
     </system>
