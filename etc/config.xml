@@ -13,7 +13,6 @@
                 <mybring_client_uid></mybring_client_uid>
                 <mybring_api_key></mybring_api_key>
                 <calculation>
-                    <use_packagesize>0</use_packagesize>
                     <posting_at_post_office>0</posting_at_post_office>
                     <edi>1</edi>
                     <activate_api>1</activate_api>
@@ -23,11 +22,6 @@
                     <activate_booking>0</activate_booking>
                     <test>1</test>
                     <default_customer></default_customer>
-                    <package>
-                        <width>31</width>
-                        <length>21</length>
-                        <height>6</height>
-                    </package>
                     <origin>
                         <name></name>
                         <country_id></country_id>
@@ -39,6 +33,10 @@
                         <phone_number></phone_number>
                     </origin>
                 </booking>
+
+                <package_management>
+                    <use_packagemanagement>0</use_packagemanagement>
+                </package_management>
             </bring>
         </carriers>
     </default>

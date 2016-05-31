@@ -153,15 +153,15 @@ class BringOrders extends \Magento\Backend\Block\Template
 
 
     public function getDefaultPackageWidth () {
-        return $this->getConfig('package/width');
+        return $this->getGlobalConfig('package_management/standard_package_width');
     }
 
     public function getDefaultPackageLength () {
-        return $this->getConfig('package/length');
+        return $this->getGlobalConfig('package_management/standard_package_length');
     }
 
     public function getDefaultPackageHeight () {
-        return $this->getConfig('package/height');
+        return $this->getGlobalConfig('package_management/standard_package_height');
     }
 
 

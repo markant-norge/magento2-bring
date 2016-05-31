@@ -36,7 +36,7 @@ class AttributeType  extends \Magento\Framework\View\Element\Html\Select {
 
         $list = $this->attributeRepo->getList($s);
         foreach ($list->getItems() as $item) {
-            $this->addOption($item->getAttributeId(), $item->getAttributeCode());
+            $this->addOption($item->getAttributeCode(), $item->getAttributeCode());
         }
         return parent::_toHtml();
     }

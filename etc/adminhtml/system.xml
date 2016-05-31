@@ -70,13 +70,6 @@
                         <comment>Add custom prices for each shipping method. You can base the prices on weight (Gram) and Country. These prices overrides the Automatic Shipping Prices.</comment>
                     </field>
 
-                    <field id="use_packagesize" translate="label" type="select" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Use Default Package Sizes</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment><![CDATA[Enable using of default package sizes when calculating shipping price. See Booking section to configure package size.]]></comment>
-                    </field>
-
-
 
                     <field id="show_estimated_delivery" translate="label" type="select" sortOrder="66" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Show estimated delivery time</label>
@@ -134,15 +127,6 @@
                         <label>Standard package size</label>
                         <comment><![CDATA[The standard format of your shipping packages. Bring have rules for package sizes. E.g. Minipackage requires max sizes of 31x21x6]]></comment>
 
-                        <field id="width" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Width (cm)</label>
-                        </field>
-                        <field id="length" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Length (cm)</label>
-                        </field>
-                        <field id="height" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Height (cm)</label>
-                        </field>
                     </group>
                     <group id="origin" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Shipping Origin</label>
@@ -179,16 +163,55 @@
 
 
 
+
                 <group id="package_management" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Package Management</label>
 
-                    <field id="packages" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <!--
+                    <field id="use_packagemanagement" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Use Package Dimensions</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <comment><![CDATA[Uses package dimensions and configured packages to calculate amount of shipments. Package Settings will need to be set per product if enabled. This gives much more accurate shipping prices and enables package management.]]></comment>
+                    </field>
+
+                    <field id="ship_individually_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Ship individually (On / off) Attribute</label>
+                        <source_model>Markant\Bring\Model\Config\Source\AttributeType</source_model>
+                    </field>
+
+                    <field id="width_attribute" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Width Attribute (cm)</label>
+                        <source_model>Markant\Bring\Model\Config\Source\AttributeType</source_model>
+                    </field>
+
+                    <field id="length_attribute" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Length Attribute (cm)</label>
+                        <source_model>Markant\Bring\Model\Config\Source\AttributeType</source_model>
+                    </field>
+
+                    <field id="height_attribute" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Height Attribute (cm)</label>
+                        <source_model>Markant\Bring\Model\Config\Source\AttributeType</source_model>
+                    </field>
+
+
+                    <field id="packages" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Package Configuration</label>
                         <frontend_model>Markant\Bring\Block\System\Config\Form\Field\PackageType</frontend_model>
                         <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                         <comment>Configure standard shipping packages.</comment>
                     </field>
 
+-->
+                    <field id="standard_package_width" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Standard Package Width (cm)</label>
+                    </field>
+                    <field id="standard_package_length" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Standard Package Length (cm)</label>
+                    </field>
+                    <field id="standard_package_height" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Standard Package Height (cm)</label>
+                    </field>
 
                 </group>
 

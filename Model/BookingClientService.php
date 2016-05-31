@@ -1,5 +1,9 @@
 <?php
 namespace Markant\Bring\Model;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Quote\Model\Quote\Address\RateRequest;
+use Markant\Bring\Model\BookingClientService\AdvancedPackageManager;
+use Markant\Bring\Model\BookingClientService\Package;
 use Peec\Bring\API\Client\BookingClient;
 use Peec\Bring\API\Client\Credentials;
 use Peec\Bring\API\Client\ShippingGuideClient;
@@ -66,6 +70,49 @@ class BookingClientService
             $option[] = ['value' => $customer['customerNumber'], 'label' => $customer['name']];
         }
         return $option;
+    }
+
+
+
+
+    public function getShippingContainers (array $items) {
+
+        $packages = [];
+
+
+        // Enable advanced packaging.
+        if ($this->_scopeConfig->getValue('carriers/bring/package_management/use_packagemanagement')) {
+            $manager = new AdvancedPackageManager($items);
+            $manager->setAttributeHeightCode($this->_scopeConfig->getValue('carriers/bring/package_management/height_attribute'));
+            $manager->setAttributeWidthCode($this->_scopeConfig->getValue('carriers/bring/package_management/width_attribute'));
+            $manager->setAttributeLengthCode($this->_scopeConfig->getValue('carriers/bring/package_management/length_attribute'));
+            $manager->setAttributeShippedIndividuallyCode($this->_scopeConfig->getValue('carriers/bring/package_management/ship_individually_attribute'));
+
+            $builtIn = $this->_scopeConfig->getValue('carriers/bring/package_management/packages');
+            if ($builtIn) {
+                $builtIn = unserialize($builtIn);
+                $builtIns = [];
+                foreach ($builtIn as $item) {
+                    $package = new Package();
+                    $package->setWidth($item['width']);
+                    $package->setHeight($item['height']);
+                    $package->setLength($item['length']);
+                    $package->setFactorAttributeCode($item['factor_attribute']);
+                    $builtIns[] = $package;
+                }
+                $manager->setBuiltInPackages($builtIns);
+            }
+
+            $packages = $manager->calculate();
+        }
+
+        if (!$packages) {
+
+            $package = new BookingClientService\Package();
+            $package->setItems($items);
+            $packages[] = $package;
+        }
+        return $packages;
     }
 
 }
