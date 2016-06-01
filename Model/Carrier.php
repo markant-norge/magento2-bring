@@ -255,7 +255,8 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             'fromCountry' => $request->getOrigCountryId(),
             'to' => null,
             'toCountry' => null,
-            'weightInGram' => null
+            'weightInGram' => null,
+            'cart_total' => $request->getOrderSubtotal()
 
         ];
 
@@ -292,7 +293,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         if ($request->getDestPostcode()) {
             $r['to'] = $request->getDestPostcode();
         }
-        
+
         
         // Fallback to origin addresses:
         
@@ -509,6 +510,9 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                         switch ($rule['rule']) {
                             case RuleType::CART_WEIGHT:
                                 $valueToTest = $hydratedRequestData['weightInGram'] / 1000;
+                                break;
+                            case RuleType::CART_TOTAL:
+                                $valueToTest = $hydratedRequestData['cart_total'];
                                 break;
                             default:
                                 throw new \Exception("No such bring rule type handler: '{$rule['rule']}'' in getBringEnabledProducts");

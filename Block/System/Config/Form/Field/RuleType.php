@@ -18,6 +18,7 @@ class RuleType  extends \Magento\Framework\View\Element\Html\Select {
 
 
     const CART_WEIGHT = 'cart_weight';
+    const CART_TOTAL = 'cart_total';
 
     public function __construct(
         \Magento\Framework\View\Element\Context $context, array $data = []
@@ -30,6 +31,7 @@ class RuleType  extends \Magento\Framework\View\Element\Html\Select {
     static public function rules () {
         return [
             self::CART_WEIGHT => __('Cart Weight (kg)'),
+            self::CART_TOTAL => __('Cart Total')
         ];
     }
 
