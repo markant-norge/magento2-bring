@@ -36,12 +36,6 @@
                     <comment>Please save settings once you have changed the My Bring Login details, so it's possible to configure My Bring customer ID.</comment>
                 </field>
 
-                <field id="default_product_weight" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Default Product Weight (kg)</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <comment><![CDATA[Default weight if no weight is set on the product. Example: 0.5 which equals 500 gram. Bring can not calculate shipping when the cart have a total of zero in product weight. This is recommended to set as a fallback.]]></comment>
-                </field>
-
                 <field id="enabled_methods" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled Bring Products</label>
                     <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
@@ -167,12 +161,6 @@
                 <group id="package_management" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Package Management</label>
 
-                    <!--
-                    <field id="use_packagemanagement" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
-                        <label>Use Package Dimensions</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment><![CDATA[Uses package dimensions and configured packages to calculate amount of shipments. Package Settings will need to be set per product if enabled. This gives much more accurate shipping prices and enables package management.]]></comment>
-                    </field>
 
                     <field id="ship_individually_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Ship individually (On / off) Attribute</label>
@@ -194,7 +182,6 @@
                         <source_model>Markant\Bring\Model\Config\Source\AttributeType</source_model>
                     </field>
 
-
                     <field id="packages" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Package Configuration</label>
                         <frontend_model>Markant\Bring\Block\System\Config\Form\Field\PackageType</frontend_model>
@@ -202,7 +189,6 @@
                         <comment>Configure standard shipping packages.</comment>
                     </field>
 
--->
                     <field id="standard_package_width" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Standard Package Width (cm)</label>
                     </field>
@@ -212,6 +198,7 @@
                     <field id="standard_package_height" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Standard Package Height (cm)</label>
                     </field>
+
 
                 </group>
 

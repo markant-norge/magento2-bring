@@ -29,12 +29,11 @@ class Package
     }
 
 
-    public function getWeight()
-    {
+    public function getWeight () {
         $weight = 0;
-        /** @var \Magento\Catalog\Api\Data\ProductInterface $item */
+        /** @var \Magento\Quote\Model\Quote\Item  $item */
         foreach ($this->_items as $item) {
-            $weight += $item->getWeight();
+            $weight += $item->getRowWeight();
         }
         return $weight;
     }
@@ -117,6 +116,16 @@ class Package
     public function getItems()
     {
         return $this->_items;
+    }
+
+
+    /**
+     * @return Package
+     */
+    public function addItem($item)
+    {
+        $this->_items[] = $item;
+        return $this;
     }
 
     /**

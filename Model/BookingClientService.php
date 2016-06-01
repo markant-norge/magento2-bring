@@ -73,6 +73,29 @@ class BookingClientService
     }
 
 
+    /**
+     * See carriers/bring/package_management/packages
+     * Gets Built in packages that is configured in admin..
+     * @return array
+     */
+    public function getBuiltInPackages () {
+        $builtIns = [];
+
+        $builtIn = $this->_scopeConfig->getValue('carriers/bring/package_management/packages');
+        if ($builtIn) {
+            $builtIn = unserialize($builtIn);
+            $builtIns = [];
+            foreach ($builtIn as $item) {
+                $package = new Package();
+                $package->setWidth($item['width']);
+                $package->setHeight($item['height']);
+                $package->setLength($item['length']);
+                $package->setFactorAttributeCode($item['factor_attribute']);
+                $builtIns[] = $package;
+            }
+        }
+        return $builtIns;
+    }
 
 
     public function getShippingContainers (array $items) {
@@ -80,38 +103,19 @@ class BookingClientService
         $packages = [];
 
 
-        // Enable advanced packaging.
-        if ($this->_scopeConfig->getValue('carriers/bring/package_management/use_packagemanagement')) {
-            $manager = new AdvancedPackageManager($items);
-            $manager->setAttributeHeightCode($this->_scopeConfig->getValue('carriers/bring/package_management/height_attribute'));
-            $manager->setAttributeWidthCode($this->_scopeConfig->getValue('carriers/bring/package_management/width_attribute'));
-            $manager->setAttributeLengthCode($this->_scopeConfig->getValue('carriers/bring/package_management/length_attribute'));
-            $manager->setAttributeShippedIndividuallyCode($this->_scopeConfig->getValue('carriers/bring/package_management/ship_individually_attribute'));
+        $manager = new AdvancedPackageManager($items);
+        $manager->setAttributeHeightCode($this->_scopeConfig->getValue('carriers/bring/package_management/height_attribute'));
+        $manager->setAttributeWidthCode($this->_scopeConfig->getValue('carriers/bring/package_management/width_attribute'));
+        $manager->setAttributeLengthCode($this->_scopeConfig->getValue('carriers/bring/package_management/length_attribute'));
+        $manager->setAttributeShippedIndividuallyCode($this->_scopeConfig->getValue('carriers/bring/package_management/ship_individually_attribute'));
 
-            $builtIn = $this->_scopeConfig->getValue('carriers/bring/package_management/packages');
-            if ($builtIn) {
-                $builtIn = unserialize($builtIn);
-                $builtIns = [];
-                foreach ($builtIn as $item) {
-                    $package = new Package();
-                    $package->setWidth($item['width']);
-                    $package->setHeight($item['height']);
-                    $package->setLength($item['length']);
-                    $package->setFactorAttributeCode($item['factor_attribute']);
-                    $builtIns[] = $package;
-                }
-                $manager->setBuiltInPackages($builtIns);
-            }
+        $manager->setDefaultLength($this->_scopeConfig->getValue('carriers/bring/package_management/standard_package_length'));
+        $manager->setDefaultWidth($this->_scopeConfig->getValue('carriers/bring/package_management/standard_package_width'));
+        $manager->setDefaultHeight($this->_scopeConfig->getValue('carriers/bring/package_management/standard_package_height'));
+        $manager->setDefaultWeight($this->_scopeConfig->getValue('carriers/bring/package_management/default_product_weight'));
 
-            $packages = $manager->calculate();
-        }
-
-        if (!$packages) {
-
-            $package = new BookingClientService\Package();
-            $package->setItems($items);
-            $packages[] = $package;
-        }
+        $manager->setBuiltInPackages($this->getBuiltInPackages());
+        $packages = $manager->calculate();
         return $packages;
     }
 

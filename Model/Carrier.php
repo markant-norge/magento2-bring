@@ -305,9 +305,6 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             $r['to'] = $this->getStoreConfig(\Magento\Sales\Model\Order\Shipment::XML_PATH_STORE_ZIP, $request);
         }
 
-        $data['weightInGram'] = (float)$request->getPackageWeight() * 1000;
-
-
         return $r;
     }
 
@@ -359,14 +356,19 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
         $clientFactory =  $this->_bookingClient->create();
 
+        $containers = $clientFactory->getShippingContainers($request->getAllItems());
+
         $data = $this->hydrateRequestData();
+        // Weight in gram of all packages.
+        $data['weightInGram'] = 0;
+        foreach ($containers as $container) {
+            $data['weightInGram'] += $container->getWeight() * 1000;
+        }
 
 
         $preFabricatedMethods = $this->generateOfflineBringShippingMethods($data);
         $preFabricatedOverrides = array_keys($preFabricatedMethods);
 
-
-        $containers = $clientFactory->getShippingContainers($request->getAllItems());
 
 
         // Require post codes from / to to use api ...

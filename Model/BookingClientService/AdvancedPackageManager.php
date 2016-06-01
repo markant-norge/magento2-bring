@@ -1,4 +1,5 @@
 <?php
+namespace Markant\Bring\Model\BookingClientService;
 
 /**
  * Copyright (C) Markant Norge AS - All Rights Reserved
@@ -9,10 +10,17 @@
  * @date 5/31/16 1:26 PM
  */
 
-namespace Markant\Bring\Model\BookingClientService;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 
+
+/**
+ * Class AdvancedPackageManager
+ *
+ * Note in use, for future ...
+ *
+ * @package Markant\Bring\Model\BookingClientService
+ */
 class AdvancedPackageManager
 {
     /** @var array  */
@@ -23,6 +31,11 @@ class AdvancedPackageManager
     protected $_attributeLengthCode;
     protected $_attributeHeightCode;
 
+    protected $_defaultWidth;
+    protected $_defaultHeight;
+    protected $_defaultLength;
+    protected $_defaultWeight;
+
     protected $_builtInPackages = [];
 
 
@@ -30,41 +43,73 @@ class AdvancedPackageManager
         $this->_items = $items;
     }
 
+    public function getItemDimensions (\Magento\Quote\Model\Quote\Item $item) {
+        $width = null;
+        $height = null;
+        $length = null;
+
+        if ($this->getAttributeWidthCode()) {
+            $width = $item->getData($this->getAttributeWidthCode());
+        }
+        if ($this->getAttributeHeightCode()) {
+            $height = $item->getData($this->getAttributeHeightCode());
+        }
+        if ($this->getAttributeLengthCode()) {
+            $length = $item->getData($this->getAttributeLengthCode());
+        }
+
+
+        if (!$width) {
+            $width = $this->getDefaultWidth();
+        }
+
+        if (!$height) {
+            $height = $this->getDefaultHeight();
+        }
+        if (!$length) {
+            $length = $this->getDefaultLength();
+        }
+
+        return [
+            'width' => $width,
+            'height' => $height,
+            'length' => $length
+        ];
+    }
 
 
     public function calculate () {
         $packages = [];
+        $shipAloneAttribute = $this->getAttributeShippedIndividuallyCode();
 
 
-        $packedIds = [];
+        $currentPackage = new Package();
+        $currentPackage->setWidth($this->getDefaultWidth());
+        $currentPackage->setHeight($this->getDefaultHeight());
+        $currentPackage->setLength($this->getDefaultLength());
 
-        $currentPackage = null;
 
         /** @var \Magento\Quote\Model\Quote\Item  $item */
-        $index = 0;
-        while (count($packedIds) !== count($this->_items)) {
-            if (!isset($this->_items[$index])) {
-                $index = 0; // start again.
-            }
-            $item = $this->_items[$index];
-            if ($item->getCustomAttribute($this->getAttributeShippedIndividuallyCode())->getValue()) {
+        foreach ($this->_items as $item) {
+            if ($shipAloneAttribute && $item->getData($shipAloneAttribute)) {
                 $pack = new Package();
                 $pack->setItems([$item]);
-                $pack->setWidth($item->getCustomAttribute($this->getAttributeWidthCode())->getValue());
-                $pack->setHeight($item->getCustomAttribute($this->getAttributeHeightCode())->getValue());
-                $pack->setLength($item->getCustomAttribute($this->getAttributeLengthCode())->getValue());
+                $dimension = $this->getItemDimensions($item);
+                $pack->setWidth($dimension['width']);
+                $pack->setHeight($dimension['height']);
+                $pack->setLength($dimension['length']);
                 $packages[] = $pack;
-                $packedIds[] = $item->getId();
             } else {
-                
+                // Package all items into one box!
+                $currentPackage->addItem($item);
             }
-            $index++;
         }
 
-        foreach ($this->_items as $item) {
-            $weight = $item->getWeight();
-
+        if ($currentPackage->getItems()) {
+            $packages[] = $currentPackage;
         }
+
+
         return $packages;
     }
 
@@ -176,6 +221,78 @@ class AdvancedPackageManager
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getDefaultWidth()
+    {
+        return $this->_defaultWidth;
+    }
+
+    /**
+     * @param mixed $defaultWidth
+     * @return AdvancedPackageManager
+     */
+    public function setDefaultWidth($defaultWidth)
+    {
+        $this->_defaultWidth = $defaultWidth;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultLength()
+    {
+        return $this->_defaultLength;
+    }
+
+    /**
+     * @param mixed $defaultLength
+     * @return AdvancedPackageManager
+     */
+    public function setDefaultLength($defaultLength)
+    {
+        $this->_defaultLength = $defaultLength;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultHeight()
+    {
+        return $this->_defaultHeight;
+    }
+
+    /**
+     * @param mixed $defaultHeight
+     * @return AdvancedPackageManager
+     */
+    public function setDefaultHeight($defaultHeight)
+    {
+        $this->_defaultHeight = $defaultHeight;
+        return $this;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultWeight()
+    {
+        return $this->_defaultWeight;
+    }
+
+    /**
+     * @param mixed $defaultWeight
+     */
+    public function setDefaultWeight($defaultWeight)
+    {
+        $this->_defaultWeight = $defaultWeight;
+        return $this;
+    }
 
 
 

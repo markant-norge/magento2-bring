@@ -9,7 +9,6 @@
                 <type>I</type>
                 <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
                 <bring_client_url>http://example.com</bring_client_url>
-                <default_product_weight>0.25</default_product_weight>
                 <mybring_client_uid></mybring_client_uid>
                 <mybring_api_key></mybring_api_key>
                 <calculation>
@@ -35,7 +34,9 @@
                 </booking>
 
                 <package_management>
-                    <use_packagemanagement>0</use_packagemanagement>
+                    <standard_package_width>31</standard_package_width>
+                    <standard_package_length>21</standard_package_length>
+                    <standard_package_height>6</standard_package_height>
                 </package_management>
             </bring>
         </carriers>
