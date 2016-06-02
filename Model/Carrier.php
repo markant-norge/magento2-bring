@@ -286,7 +286,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             $r['toCountry'] = strtolower($request->getDestCountryId());
         }
         if (!$r['toCountry']) {
-            $r['toCountry'] = 'no';
+            $r['toCountry'] = $r['fromCountry'];
         }
 
 

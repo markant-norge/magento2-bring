@@ -29,31 +29,31 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
 
     static public function products () {
         return [
-            BringData::PRODUCT_SERVICEPAKKE => 'Servicepakke',
-            BringData::PRODUCT_PA_DOREN => 'På døren',
-            BringData::PRODUCT_BPAKKE_DOR_DOR => 'Dør til dør',
-            BringData::PRODUCT_EKSPRESS09 => 'Bedriftspakke Ekspress-Over natten 09',
-            BringData::PRODUCT_MINIPAKKE => 'Minipakken',
-            BringData::PRODUCT_A_POST => 'A-Prioritert',
-            BringData::PRODUCT_B_POST => 'B-Økonomi',
-            BringData::PRODUCT_SMAAPAKKER_A_POST => 'Småpakke A-Post',
-            BringData::PRODUCT_SMAAPAKKER_B_POST => 'Småpakke B-Økonomi',
+            BringData::PRODUCT_SERVICEPAKKE => __('Servicepakke'),
+            BringData::PRODUCT_PA_DOREN => __('På døren'),
+            BringData::PRODUCT_BPAKKE_DOR_DOR => __('Dør til dør'),
+            BringData::PRODUCT_EKSPRESS09 => __('Bedriftspakke Ekspress-Over natten 09'),
+            BringData::PRODUCT_MINIPAKKE => __('Minipakken'),
+            BringData::PRODUCT_A_POST => __('A-Prioritert'),
+            BringData::PRODUCT_B_POST => __('B-Økonomi'),
+            BringData::PRODUCT_SMAAPAKKER_A_POST => __('Småpakke A-Post'),
+            BringData::PRODUCT_SMAAPAKKER_B_POST => __('Småpakke B-Økonomi'),
 
-            BringData::PRODUCT_EXPRESS_NORDIC_SAME_DAY => 'Express Nordic Same Day',
-            BringData::PRODUCT_EXPRESS_INTERNATIONAL_0900 => 'Express International 09:00',
-            BringData::PRODUCT_EXPRESS_INTERNATIONAL_1200 => 'Express International 12:00',
-            BringData::PRODUCT_EXPRESS_INTERNATIONAL => 'Express International',
-            BringData::PRODUCT_EXPRESS_ECONOMY => 'Express Economy',
-            BringData::PRODUCT_CARGO_GROUPAGE => 'Cargo',
+            BringData::PRODUCT_EXPRESS_NORDIC_SAME_DAY => __('Express Nordic Same Day'),
+            BringData::PRODUCT_EXPRESS_INTERNATIONAL_0900 => __('Express International 09:00'),
+            BringData::PRODUCT_EXPRESS_INTERNATIONAL_1200 => __('Express International 12:00'),
+            BringData::PRODUCT_EXPRESS_INTERNATIONAL => __('Express International'),
+            BringData::PRODUCT_EXPRESS_ECONOMY => __('Express Economy'),
+            BringData::PRODUCT_CARGO_GROUPAGE => __('Cargo'),
 
-            BringData::PRODUCT_BUSINESS_PARCEL => 'Business Parcel',
-            BringData::PRODUCT_PICKUP_PARCEL => 'PickUp Parcel',
-            BringData::PRODUCT_COURIER_VIP => 'Bud VIP',
-            BringData::PRODUCT_COURIER_1H => 'Bud 1 time',
-            BringData::PRODUCT_COURIER_2H => 'Bud 2 timer',
-            BringData::PRODUCT_COURIER_4H => 'Bud 4 timer',
-            BringData::PRODUCT_COURIER_6H => 'Bud 6 timer',
-            BringData::PRODUCT_OIL_EXPRESS => 'Oil Express'
+            BringData::PRODUCT_BUSINESS_PARCEL => __('Business Parcel'),
+            BringData::PRODUCT_PICKUP_PARCEL => __('PickUp Parcel'),
+            BringData::PRODUCT_COURIER_VIP => __('Bud VIP'),
+            BringData::PRODUCT_COURIER_1H => __('Bud 1 time'),
+            BringData::PRODUCT_COURIER_2H => __('Bud 2 timer'),
+            BringData::PRODUCT_COURIER_4H => __('Bud 4 timer'),
+            BringData::PRODUCT_COURIER_6H => __('Bud 6 timer'),
+            BringData::PRODUCT_OIL_EXPRESS => __('Oil Express')
 
         ];
     }
