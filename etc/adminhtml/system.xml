@@ -46,7 +46,7 @@
                     <label>Bring Product Rules</label>
                     <frontend_model>Markant\Bring\Block\System\Config\Form\Field\BringProductRuleType</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
-                    <comment>Add rules that must be fulfilled to enable a specific Bring Products. Forexample: "Minipakken" can have max 2 kg.</comment>
+                    <comment>Add rules that must be fulfilled to enable a specific Bring Products. E.g.: "Minipakken" can have max 2 kg.</comment>
                 </field>
 
                 <field id="sort_order" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
