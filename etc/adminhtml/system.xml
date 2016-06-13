@@ -182,12 +182,14 @@
                         <source_model>Markant\Bring\Model\Config\Source\AttributeType</source_model>
                     </field>
 
+                    <!-- not ready for 1.0 / extra module
                     <field id="packages" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Package Configuration</label>
                         <frontend_model>Markant\Bring\Block\System\Config\Form\Field\PackageType</frontend_model>
                         <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                         <comment>Configure standard shipping packages.</comment>
                     </field>
+                    -->
 
                     <field id="standard_package_width" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Standard Package Width (cm)</label>

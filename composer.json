@@ -2,7 +2,7 @@
   "name": "markantnorge/magento2-bring",
   "description": "Bring shipping integration for Magento 2",
   "type": "magento2-module",
-  "version": "0.0.1",
+  "version": "1.0.7",
   "authors": [
     {
       "name": "Petter Kjelkenes",
