@@ -12,12 +12,12 @@ define(
         Component,
         defaultShippingRatesValidator,
         defaultShippingRatesValidationRules,
-        sampleShippingProviderShippingRatesValidator,
-        sampleShippingProviderShippingRatesValidationRules
+        bringShippingProviderShippingRatesValidator,
+        bringShippingProviderShippingRatesValidationRules
     ) {
         "use strict";
-        defaultShippingRatesValidator.registerValidator('storepickup', sampleShippingProviderShippingRatesValidator);
-        defaultShippingRatesValidationRules.registerRules('storepickup', sampleShippingProviderShippingRatesValidationRules);
+        defaultShippingRatesValidator.registerValidator('bring', bringShippingProviderShippingRatesValidator);
+        defaultShippingRatesValidationRules.registerRules('bring', bringShippingProviderShippingRatesValidationRules);
         return Component;
     }
 );
