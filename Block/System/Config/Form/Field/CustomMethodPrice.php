@@ -77,8 +77,8 @@ class CustomMethodPrice extends \Magento\Config\Block\System\Config\Form\Field\F
             ]
         );
         $this->addColumn('price', array('label' => __('Price')));
-        $this->addColumn('min_weight', array('label' => __('Min weight (Gr)')));
-        $this->addColumn('max_weight', array('label' => __('Max weight (Gr)')));
+        $this->addColumn('min_weight', array('label' => __('Min weight (g)')));
+        $this->addColumn('max_weight', array('label' => __('Max weight (g)')));
         $this->_addAfter = false;
         $this->_addButtonLabel = __('Add');
     }

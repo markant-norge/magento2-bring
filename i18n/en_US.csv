@@ -12,8 +12,8 @@ Value,Value
 "Shipping method","Shipping method"
 Country,Country
 Price,Price
-"Min weight (Gr)","Min weight (Gr)"
-"Max weight (Gr)","Max weight (Gr)"
+"Min weight (g)","Min weight (g)"
+"Max weight (g)","Max weight (g)"
 Title,Title
 "Width (cm)","Width (cm)"
 "Length (cm)","Length (cm)"
@@ -25,8 +25,8 @@ Title,Title
 "Please enter a length.","Please enter a length."
 "Please enter a width.","Please enter a width."
 "Please enter a height.","Please enter a height."
-"Date format of Shipping Date must be ""YYYY-MM-DD HH:SS"".","Date format of Shipping Date must be ""YYYY-MM-DD HH:SS""."
-"Shipping Origin is required. Configure sender information under Bring -> Booking.","Shipping Origin is required. Configure sender information under Bring -> Booking."
+"Date format of Shipping Date must be ""YYYY-MM-DD HH:MM"".","Date format of Shipping Date must be ""YYYY-MM-DD HH:MM""."
+"Shipping Origin is required. Configure shipping origin under Sales -> Shipping Methods -> Bring -> Bring Booking -> Shipping Origin.","Shipping Origin is required. Configure shipping origin under Sales -> Shipping Methods -> Bring -> Bring Booking -> Shipping Origin."
 "We can\'t initialize shipment for adding edi.","We can\'t initialize shipment for adding edi."
 "Bring API Error:","Bring API Error:"
 "Configuration error:","Configuration error:"
@@ -38,7 +38,7 @@ Title,Title
 "Delivery on Saturdays","Delivery on Saturdays"
 "Express Envelope","Express Envelope"
 "Bring contacts recipient","Bring contacts recipient"
-"	Delivery to pickup point","	Delivery to pickup point"
+"Delivery to pickup point","Delivery to pickup point"
 "Evening delivery","Evening delivery"
 "--Please Select--","--Please Select--"
 Servicepakke,Servicepakke
@@ -75,7 +75,7 @@ Delete,Delete
 "Estimate Price","Estimate Price"
 "Estimated shipping costs:","Estimated shipping costs:"
 "Bring Package Orders","Bring Package Orders"
-"Overview over Bring Package orders for this shipment.","Overview over Bring Package orders for this shipment."
+"Overview for Bring Package orders for this shipment.","Overview for Bring Package orders for this shipment."
 Bring,Bring
 Enabled,Enabled
 "Calculate Handling Fee","Calculate Handling Fee"

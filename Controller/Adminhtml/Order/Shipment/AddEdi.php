@@ -87,7 +87,7 @@ class AddEdi extends \Magento\Backend\App\Action
             }
 
             if ($shippingDateTimeObj === false) {
-                throw new \Magento\Framework\Exception\LocalizedException(__('Date format of Shipping Date must be "YYYY-MM-DD HH:SS".'));
+                throw new \Magento\Framework\Exception\LocalizedException(__('Date format of Shipping Date must be "YYYY-MM-DD HH:MM".'));
             }
 
 
@@ -170,7 +170,7 @@ class AddEdi extends \Magento\Backend\App\Action
                 try {
                     $sender->validate();
                 } catch (\Peec\Bring\API\Contract\ContractValidationException $e) {
-                    throw new \Magento\Framework\Exception\LocalizedException(__('Shipping Origin is required. Configure sender information under Bring -> Booking.'));
+                    throw new \Magento\Framework\Exception\LocalizedException(__('Shipping Origin is required. Configure shipping origin under Sales -> Shipping Methods -> Bring -> Bring Booking -> Shipping Origin.'));
                 }
 
 

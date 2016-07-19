@@ -12,8 +12,8 @@ Value,Verdi
 "Shipping method","Leveringsmetode"
 Country,Land
 Price,Pris
-"Min weight (Gr)","Min vekt (Gr)"
-"Max weight (Gr)","Max vekt (Gr)"
+"Min weight (g)","Min vekt (g)"
+"Max weight (g)","Maks vekt (g)"
 Title,Tittel
 "Width (cm)","Bredde (cm)"
 "Length (cm)","Lengde (cm)"
@@ -25,8 +25,8 @@ Title,Tittel
 "Please enter a length.","Vennligst legg inn lengde."
 "Please enter a width.","Vennligst legg inn bredde."
 "Please enter a height.","Vennligst legg inn høyde."
-"Date format of Shipping Date must be ""YYYY-MM-DD HH:SS"".","Dato formatet på leveringsdato må være ""ÅÅÅÅ-MM-DD TT:MM""."
-"Shipping Origin is required. Configure sender information under Bring -> Booking.","Avsenderadresse er påkrevd. Konfigurer avsender adresse under Bring -> Booking."
+"Date format of Shipping Date must be ""YYYY-MM-DD HH:MM"".","Dato formatet på leveringsdato må være ""ÅÅÅÅ-MM-DD TT:MM""."
+"Shipping Origin is required. Configure shipping origin under Sales -> Shipping Methods -> Bring -> Bring Booking -> Shipping Origin.","Avsenderadresse er påkrevd. Konfigurer avsender adresse under Salg -> Leveringsmetoder -> Bring -> Bring Booking -> Avsenderadresse."
 "We can\'t initialize shipment for adding edi.","Vi kan ikke initiere levering for å legge til EDI."
 "Bring API Error:","Bring API Error:"
 "Configuration error:","Konfigurasjons-error:"
@@ -38,7 +38,7 @@ Title,Tittel
 "Delivery on Saturdays","Levering på lørdager"
 "Express Envelope","Express Envelope"
 "Bring contacts recipient","Bring kontakter mottaker"
-"	Delivery to pickup point","	Levering til pickup point"
+"Delivery to pickup point","Levering til pickup point"
 "Evening delivery","Evening delivery"
 "--Please Select--","--Vennligst velg--"
 Servicepakke,Servicepakke
@@ -75,7 +75,7 @@ Delete,Slett
 "Estimate Price","Estimér pris"
 "Estimated shipping costs:","Estimerte fraktkostnader:"
 "Bring Package Orders","Bring pakkeordrer"
-"Overview over Bring Package orders for this shipment.","Oversikt over Bring EDI ordrer for denne leveringen."
+"Overview for Bring Package orders for this shipment.","Oversikt over Bring EDI ordrer for denne leveransen."
 Bring,Bring
 Enabled,Aktivert
 "Calculate Handling Fee","Kalkulér ekspedisjonsgebyr"

@@ -35,7 +35,7 @@ class AdditionalService implements \Magento\Framework\Option\ArrayInterface
             ShippingGuideData::LORDAGSUTKJORING =>  __('Delivery on Saturdays'),
             ShippingGuideData::ENVELOPE =>  __('Express Envelope'),
             ShippingGuideData::ADVISERING =>  __('Bring contacts recipient'),
-            ShippingGuideData::PICKUP_POINT =>  __('	Delivery to pickup point'),
+            ShippingGuideData::PICKUP_POINT =>  __('Delivery to pickup point'),
             ShippingGuideData::EVE_DELIVERY =>  __('Evening delivery')
         ];
     }
