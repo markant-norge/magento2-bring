@@ -212,7 +212,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     if (isset($consignmentSet['error'])) {
                         $error = $this->_trackErrorFactory->create();
                         $error->setCarrier($this->_code);
-                        $error->setCarrierTitle($this->getConfig('title'));
+                        $error->setCarrierTitle($this->getConfigData('title'));
                         $error->setTracking($trackingnumber);
                         $error->setErrorMessage(implode(', ', $consignmentSet['error']));
                         $result->append($error);
@@ -220,9 +220,10 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                         foreach ($consignmentSet['packageSet'] as $packageSet) {
                             if (isset($packageSet['eventSet'])) {
                                 foreach ($packageSet['eventSet'] as $eventSet) {
+                                    /** @var \Magento\Shipping\Model\Tracking\Result $tracking */
                                     $tracking = $this->_trackStatusFactory->create();
                                     $tracking->setCarrier($this->_code);
-                                    $tracking->setCarrierTitle($this->getConfig('title'));
+                                    $tracking->setCarrierTitle($this->getConfigData('title'));
                                     $tracking->setTracking($trackingnumber);
                                     $status = $eventSet['description'] ? $eventSet['description'] : $eventSet['status'];
                                     $summary = "{$status} - {$eventSet['displayDate']} {$eventSet['displayTime']}";
@@ -237,7 +238,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             } catch (\Exception $e) {
                 $error = $this->_trackErrorFactory->create();
                 $error->setCarrier($this->_code);
-                $error->setCarrierTitle($this->getConfig('title'));
+                $error->setCarrierTitle($this->getConfigData('title'));
                 $error->setTracking($trackingnumber);
                 $error->setErrorMessage($e->getMessage());
                 $result->append($error);
@@ -465,7 +466,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
             $method = $this->_rateMethodFactory->create();
             $method->setCarrier($this->getCarrierCode());
-            $method->setCarrierTitle($this->getConfig('title'));
+            $method->setCarrierTitle($this->getConfigData('title'));
             $method->setMethod($shipping_method);
             $productLabel = isset($products[$shipping_method]) ? $products[$shipping_method] : $shipping_method;
 
