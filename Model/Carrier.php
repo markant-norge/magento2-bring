@@ -464,6 +464,16 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $products = BringMethod::products();
 
+
+        $affectedFreeShippingMethods = explode(',', $this->getConfigData('affected_free_shipping_methods'));
+        $shouldMaybeHaveFreeShipping = $request->getFreeShipping();
+
+
+        uasort($preFabricatedMethods, function ($a, $b) {
+            return $a['price'] - $b['price'];
+        });
+
+
         foreach ($preFabricatedMethods as $shipping_method => $info) {
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
             $method = $this->_rateMethodFactory->create();
@@ -488,9 +498,13 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             //
             // Support free shipping from request ( can e.g. be a coupon code that was activated that gives free shipping! ).
             //
+            $finalPrice = $info['price'];
+            $finalCost = $info['cost'];
+            if (in_array($shipping_method, $affectedFreeShippingMethods) && $shouldMaybeHaveFreeShipping) {
+                $finalPrice = '0.00';
+                $finalCost = '0.00';
+            }
 
-            $finalPrice = $request->getFreeShipping() ? '0.00' : $info['price'];
-            $finalCost = $request->getFreeShipping() ? '0.00' : $info['cost'];
 
             $method->setPrice($finalPrice);
             $method->setCost($finalCost);

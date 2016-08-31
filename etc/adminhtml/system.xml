@@ -42,6 +42,15 @@
                     <can_be_empty>1</can_be_empty>
                 </field>
 
+
+                <field id="affected_free_shipping_methods" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Affected Free Shipping Bring Products</label>
+                    <source_model>Markant\Bring\Model\Config\Source\BringMethod</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <comment>When a cart rule that gives free shipping is applied you can chose what bring products that should be free. E.g. you don't want the "Home delivery" method to be free because it costs more for you.</comment>
+                </field>
+
+
                 <field id="bring_product_rules" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Bring Product Rules</label>
                     <frontend_model>Markant\Bring\Block\System\Config\Form\Field\BringProductRuleType</frontend_model>
