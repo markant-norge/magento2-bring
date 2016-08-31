@@ -465,13 +465,24 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         $products = BringMethod::products();
 
 
+
+        $free_shipping_method_enabled_discount_amount = floatval($this->getConfigData('free_shipping_method_enabled_discount_amount'));
         $affectedFreeShippingMethods = explode(',', $this->getConfigData('affected_free_shipping_methods'));
         $shouldMaybeHaveFreeShipping = $request->getFreeShipping();
+        $haveABringMethodThatIsFree = false;
+        foreach ($preFabricatedMethods as $shipping_method => $info) {
+            if (in_array($shipping_method, $affectedFreeShippingMethods) && $shouldMaybeHaveFreeShipping) {
+                $haveABringMethodThatIsFree = true;
+                break;
+            }
+
+        }
 
 
         uasort($preFabricatedMethods, function ($a, $b) {
             return $a['price'] - $b['price'];
         });
+
 
 
         foreach ($preFabricatedMethods as $shipping_method => $info) {
@@ -503,7 +514,12 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             if (in_array($shipping_method, $affectedFreeShippingMethods) && $shouldMaybeHaveFreeShipping) {
                 $finalPrice = '0.00';
                 $finalCost = '0.00';
+            } else if ($haveABringMethodThatIsFree && $finalPrice >= $free_shipping_method_enabled_discount_amount && $free_shipping_method_enabled_discount_amount > 0) {
+                $finalPrice = $finalPrice - $free_shipping_method_enabled_discount_amount;
             }
+
+
+
 
 
             $method->setPrice($finalPrice);

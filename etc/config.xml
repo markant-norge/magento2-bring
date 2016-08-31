@@ -9,6 +9,7 @@
                 <type>I</type>
                 <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
                 <affected_free_shipping_methods>SERVICEPAKKE,MINIPAKKE,A-POST,B-POST</affected_free_shipping_methods>
+                <free_shipping_method_enabled_discount_amount>0</free_shipping_method_enabled_discount_amount>
                 <bring_client_url>http://example.com</bring_client_url>
                 <mybring_client_uid></mybring_client_uid>
                 <mybring_api_key></mybring_api_key>
