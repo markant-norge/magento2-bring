@@ -373,6 +373,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
 
 
+
         // Require post codes from / to to use api ...
         if ($data['to'] && $data['from']) {
 
@@ -420,9 +421,11 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                             $shipping_method = $bringAlternative['ProductId'];
                             if ($this->isBringMethodEnabled($data, $shipping_method)) {
                                 /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                $amount = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
-                                $shippingPrice = $this->getFinalPriceWithHandlingFee($amount);
+                                $AmountWithVAT = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
+                                $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
 
+                                // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
+                                $shippingPrice = ceil($shippingPrice);
 
                                 $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
 
@@ -432,7 +435,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                 $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
                                 // Do not override prefabricated shipping method prices..
                                 if (!in_array($shipping_method, $preFabricatedOverrides)) {
-                                    $preFabricatedMethods[$shipping_method]['price'] = ceil($shippingPrice);
+                                    $preFabricatedMethods[$shipping_method]['price'] = $shippingPrice;
                                     $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
                                 }
                             }
@@ -481,8 +484,17 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             }
 
             $method->setMethodTitle($productLabel);
-            $method->setPrice($info['price']);
-            $method->setCost($info['cost']);
+
+
+            //
+            // Support free shipping from request ( can e.g. be a coupon code that was activated that gives free shipping! ).
+            //
+
+            $finalPrice = $request->getFreeShipping() ? '0.00' : $info['price'];
+            $finalCost = $request->getFreeShipping() ? '0.00' : $info['cost'];
+
+            $method->setPrice($finalPrice);
+            $method->setCost($finalCost);
             $result->append($method);
         }
 
