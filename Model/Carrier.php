@@ -376,7 +376,6 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         // Require post codes from / to to use api ...
         if ($data['to'] && $data['from']) {
 
-
             /** @var \Peec\Bring\API\Client\ShippingGuideClient $client */
             $client = $clientFactory->getShippingGuideClient();
 
