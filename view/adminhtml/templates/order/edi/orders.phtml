@@ -22,10 +22,11 @@ $defaultReturnMethodSelected = $block->getDefaultReturnMethod();
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Length (cm)') ?></th>
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Height (cm)') ?></th>
             <th class="col-number"><?php /* @escapeNotVerified */ echo __('Tracking') ?></th>
-            <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Label') ?></th>
+            <th class="col-delete"><?php /* @escapeNotVerified */ echo __('Label') ?></th>
+            <th class="col-delete last"><?php /* @escapeNotVerified */ echo __('Return Label') ?></th>
         </tr>
         </thead>
-        <?php if ($_edis = $block->getAllEdis()): ?>
+        <?php $_edis = $block->getAllEdis(); if ($_edis && count($_edis)): ?>
             <tbody>
             <?php $i = 0; foreach ($_edis as $_edi):$i++; /** @var \Markant\Bring\Model\Order\Shipment\Edi $_edi */ ?>
                 <tr class="<?php /* @escapeNotVerified */ echo($i%2 == 0) ? 'even' : 'odd' ?>">
@@ -40,11 +41,22 @@ $defaultReturnMethodSelected = $block->getDefaultReturnMethod();
                             <a target="_blank" href="<?php echo $_edi->getLabelUrl()?>"><?php echo __('Shipping Label (PDF)')?></a>
                         <?php endif ?>
                     </td>
+                    <td>
+                        <?php if ($_edi->getReturnLabelUrl()): ?>
+                            <a target="_blank" href="<?php echo $_edi->getReturnLabelUrl()?>"><?php echo __('Return Label (PDF)')?></a>
+                        <?php endif ?>
+                    </td>
                     <!--
                     <td class="col-delete last"><button class="action-delete" type="button" onclick="deleteEdi('<?php /* @escapeNotVerified */ echo $block->getRemoveUrl($_edi) ?>'); return false;"><span><?php /* @escapeNotVerified */ echo __('Delete') ?></span></button></td>
                     -->
                 </tr>
             <?php endforeach; ?>
+            </tbody>
+        <?php else: ?>
+            <tbody>
+                <tr>
+                    <td colspan="7"><p><?php echo __('No shipments ordered yet. Book a bring shipment below.')?></p></td>
+                </tr>
             </tbody>
         <?php endif; ?>
     </table>
@@ -134,7 +146,7 @@ $defaultReturnMethodSelected = $block->getDefaultReturnMethod();
                        for="bring_edi_return_product">
                     <span><?php /* @escapeNotVerified */ echo __('Bring Return Product') ?></span></label>
                 <div class="admin__field-control">
-                    <select id="bring_edi_return_product" name="product" class="select admin__control-select">
+                    <select id="bring_edi_return_product" name="return_product" class="select admin__control-select">
                         <option value=""><?php /* @escapeNotVerified */ echo __('No return label') ?></option>
                         <?php foreach ($block->getBringReturnProducts() as $key => $value):?>
                             <option value="<?php echo $key?>" <?php echo $key == $defaultReturnMethodSelected ? 'selected':''?>><?php echo $value?></option>

@@ -107,6 +107,10 @@ class AddEdi extends \Magento\Backend\App\Action
                 $bringProductId = $this->getRequest()->getPost('product');
 
 
+
+                $bringReturnProductId = $this->getRequest()->getPost('return_product');
+
+
                 $shippingAddress = $shipment->getShippingAddress();
 
 
@@ -144,18 +148,21 @@ class AddEdi extends \Magento\Backend\App\Action
                 $recipient->setCountryCode($shippingAddress->getCountryId());
                 $recipient->setName($shippingAddress->getName());
                 $recipient->setPostalCode($shippingAddress->getPostcode());
-                $recipient->setReference($shippingAddress->getCustomerId());
                 $recipient->setReference($shipment->getOrderId()); // order id as reference.
 
 
                 $sender = new BookingRequest\Consignment\Address();
-                $sender->setName($this->getConfig('booking/origin/name'));
-                $sender->setAddressLine($this->getConfig('booking/origin/street_line_1'));
-                $sender->setAddressLine2($this->getConfig('booking/origin/street_line_2'));
+                if ($adr1 = $this->getConfig('booking/origin/street_line_1')) {
+                    $sender->setAddressLine($adr1);
+                }
+                if ($adr2 = $this->getConfig('booking/origin/street_line_2')) {
+                    $sender->setAddressLine2($adr2);
+                }
                 $sender->setCity($this->getConfig('booking/origin/city'));
                 $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
+                $sender->setName($this->getConfig('booking/origin/name'));
                 $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
-                $sender->setReference($shipment->getId());
+                $sender->setReference($shipment->getOrderId());
 
 
 
@@ -191,6 +198,7 @@ class AddEdi extends \Magento\Backend\App\Action
                 $client = $clientFactory->getBookingClient();
 
                 $result = $client->bookShipment($message);
+
 
                 $consignment = $result['consignments'][0];
 
@@ -228,6 +236,66 @@ class AddEdi extends \Magento\Backend\App\Action
                         ->setLabelUrl($labels);
                     $edi->setWaybill($waybill);
                     $edi->setTrackingUrl($tracking);
+
+
+                    if ($bringReturnProductId) {
+
+                        // Create Package
+
+                        $consignmentPackage = new BookingRequest\Consignment\Package();
+                        $consignmentPackage->setWeightInKg(0);
+                        $consignmentPackage->setDimensionHeightInCm(0);
+                        $consignmentPackage->setDimensionLengthInCm(0);
+                        $consignmentPackage->setDimensionWidthInCm(0);
+
+                        // Create Product
+
+                        $bringProduct = new BookingRequest\Consignment\Product();
+                        $bringProduct->setId($bringReturnProductId);
+                        $bringProduct->setCustomerNumber($bringCustomerNumber);
+
+                        // Create Consignment
+
+                        $returnConsignment = new BookingRequest\Consignment();
+                        $returnConsignment->addPackage($consignmentPackage);
+                        $returnConsignment->setProduct($bringProduct);
+                        $returnConsignment->setShippingDateTime($shippingDateTimeObj);
+
+                        $recipient->setContact($contact);
+                                
+                        $sender = new BookingRequest\Consignment\Address();
+                        if ($adr1 = $this->getConfig('booking/origin/street_line_1')) {
+                            $sender->setAddressLine($adr1);
+                        }
+                        if ($adr2 = $this->getConfig('booking/origin/street_line_2')) {
+                            $sender->setAddressLine2($adr2);
+                        }
+                        $sender->setCity($this->getConfig('booking/origin/city'));
+                        $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
+                        $sender->setName($this->getConfig('booking/origin/name'));
+                        $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
+                        $sender->setReference($shipment->getOrderId());
+
+                        $returnConsignment->setRecipient($sender);
+                        $returnConsignment->setSender($recipient);
+
+                        // Create BookingRequest
+
+                        $returnMessage = new BookingRequest();
+                        $returnMessage->addConsignment($returnConsignment);
+                        $returnMessage->setTestIndicator($bringTestMode);
+
+
+                        $result2 = $client->bookShipment($returnMessage);
+
+                        $returnConsignment = $result2['consignments'][0];
+
+                        $confReturn = $returnConsignment['confirmation'];
+                        $labels = $confReturn['links']['labels'];
+                        $edi->setReturnLabelUrl($labels);
+                    }
+
+
                     if ($expectedDelivery) {
                         $dt = new \DateTime();
                         $dt->setTimestamp($expectedDelivery / 1000);
