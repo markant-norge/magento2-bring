@@ -52,6 +52,23 @@ class AddEdi extends \Magento\Backend\App\Action
         return $this->_authorization->isAllowed('Magento_Sales::shipment');
     }
 
+
+    protected function _getEdiSender ($shipment) {
+        $sender = new BookingRequest\Consignment\Address();
+        if ($adr1 = $this->getConfig('booking/origin/street_line_1')) {
+            $sender->setAddressLine($adr1);
+        }
+        if ($adr2 = $this->getConfig('booking/origin/street_line_2')) {
+            $sender->setAddressLine2($adr2);
+        }
+        $sender->setCity($this->getConfig('booking/origin/city'));
+        $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
+        $sender->setName($this->getConfig('booking/origin/name'));
+        $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
+        $sender->setReference($shipment->getOrderId());
+        return $sender;
+    }
+
     /**
      * Add new tracking number action
      *
@@ -151,26 +168,14 @@ class AddEdi extends \Magento\Backend\App\Action
                 $recipient->setReference($shipment->getOrderId()); // order id as reference.
 
 
-                $sender = new BookingRequest\Consignment\Address();
-                if ($adr1 = $this->getConfig('booking/origin/street_line_1')) {
-                    $sender->setAddressLine($adr1);
-                }
-                if ($adr2 = $this->getConfig('booking/origin/street_line_2')) {
-                    $sender->setAddressLine2($adr2);
-                }
-                $sender->setCity($this->getConfig('booking/origin/city'));
-                $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
-                $sender->setName($this->getConfig('booking/origin/name'));
-                $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
-                $sender->setReference($shipment->getOrderId());
-
-
-
+                // Create a contact.
                 $contact = new BookingRequest\Consignment\Contact();
                 $contact->setName($this->getConfig('booking/origin/name'));
                 $contact->setEmail($this->getConfig('booking/origin/email'));
                 $contact->setPhoneNumber($this->getConfig('booking/origin/phone_number'));
 
+
+                $sender = $this->_getEdiSender($shipment);
                 $sender->setContact($contact);
 
                 // Lets validate sender, since these settings must be displayed in a much nicer manner....
@@ -263,18 +268,7 @@ class AddEdi extends \Magento\Backend\App\Action
 
                         $recipient->setContact($contact);
                                 
-                        $sender = new BookingRequest\Consignment\Address();
-                        if ($adr1 = $this->getConfig('booking/origin/street_line_1')) {
-                            $sender->setAddressLine($adr1);
-                        }
-                        if ($adr2 = $this->getConfig('booking/origin/street_line_2')) {
-                            $sender->setAddressLine2($adr2);
-                        }
-                        $sender->setCity($this->getConfig('booking/origin/city'));
-                        $sender->setCountryCode($this->getConfig('booking/origin/country_id'));
-                        $sender->setName($this->getConfig('booking/origin/name'));
-                        $sender->setPostalCode($this->getConfig('booking/origin/postcode'));
-                        $sender->setReference($shipment->getOrderId());
+                        $sender = $this->_getEdiSender($shipment);
 
                         $returnConsignment->setRecipient($sender);
                         $returnConsignment->setSender($recipient);
