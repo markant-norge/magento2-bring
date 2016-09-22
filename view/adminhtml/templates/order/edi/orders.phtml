@@ -8,6 +8,8 @@ $order = $block->getOrder();
 $shippingMethod = $order->getShippingMethod(true);
 $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
 
+$defaultReturnMethodSelected = $block->getDefaultReturnMethod();
+
 
 ?>
 <?php /** @var $block Markant\Bring\Block\Adminhtml\View\BringOrders */ ?>
@@ -125,6 +127,22 @@ $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
                     </select>
                 </div>
             </div>
+
+
+            <div class="field admin__field">
+                <label class="admin__field-label"
+                       for="bring_edi_return_product">
+                    <span><?php /* @escapeNotVerified */ echo __('Bring Return Product') ?></span></label>
+                <div class="admin__field-control">
+                    <select id="bring_edi_return_product" name="product" class="select admin__control-select">
+                        <option value=""><?php /* @escapeNotVerified */ echo __('No return label') ?></option>
+                        <?php foreach ($block->getBringReturnProducts() as $key => $value):?>
+                            <option value="<?php echo $key?>" <?php echo $key == $defaultReturnMethodSelected ? 'selected':''?>><?php echo $value?></option>
+                        <?php endforeach?>
+                    </select>
+                </div>
+            </div>
+
 
 
             <div class="field admin__field">

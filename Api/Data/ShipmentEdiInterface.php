@@ -64,6 +64,10 @@ interface ShipmentEdiInterface
     const EXPECTED_DELIVERY = 'expected_delivery';
 
 
+    const RETURN_LABEL_URL = 'return_label_url';
+
+
+
     public function getLength();
     public function setLength($length);
     public function getWidth();
@@ -86,6 +90,8 @@ interface ShipmentEdiInterface
     public function setEarliestPickup($value);
     public function getExpectedDelivery();
     public function setExpectedDelivery($value);
+    public function getReturnLabelUrl();
+    public function setReturnLabelUrl($value);
 
 
     /**

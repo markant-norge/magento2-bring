@@ -137,6 +137,16 @@
                         <comment>Please configure Mybring login ID and Api Key in order to select a customer. After you have changed login and and API key you will need to refresh the config cache in order to select a mybring customer.</comment>
                     </field>
 
+                    <field id="default_return_method" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Default Return Shipping Method</label>
+                        <source_model>Markant\Bring\Model\Config\Source\BringReturnMethod</source_model>
+                        <depends>
+                            <field id="activate_booking">1</field>
+                        </depends>
+                        <comment>Can be empty. Book a return label for each booking of shipment. This is the default method label to use.</comment>
+                    </field>
+
+
 
                     <group id="package" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Standard package size</label>

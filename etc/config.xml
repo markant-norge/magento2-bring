@@ -23,6 +23,7 @@
                     <activate_booking>0</activate_booking>
                     <test>1</test>
                     <default_customer></default_customer>
+                    <default_return_method>SERVICEPAKKE_RETURSERVICE</default_return_method>
                     <origin>
                         <name></name>
                         <country_id></country_id>

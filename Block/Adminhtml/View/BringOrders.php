@@ -2,6 +2,7 @@
 namespace Markant\Bring\Block\Adminhtml\View;
 
 use Markant\Bring\Model\Config\Source\BringMethod;
+use Markant\Bring\Model\Config\Source\BringReturnMethod;
 
 
 class BringOrders extends \Magento\Backend\Block\Template
@@ -139,6 +140,17 @@ class BringOrders extends \Magento\Backend\Block\Template
         }
         return $prods;
     }
+
+    public function getBringReturnProducts () {
+        return BringReturnMethod::returnProducts();
+    }
+    
+
+    public function getDefaultReturnMethod () {
+        return $this->getGlobalConfig('booking/default_return_method');
+    }
+
+
 
 
     public function getBringEnabledProducts () {

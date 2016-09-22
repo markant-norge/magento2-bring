@@ -146,6 +146,18 @@ class UpgradeSchema implements UpgradeSchemaInterface
             );
         }
 
+
+        if (version_compare($context->getVersion(), '1.0.11') < 0) {
+            $connection = $table = $installer->getConnection();
+
+            $connection
+                ->addColumn(
+                    $installer->getTable(self::TABLE_NAME),
+                    'return_label_url',
+                    ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Return Label URL']
+                );
+        }
+
         $installer->endSetup();
     }
 }

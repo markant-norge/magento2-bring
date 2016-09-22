@@ -158,6 +158,15 @@ class InstallSchema implements InstallSchemaInterface
             );
 
 
+
+            $connection
+                ->addColumn(
+                    $installer->getTable(self::TABLE_NAME),
+                    'return_label_url',
+                    ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'nullable' => true, 'comment' => 'From bring: Return Label URL']
+                );
+                
+
         }
         $installer->endSetup();
     }

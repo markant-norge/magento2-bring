@@ -346,6 +346,18 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
         return $this->setData(ShipmentEdiInterface::LABEL_URL, $value);
     }
 
+
+    public function getReturnLabelUrl()
+    {
+        return $this->getData(ShipmentEdiInterface::RETURN_LABEL_URL);
+    }
+
+    public function setReturnLabelUrl($value)
+    {
+        return $this->setData(ShipmentEdiInterface::RETURN_LABEL_URL, $value);
+    }
+
+
     public function getWaybill()
     {
         return $this->getData(ShipmentEdiInterface::WAYBILL);
