@@ -136,6 +136,9 @@ class AddEdi extends \Magento\Backend\App\Action
                 // Build up request to send to bring.
                 //
 
+
+                // Create Package
+
                 $consignmentPackage = new BookingRequest\Consignment\Package();
                 $consignmentPackage->setWeightInKg($weight);
                 $consignmentPackage->setDimensionHeightInCm($height);
@@ -143,15 +146,21 @@ class AddEdi extends \Magento\Backend\App\Action
                 $consignmentPackage->setDimensionWidthInCm($width);
 
 
+                // Create Bring Product
+
                 $bringProduct = new BookingRequest\Consignment\Product();
                 $bringProduct->setId($bringProductId);
                 $bringProduct->setCustomerNumber($bringCustomerNumber);
+
+                // Create Consignment
 
                 $consignment = new BookingRequest\Consignment();
                 $consignment->addPackage($consignmentPackage);
                 $consignment->setProduct($bringProduct);
                 $consignment->setShippingDateTime($shippingDateTimeObj);
 
+
+                // Create Recipient.
 
                 $recipient = new BookingRequest\Consignment\Address();
                 $addresses = $shippingAddress->getStreet();
@@ -168,7 +177,8 @@ class AddEdi extends \Magento\Backend\App\Action
                 $recipient->setReference($shipment->getOrderId()); // order id as reference.
 
 
-                // Create a contact.
+                // Create Contact for Sender.
+
                 $contact = new BookingRequest\Consignment\Contact();
                 $contact->setName($this->getConfig('booking/origin/name'));
                 $contact->setEmail($this->getConfig('booking/origin/email'));
@@ -242,6 +252,10 @@ class AddEdi extends \Magento\Backend\App\Action
                     $edi->setWaybill($waybill);
                     $edi->setTrackingUrl($tracking);
 
+
+
+
+                    // Do we want to order a return label as well ? In that case we create a second booking request.
 
                     if ($bringReturnProductId) {
 
