@@ -132,7 +132,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
      */
     public function getAllowedMethods()
     {
-        return self::products();
+        return BringMethod::products();
     }
 
 
