@@ -41,15 +41,15 @@ Title,Title
 "Delivery to pickup point","Delivery to pickup point"
 "Evening delivery","Evening delivery"
 "--Please Select--","--Please Select--"
-Servicepakke,Servicepakke
-"På døren","På døren"
-"Dør til dør","Dør til dør"
-"Bedriftspakke Ekspress-Over natten 09","Bedriftspakke Ekspress-Over natten 09"
-Minipakken,Minipakken
-A-Prioritert,A-Prioritert
-B-Økonomi,B-Økonomi
-"Småpakke A-Post","Småpakke A-Post"
-"Småpakke B-Økonomi","Småpakke B-Økonomi"
+Servicepakke,"Servicepackage"
+"På døren","Home delivery"
+"Dør til dør","Door to door"
+"Bedriftspakke Ekspress-Over natten 09","Businesspackage Express-Over night 09"
+Minipakken,Minipackage
+A-Prioritert,A-Post
+B-Økonomi,B-Post
+"Småpakke A-Post","Minipackage A-Post"
+"Småpakke B-Økonomi","Minipackage B-Post"
 "Express Nordic Same Day","Express Nordic Same Day"
 "Express International 09:00","Express International 09:00"
 "Express International 12:00","Express International 12:00"
