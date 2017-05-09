@@ -417,25 +417,27 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                         $bringProducts = $json['Product'];
 
                         foreach ($bringProducts as $bringAlternative) {
-                            $shipping_method = $bringAlternative['ProductId'];
-                            if ($this->isBringMethodEnabled($data, $shipping_method)) {
-                                /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                $AmountWithVAT = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
-                                $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
+                            if (isset($bringAlternative['ProductId'])) {
+                                $shipping_method = $bringAlternative['ProductId'];
+                                if ($this->isBringMethodEnabled($data, $shipping_method)) {
+                                    /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
+                                    $AmountWithVAT = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
+                                    $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
 
-                                // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
-                                $shippingPrice = ceil($shippingPrice);
+                                    // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
+                                    $shippingPrice = ceil($shippingPrice);
 
-                                $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
+                                    $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
 
-                                if (!isset($preFabricatedMethods[$shipping_method])) {
-                                    $preFabricatedMethods[$shipping_method] = array();
-                                }
-                                $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
-                                // Do not override prefabricated shipping method prices..
-                                if (!in_array($shipping_method, $preFabricatedOverrides)) {
-                                    $preFabricatedMethods[$shipping_method]['price'] = $shippingPrice;
-                                    $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                                    if (!isset($preFabricatedMethods[$shipping_method])) {
+                                        $preFabricatedMethods[$shipping_method] = array();
+                                    }
+                                    $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
+                                    // Do not override prefabricated shipping method prices..
+                                    if (!in_array($shipping_method, $preFabricatedOverrides)) {
+                                        $preFabricatedMethods[$shipping_method]['price'] = $shippingPrice;
+                                        $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                                    }
                                 }
                             }
                         }
