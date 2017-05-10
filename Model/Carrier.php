@@ -412,12 +412,18 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                     $json = $client->getPrices($priceRequest);
 
+
                     if (isset($json['Product'])) {
 
                         $bringProducts = $json['Product'];
 
+                        // Single result.... CAN ACTUALLY ENCOUNTER... WIERD THINGS...
+                        if (is_array($bringProducts) && isset($bringProducts['ProductId'])) {
+                            $bringProducts = array ( $bringProducts ); // Convert it to array...
+                        }
+
                         foreach ($bringProducts as $bringAlternative) {
-                            if (isset($bringAlternative['ProductId'])) {
+                            if (isset($bringAlternative['ProductId'])) {  // Should always be isset...
                                 $shipping_method = $bringAlternative['ProductId'];
                                 if ($this->isBringMethodEnabled($data, $shipping_method)) {
                                     /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
