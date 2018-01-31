@@ -2,7 +2,7 @@
   "name": "markantnorge/magento2-bring",
   "description": "Bring shipping integration for Magento 2",
   "type": "magento2-module",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "authors": [
     {
       "name": "Petter Kjelkenes",
@@ -27,7 +27,7 @@
    },
    "repositories": [
         {
-            "url": "git@github.com:markant-norge/php-angrerett.git",
+            "url": "git@github.com:markant-norge/php-bring-api.git",
             "type": "vcs"
         }
      ]
