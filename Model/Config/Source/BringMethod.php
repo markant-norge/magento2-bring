@@ -34,8 +34,7 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
             BringData::PRODUCT_BPAKKE_DOR_DOR => __('Dør til dør'),
             BringData::PRODUCT_EKSPRESS09 => __('Bedriftspakke Ekspress-Over natten 09'),
             BringData::PRODUCT_MINIPAKKE => __('Minipakken'),
-            
-			'POST' => __('Brevpost'), // Should be changed to constant, when API SDK is updated
+            'MAIL' => __('Brevpost'), // Should be changed to constant, when API SDK is updated
 			
             BringData::PRODUCT_A_POST => __('A-Prioritert'),
             BringData::PRODUCT_B_POST => __('B-Økonomi'),
