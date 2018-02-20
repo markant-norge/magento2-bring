@@ -3,13 +3,6 @@
   "description": "Bring shipping integration for Magento 2",
   "type": "magento2-module",
   "version": "1.0.26",
-  "authors": [
-    {
-      "name": "Petter Kjelkenes",
-      "email": "petter.kjelkenes@markant.no",
-      "homepage": "http://markant.no"
-    }
-  ],
   "license": [
   ],
   "require": {
