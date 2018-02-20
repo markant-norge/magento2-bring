@@ -46,7 +46,7 @@ class BookingCustomer implements \Magento\Framework\Option\ArrayInterface
             try {
                 /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
                 $clientFactory =  $this->_bookingClient->create();
-                /** @var \Peec\Bring\API\Client\BookingClient $client */
+                /** @var \Markantnorge\Bring\API\Client\BookingClient $client */
                 $client = $clientFactory->getBookingClient();
                 $this->_options = $clientFactory->customersToOptionArray($client);
             } catch (\Exception $e) {

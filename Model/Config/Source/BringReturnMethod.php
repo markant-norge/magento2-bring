@@ -10,7 +10,7 @@ namespace Markant\Bring\Model\Config\Source;
  * @author petterk
  * @date 5/18/16 1:34 PM
  */
-use Peec\Bring\API\Data\BringData;
+use Markantnorge\Bring\API\Data\BringData;
 
 /**
  * @codeCoverageIgnore

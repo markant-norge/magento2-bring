@@ -4,10 +4,10 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Markant\Bring\Model\BookingClientService\AdvancedPackageManager;
 use Markant\Bring\Model\BookingClientService\Package;
-use Peec\Bring\API\Client\BookingClient;
-use Peec\Bring\API\Client\Credentials;
-use Peec\Bring\API\Client\ShippingGuideClient;
-use Peec\Bring\API\Client\TrackingClient;
+use Markantnorge\Bring\API\Client\BookingClient;
+use Markantnorge\Bring\API\Client\Credentials;
+use Markantnorge\Bring\API\Client\ShippingGuideClient;
+use Markantnorge\Bring\API\Client\TrackingClient;
 
 
 /**

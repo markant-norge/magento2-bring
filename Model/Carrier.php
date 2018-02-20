@@ -13,10 +13,10 @@ use Markant\Bring\Model\BookingClientService\AdvancedPackageManager;
 use Markant\Bring\Model\BookingClientService\Package;
 use Markant\Bring\Model\Config\Source\BringMethod;
 use Magento\Shipping\Helper\Carrier as CarrierHelper;
-use Peec\Bring\API\Client\ShippingGuideClientException;
-use Peec\Bring\API\Contract\ContractValidationException;
-use Peec\Bring\API\Contract\ShippingGuide\PriceRequest;
-use Peec\Bring\API\Contract\Tracking\TrackingRequest;
+use Markantnorge\Bring\API\Client\ShippingGuideClientException;
+use Markantnorge\Bring\API\Contract\ContractValidationException;
+use Markantnorge\Bring\API\Contract\ShippingGuide\PriceRequest;
+use Markantnorge\Bring\API\Contract\Tracking\TrackingRequest;
 
 /**
  * Class Bring
@@ -192,7 +192,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
         $clientFactory =  $this->_bookingClient->create();
-        /** @var \Peec\Bring\API\Client\TrackingClient $client */
+        /** @var \Markantnorge\Bring\API\Client\TrackingClient $client */
         $client = $clientFactory->getTrackingClient();
 
         foreach ($trackings as $trackingnumber) {
@@ -200,7 +200,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
             $request = new TrackingRequest();
             $request->setQuery($trackingnumber);
-            $request->setLanguage(\Peec\Bring\API\Data\BringData::LANG_NORWEGIAN);
+            $request->setLanguage(\Markantnorge\Bring\API\Data\BringData::LANG_NORWEGIAN);
 
 
             try {
@@ -377,7 +377,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         // Require post codes from / to to use api ...
         if ($data['to'] && $data['from']) {
 
-            /** @var \Peec\Bring\API\Client\ShippingGuideClient $client */
+            /** @var \Markantnorge\Bring\API\Client\ShippingGuideClient $client */
             $client = $clientFactory->getShippingGuideClient();
 
             /** @var Package $container */

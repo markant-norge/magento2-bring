@@ -10,7 +10,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Sales\Model\Order\Shipment;
 use Markant\Bring\Model\Carrier;
-use Peec\Bring\API\Contract\Booking\BookingRequest;
+use Markantnorge\Bring\API\Contract\Booking\BookingRequest;
 
 class AddEdi extends \Magento\Backend\App\Action
 {
@@ -191,7 +191,7 @@ class AddEdi extends \Magento\Backend\App\Action
                 // Lets validate sender, since these settings must be displayed in a much nicer manner....
                 try {
                     $sender->validate();
-                } catch (\Peec\Bring\API\Contract\ContractValidationException $e) {
+                } catch (\Markantnorge\Bring\API\Contract\ContractValidationException $e) {
                     throw new \Magento\Framework\Exception\LocalizedException(__('Shipping Origin is required. Configure shipping origin under Sales -> Shipping Methods -> Bring -> Bring Booking -> Shipping Origin.'));
                 }
 
@@ -209,7 +209,7 @@ class AddEdi extends \Magento\Backend\App\Action
 
                 /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
                 $clientFactory =  $this->_bookingClient->create();
-                /** @var \Peec\Bring\API\Client\BookingClient $client */
+                /** @var \Markantnorge\Bring\API\Client\BookingClient $client */
                 $client = $clientFactory->getBookingClient();
 
                 $result = $client->bookShipment($message);
@@ -357,12 +357,12 @@ class AddEdi extends \Magento\Backend\App\Action
                     'message' => __('We can\'t initialize shipment for adding edi.'),
                 ];
             }
-        } catch (\Peec\Bring\API\Client\BookingClientException $e) {
+        } catch (\Markantnorge\Bring\API\Client\BookingClientException $e) {
             $response = [
                 'error' => true,
                 'message' => __('Bring API Error:') . " {$e->getDetaildMessage()}.",
             ];
-        } catch (\Peec\Bring\API\Contract\ContractValidationException $e) {
+        } catch (\Markantnorge\Bring\API\Contract\ContractValidationException $e) {
             $response = [
                 'error' => true,
                 'message' => __('Configuration error:') . " {$e->getMessage()}.",

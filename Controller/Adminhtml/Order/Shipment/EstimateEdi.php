@@ -10,10 +10,10 @@ use Magento\Backend\App\Action;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Sales\Model\Order\Shipment;
 use Markant\Bring\Model\Carrier;
-use Peec\Bring\API\Client\ShippingGuideClientException;
-use Peec\Bring\API\Contract\Booking\BookingRequest;
-use Peec\Bring\API\Contract\ContractValidationException;
-use Peec\Bring\API\Contract\ShippingGuide\PriceRequest;
+use Markantnorge\Bring\API\Client\ShippingGuideClientException;
+use Markantnorge\Bring\API\Contract\Booking\BookingRequest;
+use Markantnorge\Bring\API\Contract\ContractValidationException;
+use Markantnorge\Bring\API\Contract\ShippingGuide\PriceRequest;
 
 class EstimateEdi extends \Magento\Backend\App\Action
 {
@@ -81,7 +81,7 @@ class EstimateEdi extends \Magento\Backend\App\Action
         $shippingAddress = $shipment->getShippingAddress();
         /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
         $clientFactory = $this->_bookingClient->create();
-        /** @var \Peec\Bring\API\Client\ShippingGuideClient $client */
+        /** @var \Markantnorge\Bring\API\Client\ShippingGuideClient $client */
         $client = $clientFactory->getShippingGuideClient();
 
         $priceRequest = new PriceRequest();
