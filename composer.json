@@ -17,11 +17,5 @@
     "psr-4": {
       "Markant\\Bring\\": ""
     }
-   },
-   "repositories": [
-        {
-            "url": "git@github.com:markant-norge/php-bring-api.git",
-            "type": "vcs"
-        }
-     ]
+   }
 }
