@@ -2,12 +2,6 @@
 
 This module integrates [Bring](http://bring.no) with Magento 2.
 
-## License
-
-Copyright (C) Markant Norge AS - All Rights Reserved
-Unauthorized copying of this file, via any medium is strictly prohibited
-Proprietary and confidential
-
 ## Features
 
 - Bring booking
