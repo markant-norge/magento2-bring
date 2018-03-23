@@ -309,13 +309,13 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         return $r;
     }
-
+    
     private function generateOfflineBringShippingMethods (array $data) {
         $methods = [];
-
+        
         $custom_prices = $this->getConfig('custom_method_prices');
-        $custom_prices = $custom_prices ? unserialize($custom_prices) : [];
-
+        $custom_prices = \Markant\Bring\Helper\Data::unserialize($custom_prices, []);
+    
         foreach ($custom_prices as $item) {
             $add = true;
             if ($item['min_weight']) {
@@ -552,7 +552,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $ruleAggregates = [];
         if ($rules) {
-            $rules = unserialize($rules);
+            $rules = \Markant\Bring\Helper\Data::unserialize($rules);
             if ($rules) {
                 foreach ($rules as $rule) {
                     if (in_array($rule['bring_product'], $methods)) {

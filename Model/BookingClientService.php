@@ -83,7 +83,7 @@ class BookingClientService
 
         $builtIn = $this->_scopeConfig->getValue('carriers/bring/package_management/packages');
         if ($builtIn) {
-            $builtIn = unserialize($builtIn);
+            $builtIn = \Markant\Bring\Helper\Data::unserialize($builtIn, []);
             $builtIns = [];
             foreach ($builtIn as $item) {
                 $package = new Package();

@@ -390,11 +390,11 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
 
     public function getPackageNumbers()
     {
-        $v = $this->getData(ShipmentEdiInterface::PACKAGE_NUMBERS);
-        if ($v) {
-            $v = unserialize($v);
+        $pgkNumber = $this->getData(ShipmentEdiInterface::PACKAGE_NUMBERS);
+        if ($pgkNumber) {
+            $pgkNumber = \Markant\Bring\Helper\Data::unserialize($pgkNumber);
         }
-        return $v;
+        return $pgkNumber;
     }
 
     public function setPackageNumbers($value)
