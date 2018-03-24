@@ -23,7 +23,7 @@ class Data {
             return $res1;
         }
         
-        $res2 = @json_decode($serializedData);
+        $res2 = @json_decode($serializedData, true);
         if ($res2!==false) {
             return $res2;
         }
