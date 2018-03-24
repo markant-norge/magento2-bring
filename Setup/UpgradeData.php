@@ -22,11 +22,12 @@ class UpgradeData implements UpgradeDataInterface
             $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
             $connection = $resource->getConnection();
             $tableName = $resource->getTableName('core_config_data'); //gives table name with prefix
-            $result = $connection->fetchAll("SELECT * FROM $tableName WHERE path='carriers/bring/bring_product_rules' OR path='carriers/bring/calculation/custom_method_prices'");
+            $result = $connection->fetchAll("SELECT * FROM $tableName WHERE path='carriers/bring/calculation/custom_method_prices'");
 
             foreach ($result as $r) {
                 $this->serializeToJson($r);
             }
+            die('123');
 
             $setup->endSetup();
         }
@@ -36,7 +37,7 @@ class UpgradeData implements UpgradeDataInterface
     private function serializeToJson($line) {
         $value = @unserialize($line['value']);
         
-        if ($value && $line['config_id']) {
+        if ($value!==false && $line['config_id']) {
             $newValue = json_encode($value);
             
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); // Instance of object manager
