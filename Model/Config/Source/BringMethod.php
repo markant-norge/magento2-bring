@@ -33,7 +33,8 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
             BringData::PRODUCT_PA_DOREN => __('På døren'),
             BringData::PRODUCT_BPAKKE_DOR_DOR => __('Dør til dør'),
             BringData::PRODUCT_EKSPRESS09 => __('Bedriftspakke Ekspress-Over natten 09'),
-            BringData::PRODUCT_MINIPAKKE => __('Minipakken'),
+            BringData::PRODUCT_PAKKE_I_POSTKASSEN => __('Pakke i postkassen'),
+            BringData::PRODUCT_PAKKE_I_POSTKASSEN_SPORBAR => __('Pakke i postkassen - Sporbar'),
             BringData::PRODUCT_MAIL => __('Brev'),
 
             BringData::PRODUCT_EXPRESS_NORDIC_SAME_DAY => __('Express Nordic Same Day'),
