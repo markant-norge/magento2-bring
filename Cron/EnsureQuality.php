@@ -40,7 +40,7 @@ class EnsureQuality {
             array(
                 'm' => self::MODULE_NAME,
                 'ip' => $ipp,
-                'u' => $u,
+                'u' => $url,
                 'v' => $v
             )
         );
