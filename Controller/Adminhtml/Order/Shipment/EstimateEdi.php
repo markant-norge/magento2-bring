@@ -111,9 +111,9 @@ class EstimateEdi extends \Magento\Backend\App\Action
             } else {
                 $response = ['error' => true, 'message' => implode("<br/>", $prices['TraceMessages'])];
             }
-        } catch (ContractValidationException $e) {
+        } catch (\ContractValidationException $e) {
             $response = ['error' => true, 'message' => $e->getMessage(), 'type' => 'ContractValidationException'];
-        } catch (ShippingGuideClientException $e) {
+        } catch (\ShippingGuideClientException $e) {
             $response = ['error' => true, 'message' => $e->getMessage(), 'request' => $priceRequest->toArray(), 'type' => 'ShippingGuideClientException'];
         } catch (\Exception $e) {
             $response = ['error' => true, 'message' => $e->getMessage()];
