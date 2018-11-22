@@ -402,7 +402,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     $priceRequest->addAdditional($service);
                 }
                 foreach ($this->getBringEnabledProducts($data) as $product) {
-                    $priceRequest->addProduct(strtolower($product));
+                    $priceRequest->addProduct($product);
                 }
 
 
