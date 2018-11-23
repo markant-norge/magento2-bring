@@ -413,9 +413,9 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     $json = $client->getPrices($priceRequest);
 
 
-                    if (isset($json['Product'])) {
+                    if (isset($json['consignments'][0]['products'])) {
 
-                        $bringProducts = $json['Product'];
+                        $bringProducts = $json['consignments'][0]['products'];
 
                         // Single result.... CAN ACTUALLY ENCOUNTER... WIERD THINGS...
                         if (is_array($bringProducts) && isset($bringProducts['ProductId'])) {
@@ -423,18 +423,18 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                         }
 
                         foreach ($bringProducts as $bringAlternative) {
-                            if (isset($bringAlternative['ProductId'])) {  // Should always be isset...
-                                $shipping_method = $bringAlternative['ProductId'];
+                            if (isset($bringAlternative['id'])) {  // Should always be isset...
+                                $shipping_method = $bringAlternative['id'];
                                 if ($this->isBringMethodEnabled($data, $shipping_method)) {
-                                    if (isset($bringAlternative['Price'])) {
+                                    if (isset($bringAlternative['price'])) {
                                         /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                        $AmountWithVAT = $bringAlternative['Price']['PackagePriceWithAdditionalServices']['AmountWithVAT'];
+                                        $AmountWithVAT = $bringAlternative['price']['listPrice']['priceWithAdditionalServices']['amountWithVAT'];
                                         $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
 
                                         // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
                                         $shippingPrice = ceil($shippingPrice);
 
-                                        $expectedDays = isset($bringAlternative['ExpectedDelivery']) ? $bringAlternative['ExpectedDelivery']['WorkingDays'] : null;
+                                        $expectedDays = isset($bringAlternative['expectedDelivery']) ? $bringAlternative['expectedDelivery']['workingDays'] : null;
 
                                         if (!isset($preFabricatedMethods[$shipping_method])) {
                                             $preFabricatedMethods[$shipping_method] = array();
