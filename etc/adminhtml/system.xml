@@ -108,6 +108,10 @@
                         <can_be_empty>1</can_be_empty>
                     </field>
 
+                    <field id="default_delivery_option" type="select" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Default Delivery Option</label>
+                        <source_model>Markant\Bring\Model\Config\Source\DeliveryOption</source_model>
+                    </field>
                 </group>
 
                 <group id="booking" translate="label" type="text" sortOrder="800" showInDefault="1" showInWebsite="1" showInStore="1">
