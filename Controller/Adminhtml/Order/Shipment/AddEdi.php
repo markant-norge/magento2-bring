@@ -152,6 +152,15 @@ class AddEdi extends \Magento\Backend\App\Action
                 $bringProduct->setId($bringProductId);
                 $bringProduct->setCustomerNumber($bringCustomerNumber);
 
+                //adding services to the $bringProduct
+                $mappings = \Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::serviceMapping();
+                //$bpArr = $this->getNullifiedServicesArray();
+                $bpArr = [];
+                foreach ($mappings[$bringProductId] as $bp){
+                    $bpArr[$bp] = $this->getServiceValue($bp, $shippingAddress);
+                }
+                $bringProduct->setServices($bpArr);
+
                 // Create Consignment
 
                 $consignment = new BookingRequest\Consignment();
@@ -175,10 +184,16 @@ class AddEdi extends \Magento\Backend\App\Action
                 $recipient->setName($shippingAddress->getName());
                 $recipient->setPostalCode($shippingAddress->getPostcode());
                 $recipient->setReference($shipment->getOrderId()); // order id as reference.
+                //create contact for recepient
+
+                $recipientContact = new BookingRequest\Consignment\Contact();
+                $recipientContact->setName($shippingAddress->getName());
+                $recipientContact->setEmail($shippingAddress->getEmail());
+                $recipientContact->setPhoneNumber($shippingAddress->getTelephone());
+                $recipient->setContact($recipientContact);
 
 
                 // Create Contact for Sender.
-
                 $contact = new BookingRequest\Consignment\Contact();
                 $contact->setName($this->getConfig('booking/origin/name'));
                 $contact->setEmail($this->getConfig('booking/origin/email'));
@@ -281,7 +296,7 @@ class AddEdi extends \Magento\Backend\App\Action
                         $returnConsignment->setShippingDateTime($shippingDateTimeObj);
 
                         $recipient->setContact($contact);
-                                
+
                         $sender = $this->_getEdiSender($shipment);
 
                         $returnConsignment->setRecipient($sender);
@@ -393,7 +408,32 @@ class AddEdi extends \Magento\Backend\App\Action
         );
     }
 
+    public function getServiceValue($serviceName, \Magento\Sales\Model\Order\Address $shippingAddress){
+        $value = null;
+        if($serviceName == \Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_RECIPIENT_NOTIFICATION){
+            $value  = [];
+            $value['email'] = $shippingAddress->getEmail();
+            $value['mobile'] = $shippingAddress->getTelephone();
+        }
+        else if($serviceName == \Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_DELIVERY_OPTION){
+            $value = $this->getConfig('calculation/default_delivery_option');
+        }
+        return $value;
+    }
 
+    public function getNullifiedServicesArray(){
+        $services = [];
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_CASH_ON_DELIVERY] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_RECIPIENT_NOTIFICATION] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_SOCIAL_CONTROL] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_SIMPLE_DELIVERY] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_DELIVERY_OPTION] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_SATURDAY_DELIVERY] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_FLEX_DELIVERY] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_PHONE_NOTIFICATION] = null;
+        $services[\Markantnorge\Bring\API\Contract\Booking\BookingRequest\Consignment\Product::ADDITIONAL_SERVICE_DELIVERY_INDOORS] = null;
+        return $services;
+    }
 
     public function addEdi(Shipment $shipment, \Markant\Bring\Model\Order\Shipment\Edi $edi) {
 
