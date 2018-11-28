@@ -396,7 +396,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                 $priceRequest->setLength($container->getLength());
                 $priceRequest->setWidth($container->getWidth());
                 $priceRequest->setHeight($container->getHeight());
-
+                $priceRequest->setCustomerNumber($this->_scopeConfig->getValue('carriers/bring/booking/default_customer'));
 
                 foreach (explode(',', $this->getConfig('additional_services')) as $service) {
                     $priceRequest->addAdditional($service);
