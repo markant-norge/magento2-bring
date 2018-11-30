@@ -33,8 +33,10 @@ class Package
         $weight = 0;
         /** @var \Magento\Quote\Model\Quote\Item  $item */
         foreach ($this->_items as $item) {
-            $weight += $item->getRowWeight();
+            $weight += ($item->getWeight() * $item->getQty());
         }
+
+
         return $weight;
     }
 
