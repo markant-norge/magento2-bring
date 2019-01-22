@@ -111,7 +111,7 @@
                         <label>Default Delivery Option</label>
                         <source_model>Markant\Bring\Model\Config\Source\DeliveryOption</source_model>
                     </field>
-                    <field id="default_customer" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="default_customer" translate="label" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Default Customer</label>
                         <source_model>Markant\Bring\Model\Config\Source\BookingCustomer</source_model>
                         <comment>Please configure Mybring login ID and Api Key in order to select a customer. After you have changed login and and API key you will need to refresh the config cache in order to select a mybring customer.</comment>
