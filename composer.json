@@ -2,7 +2,7 @@
   "name": "markant-norge/magento2-bring",
   "description": "Bring shipping integration for Magento 2",
   "type": "magento2-module",
-  "version": "1.0.44",
+  "version": "1.0.45",
   "license": [
   ],
   "require": {
