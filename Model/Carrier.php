@@ -43,7 +43,10 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
     const XML_GLOBAL_PATH = 'carriers/bring/';
     const XML_PATH = 'carriers/bring/calculation/';
 
-
+    /**
+     * @var array
+     */
+    private $_combinedRates;
 
     /**
      * @var \Magento\Shipping\Model\Rate\ResultFactory
@@ -347,155 +350,140 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
      */
     public function collectRates(RateRequest $request)
     {
-        if (!$this->getConfigFlag('active')) {
-            return false;
-        }
+        $free_shipping_method_enabled_discount_amount = floatval($this->getConfigData('free_shipping_method_enabled_discount_amount'));
+        $affectedFreeShippingMethods = explode(',', $this->getConfigData('affected_free_shipping_methods'));
+        $shouldMaybeHaveFreeShipping = $request->getFreeShipping();
+        $customerNumbers = explode(",", $this->getConfig('default_customer'));
+        foreach ($customerNumbers as $customerNumber) {
+            if (!$this->getConfigFlag('active')) {
+                return false;
+            }
 
-        $this->_request = $request;
+            $this->_request = $request;
 
-        /** @var \Magento\Shipping\Model\Rate\Result $result */
-        $result = $this->_rateResultFactory->create();
-        /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
-        $clientFactory =  $this->_bookingClient->create();
+            /** @var \Magento\Shipping\Model\Rate\Result $result */
+            $result = $this->_rateResultFactory->create();
+            /** @var \Markant\Bring\Model\BookingClientService $clientFactory */
+            $clientFactory = $this->_bookingClient->create();
 
-        $containers = $clientFactory->getShippingContainers($request->getAllItems());
+            $containers = $clientFactory->getShippingContainers($request->getAllItems());
 
-        $data = $this->hydrateRequestData();
-        // Weight in gram of all packages.
-        $data['weightInGram'] = 0;
-        foreach ($containers as $container) {
-            $data['weightInGram'] += $container->getWeight() * 1000;
-        }
-
-
-        $preFabricatedMethods = $this->generateOfflineBringShippingMethods($data);
-        $preFabricatedOverrides = array_keys($preFabricatedMethods);
-
-
-
-
-        // Require post codes from / to to use api ...
-        if ($data['to'] && $data['from']) {
-
-            /** @var \Markantnorge\Bring\API\Client\ShippingGuideClient $client */
-            $client = $clientFactory->getShippingGuideClient();
-
-            /** @var Package $container */
+            $data = $this->hydrateRequestData();
+            // Weight in gram of all packages.
+            $data['weightInGram'] = 0;
             foreach ($containers as $container) {
-                $priceRequest = new PriceRequest();
-                $priceRequest
-                    ->setWeightInGrams($container->getWeight() * 1000)
-                    ->setEdi($this->getConfig('edi'))
-                    ->setFromCountry(strtoupper($data['fromCountry']))
-                    ->setFrom($data['from'])
-                    ->setToCountry(strtoupper($data['toCountry']))
-                    ->setTo($data['to'])
-                    ->setPostingAtPostOffice($this->getConfig('posting_at_post_office'))
-                    ->setLanguage('no');
-
-                $priceRequest->setLength($container->getLength());
-                $priceRequest->setWidth($container->getWidth());
-                $priceRequest->setHeight($container->getHeight());
-                $priceRequest->setCustomerNumber($this->getConfig('default_customer'));
-
-                foreach (explode(',', $this->getConfig('additional_services')) as $service) {
-                    $priceRequest->addAdditional($service);
-                }
-                foreach ($this->getBringEnabledProducts($data) as $product) {
-                    $priceRequest->addProduct($product);
-                }
+                $data['weightInGram'] += $container->getWeight() * 1000;
+            }
 
 
-                try {
+            $preFabricatedMethods = $this->generateOfflineBringShippingMethods($data);
+            $preFabricatedOverrides = array_keys($preFabricatedMethods);
 
 
+            // Require post codes from / to to use api ...
+            if ($data['to'] && $data['from']) {
 
-                    $json = $client->getPrices($priceRequest);
+                /** @var \Markantnorge\Bring\API\Client\ShippingGuideClient $client */
+                $client = $clientFactory->getShippingGuideClient();
+
+                /** @var Package $container */
+                foreach ($containers as $container) {
+                    $priceRequest = new PriceRequest();
+                    $priceRequest
+                        ->setWeightInGrams($container->getWeight() * 1000)
+                        ->setEdi($this->getConfig('edi'))
+                        ->setFromCountry(strtoupper($data['fromCountry']))
+                        ->setFrom($data['from'])
+                        ->setToCountry(strtoupper($data['toCountry']))
+                        ->setTo($data['to'])
+                        ->setPostingAtPostOffice($this->getConfig('posting_at_post_office'))
+                        ->setLanguage('no');
+
+                    $priceRequest->setLength($container->getLength());
+                    $priceRequest->setWidth($container->getWidth());
+                    $priceRequest->setHeight($container->getHeight());
+                    $priceRequest->setCustomerNumber($customerNumber);
+
+                    foreach (explode(',', $this->getConfig('additional_services')) as $service) {
+                        $priceRequest->addAdditional($service);
+                    }
+                    foreach ($this->getBringEnabledProducts($data) as $product) {
+                        $priceRequest->addProduct($product);
+                    }
 
 
-                    if (isset($json['consignments'][0]['products'])) {
+                    try {
 
-                        $bringProducts = $json['consignments'][0]['products'];
 
-                        // Single result.... CAN ACTUALLY ENCOUNTER... WIERD THINGS...
-                        if (is_array($bringProducts) && isset($bringProducts['ProductId'])) {
-                            $bringProducts = array ( $bringProducts ); // Convert it to array...
-                        }
+                        $json = $client->getPrices($priceRequest);
 
-                        foreach ($bringProducts as $bringAlternative) {
-                            if (isset($bringAlternative['id'])) {  // Should always be isset...
-                                $shipping_method = $bringAlternative['id'];
-                                if ($this->isBringMethodEnabled($data, $shipping_method)) {
-                                    if (isset($bringAlternative['price'])) {
-                                        /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                        $AmountWithVAT = $bringAlternative['price']['listPrice']['priceWithAdditionalServices']['amountWithVAT'];
-                                        $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
 
-                                        // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
-                                        $shippingPrice = ceil($shippingPrice);
+                        if (isset($json['consignments'][0]['products'])) {
 
-                                        $expectedDays = isset($bringAlternative['expectedDelivery']) ? $bringAlternative['expectedDelivery']['workingDays'] : null;
+                            $bringProducts = $json['consignments'][0]['products'];
 
-                                        if (!isset($preFabricatedMethods[$shipping_method])) {
-                                            $preFabricatedMethods[$shipping_method] = array();
-                                        }
-                                        $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
-                                        // Do not override prefabricated shipping method prices..
-                                        if (!in_array($shipping_method, $preFabricatedOverrides)) {
-                                            $preFabricatedMethods[$shipping_method]['price'] = $shippingPrice;
-                                            $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                            // Single result.... CAN ACTUALLY ENCOUNTER... WIERD THINGS...
+                            if (is_array($bringProducts) && isset($bringProducts['ProductId'])) {
+                                $bringProducts = array($bringProducts); // Convert it to array...
+                            }
+
+                            foreach ($bringProducts as $bringAlternative) {
+                                if (isset($bringAlternative['id'])) {  // Should always be isset...
+                                    $shipping_method = $bringAlternative['id'];
+                                    if ($this->isBringMethodEnabled($data, $shipping_method)) {
+                                        if (isset($bringAlternative['price'])) {
+                                            /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
+                                            $AmountWithVAT = $bringAlternative['price']['listPrice']['priceWithAdditionalServices']['amountWithVAT'];
+                                            $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
+
+                                            // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
+                                            $shippingPrice = ceil($shippingPrice);
+
+                                            $expectedDays = isset($bringAlternative['expectedDelivery']) ? $bringAlternative['expectedDelivery']['workingDays'] : null;
+
+                                            if (!isset($preFabricatedMethods[$shipping_method])) {
+                                                $preFabricatedMethods[$shipping_method] = array();
+                                            }
+                                            $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
+                                            // Do not override prefabricated shipping method prices..
+                                            if (!in_array($shipping_method, $preFabricatedOverrides)) {
+                                                $preFabricatedMethods[$shipping_method]['price'] = $shippingPrice;
+                                                $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                    } catch (ShippingGuideClientException $e) {
+                        /** @var \Magento\Quote\Model\Quote\Address\RateResult\Error $error */
+                        $error = $this->_rateErrorFactory->create();
+                        $error->setCarrier(self::CARRIER_CODE);
+                        $error->setCarrierTitle($this->getConfigData('title'));
+                        /** @var \GuzzleHttp\Exception\RequestException $requestException */
+                        $requestException = $e->getPrevious();
+                        $error->setErrorMessage($requestException->getResponse()->getBody());
+                        $result->append($error);
+                        return $result;
+                    } catch (ContractValidationException $e) {
+                        $error = $this->_rateErrorFactory->create();
+                        $error->setCarrier(self::CARRIER_CODE);
+                        $error->setCarrierTitle($this->getConfigData('title'));
+                        $error->setErrorMessage($e->getMessage());
+                        $result->append($error);
+                        return $result;
                     }
-                } catch (ShippingGuideClientException $e) {
-                    /** @var \Magento\Quote\Model\Quote\Address\RateResult\Error $error */
-                    $error = $this->_rateErrorFactory->create();
-                    $error->setCarrier(self::CARRIER_CODE);
-                    $error->setCarrierTitle($this->getConfigData('title'));
-                    /** @var \GuzzleHttp\Exception\RequestException $requestException */
-                    $requestException = $e->getPrevious();
-                    $error->setErrorMessage($requestException->getResponse()->getBody());
-                    $result->append($error);
-                    return $result;
-                } catch (ContractValidationException $e) {
-                    $error = $this->_rateErrorFactory->create();
-                    $error->setCarrier(self::CARRIER_CODE);
-                    $error->setCarrierTitle($this->getConfigData('title'));
-                    $error->setErrorMessage($e->getMessage());
-                    $result->append($error);
-                    return $result;
                 }
+
             }
-
+            uasort($preFabricatedMethods, function ($a, $b) {
+                return $a['price'] - $b['price'];
+            });
+            $this->updateMethodsAccordingToLowestPrices($preFabricatedMethods);
         }
-
         $products = BringMethod::products();
-
-
-
-        $free_shipping_method_enabled_discount_amount = floatval($this->getConfigData('free_shipping_method_enabled_discount_amount'));
-        $affectedFreeShippingMethods = explode(',', $this->getConfigData('affected_free_shipping_methods'));
-        $shouldMaybeHaveFreeShipping = $request->getFreeShipping();
         $haveABringMethodThatIsFree = false;
-        foreach ($preFabricatedMethods as $shipping_method => $info) {
-            if (in_array($shipping_method, $affectedFreeShippingMethods) && $shouldMaybeHaveFreeShipping) {
-                $haveABringMethodThatIsFree = true;
-                break;
-            }
-
-        }
-
-
-        uasort($preFabricatedMethods, function ($a, $b) {
-            return $a['price'] - $b['price'];
-        });
-
-
-
-        foreach ($preFabricatedMethods as $shipping_method => $info) {
+        foreach ($this->_combinedRates as $shipping_method => $info) {
             /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
             $method = $this->_rateMethodFactory->create();
             $method->setCarrier($this->getCarrierCode());
@@ -512,31 +500,25 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                 }
                 $productLabel .= " ($label)";
             }
-
             $method->setMethodTitle($productLabel);
-
-
             //
             // Support free shipping from request ( can e.g. be a coupon code that was activated that gives free shipping! ).
             //
             $finalPrice = $info['price'];
             $finalCost = $info['cost'];
             if (in_array($shipping_method, $affectedFreeShippingMethods) && $shouldMaybeHaveFreeShipping) {
+                $haveABringMethodThatIsFree = true;
+            }
+            if (in_array($shipping_method, $affectedFreeShippingMethods) && $shouldMaybeHaveFreeShipping) {
                 $finalPrice = '0.00';
                 $finalCost = '0.00';
             } else if ($haveABringMethodThatIsFree && $finalPrice >= $free_shipping_method_enabled_discount_amount && $free_shipping_method_enabled_discount_amount > 0) {
                 $finalPrice = $finalPrice - $free_shipping_method_enabled_discount_amount;
             }
-
-
-
-
-
             $method->setPrice($finalPrice);
             $method->setCost($finalCost);
             $result->append($method);
         }
-
         return $result;
     }
 
@@ -620,4 +602,22 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         );
     }
 
+    /**
+     * @param $preFabricatedMethods
+     */
+    public function updateMethodsAccordingToLowestPrices($preFabricatedMethods){
+        if(!$this->_combinedRates){
+            $this->_combinedRates = $preFabricatedMethods;
+        }else{
+            foreach ($preFabricatedMethods as $shipping_method => $info){
+                if(array_key_exists($shipping_method,$this->_combinedRates) && $this->_combinedRates[$shipping_method]["price"] > $info["price"]){
+                    $this->_combinedRates[$shipping_method]["expected_days"] = $info["expected_days"];
+                    $this->_combinedRates[$shipping_method]["price"] = $info["price"];
+                    $this->_combinedRates[$shipping_method]["cost"] = $info["cost"];
+                } elseif (!array_key_exists($shipping_method,$this->_combinedRates)){
+                    $this->_combinedRates[$shipping_method] = array("expected_days" => $info["expected_days"],"price" => $info["price"],"cost" => $info["cost"]);
+                }
+            }
+        }
+    }
 }
