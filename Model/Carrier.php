@@ -433,7 +433,11 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                     if ($this->isBringMethodEnabled($data, $shipping_method)) {
                                         if (isset($bringAlternative['price'])) {
                                             /*you can fetch shipping price from different sources over some APIs, we used price from config.xml - xml node price*/
-                                            $AmountWithVAT = $bringAlternative['price']['listPrice']['priceWithAdditionalServices']['amountWithVAT'];
+                                            if(isset($bringAlternative['price']['netPrice']))
+                                                $AmountWithVAT = $bringAlternative['price']['netPrice']['priceWithAdditionalServices']['amountWithVAT'];
+                                            else
+                                                $AmountWithVAT = $bringAlternative['price']['listPrice']['priceWithAdditionalServices']['amountWithVAT'];
+
                                             $shippingPrice = $this->getFinalPriceWithHandlingFee($AmountWithVAT);
 
                                             // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
