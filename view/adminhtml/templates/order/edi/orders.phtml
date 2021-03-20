@@ -224,7 +224,7 @@ require([
                 } else {
                     jQuery('#bring_estimated_price').show();
                     jQuery('#bring_estimated_error').hide();
-                    jQuery('#bring_estimated_price').html('<div class="message message-success success" data-ui-id="messages-message-error"><?php echo __('Estimated shipping costs:')?> <strong>'+data.message['AmountWithVAT']+' KR</strong></div>');
+                    jQuery('#bring_estimated_price').html('<div class="message message-success success" data-ui-id="messages-message-error"><?php echo __('Estimated shipping costs:')?> <strong>'+data.message['amountWithVAT']+' KR</strong></div>');
                 }
             }
         });

@@ -1,14 +1,14 @@
 {
-  "name": "markant-norge/magento2-bring",
+  "name": "markantnorgeas/magento2-bring",
   "description": "Bring shipping integration for Magento 2",
   "type": "magento2-module",
-  "version": "1.0.46",
+  "version": "2.0.25",
   "license": [
   ],
   "require": {
     "php": "~5.5.0|~5.6.0|>=7.0.0",
     "magento/framework": ">=100.0.5",
-    "markant-norge/php-bring-api": "~1.0.13"
+    "markant-norge/php-bring-api": "~1.0.17"
   },
   "autoload": {
     "files": [

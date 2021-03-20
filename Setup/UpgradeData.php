@@ -31,11 +31,16 @@ class UpgradeData implements UpgradeDataInterface
             $setup->endSetup();
         }
     }
-    
-    
+
+    /**
+     * @param $line
+     * @return mixed
+     */
     private function serializeToJson($line) {
-        $value = @unserialize($line['value']);
-        
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
+        $value = $serializer->unserialize($line['value']);
+
         if ($value!==false && $line['config_id']) {
             $newValue = json_encode($value);
             

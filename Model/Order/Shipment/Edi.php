@@ -49,16 +49,22 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
     protected $shipmentRepository;
 
     /**
+     * @var \Magento\Framework\Serialize\SerializerInterface
+     */
+    protected $serialize;
+
+    /**
+     * Edi constructor.
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
      * @param AttributeValueFactory $customAttributeFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Sales\Api\ShipmentRepositoryInterface $shipmentRepository
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param \Magento\Framework\Serialize\SerializerInterface $serialize
      * @param array $data
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -69,6 +75,7 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
         \Magento\Sales\Api\ShipmentRepositoryInterface $shipmentRepository,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        \Magento\Framework\Serialize\SerializerInterface $serialize,
         array $data = []
     ) {
         parent::__construct(
@@ -82,6 +89,7 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
         );
         $this->_storeManager = $storeManager;
         $this->shipmentRepository = $shipmentRepository;
+        $this->serialize = $serialize;
     }
 
     /**
@@ -399,7 +407,7 @@ class Edi extends AbstractModel implements ShipmentEdiInterface
 
     public function setPackageNumbers($value)
     {
-        return $this->setData(ShipmentEdiInterface::PACKAGE_NUMBERS, serialize($value));
+        return $this->setData(ShipmentEdiInterface::PACKAGE_NUMBERS, $this->serialize->serialize($value));
     }
 
     public function getEarliestPickup()
