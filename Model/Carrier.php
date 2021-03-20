@@ -84,12 +84,21 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
     protected $_bookingClient;
 
+    protected $helperData;
+
     /**
+     * Carrier constructor.
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory
      * @param \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
+     * @param \Magento\Shipping\Model\Tracking\ResultFactory $trackFactory
+     * @param \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory
+     * @param \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory
+     * @param CarrierHelper $carrierHelper
+     * @param BookingClientServiceFactory $bookingClient
+     * @param \Markant\Bring\Helper\Data $helperData
      * @param array $data
      */
     public function __construct(
@@ -103,6 +112,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory,
         CarrierHelper $carrierHelper,
         \Markant\Bring\Model\BookingClientServiceFactory $bookingClient,
+        \Markant\Bring\Helper\Data $helperData,
         array $data = []
     ) {
         $this->_bookingClient = $bookingClient;
@@ -112,6 +122,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         $this->_trackFactory = $trackFactory;
         $this->_trackErrorFactory = $trackErrorFactory;
         $this->_trackStatusFactory = $trackStatusFactory;
+        $this->helperData = $helperData;
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
@@ -260,8 +271,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             'to' => null,
             'toCountry' => null,
             'weightInGram' => null,
-            'cart_total' => $request->getOrderSubtotal()
-
+            'cart_total' => $request->getBaseSubtotalInclTax()
         ];
 
         // Bring ship origin setting.
@@ -283,11 +293,11 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             $r['fromCountry'] = $this->getStoreConfig(\Magento\Sales\Model\Order\Shipment::XML_PATH_STORE_COUNTRY_ID, $request);
         }
         if (!$r['fromCountry']) {
-            $r['fromCountry'] = 'no';
+            $r['fromCountry'] = 'NO';
         }
 
         if ($request->getDestCountryId()) {
-            $r['toCountry'] = strtolower($request->getDestCountryId());
+            $r['toCountry'] = $request->getDestCountryId();
         }
         if (!$r['toCountry']) {
             $r['toCountry'] = $r['fromCountry'];
@@ -317,8 +327,8 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
         $methods = [];
         
         $custom_prices = $this->getConfig('custom_method_prices');
-        $custom_prices = \Markant\Bring\Helper\Data::unserialize($custom_prices, []);
-    
+        $custom_prices = $this->helperData->unserialize($custom_prices, []);
+
         foreach ($custom_prices as $item) {
             $add = true;
             if ($item['min_weight']) {
@@ -538,7 +548,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         $ruleAggregates = [];
         if ($rules) {
-            $rules = \Markant\Bring\Helper\Data::unserialize($rules);
+            $rules = $this->helperData->unserialize($rules);
             if ($rules) {
                 foreach ($rules as $rule) {
                     if (in_array($rule['bring_product'], $methods)) {

@@ -7,7 +7,7 @@
                 <name>Bring</name>
                 <title>Bring</title>
                 <type>I</type>
-                <enabled_methods>SERVICEPAKKE,PA_DOREN</enabled_methods>
+                <enabled_methods>SERVICEPAKKE,PA_DOREN,PAKKE_I_POSTKASSEN</enabled_methods>
                 <affected_free_shipping_methods>SERVICEPAKKE,MINIPAKKE,A-POST,B-POST</affected_free_shipping_methods>
                 <free_shipping_method_enabled_discount_amount>0</free_shipping_method_enabled_discount_amount>
                 <bring_client_url>http://example.com</bring_client_url>

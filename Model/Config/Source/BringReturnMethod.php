@@ -28,6 +28,7 @@ class BringReturnMethod implements \Magento\Framework\Option\ArrayInterface
     static public function returnProducts () {
         return [
             BringData::PRODUCT_SERVICEPAKKE_RETURSERVICE => __('Servicepakke'),
+            // BringData::PRODUCT_PA_DOREN_RETURSERVICE => __('På døren'),
             BringData::PRODUCT_BPAKKE_DOR_DOR_RETURSERVICE => __('Dør til dør'),
             BringData::PRODUCT_EKSPRESS09_RETURSERVICE => __('Bedriftspakke Ekspress-Over natten 09')
         ];

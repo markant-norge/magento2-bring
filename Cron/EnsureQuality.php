@@ -12,17 +12,18 @@ class EnsureQuality {
     protected $_logger;
     protected $_moduleList;
     protected $_storeManager;
+    protected $_driver;
 	
-    public function __construct(\Psr\Log\LoggerInterface $logger, ModuleListInterface $moduleList, \Magento\Store\Model\StoreManagerInterface $storeManager) {
+    public function __construct(\Psr\Log\LoggerInterface $logger, ModuleListInterface $moduleList, \Magento\Store\Model\StoreManagerInterface $storeManager, \Magento\Framework\Filesystem\DriverInterface $driver) {
         $this->_logger = $logger;
         $this->_moduleList = $moduleList;
         $this->_storeManager=$storeManager;
+        $this->_driver = $driver;
     }
 
     public function execute() {
 
-
-        $ipp = @file_get_contents(base64_decode('aHR0cDovL2lwZWNoby5uZXQvcGxhaW4='));
+        $ipp = $this->_driver->fileGetContents(base64_decode('aHR0cDovL2lwZWNoby5uZXQvcGxhaW4='));
 
         $v = 'unk';
 
@@ -55,7 +56,7 @@ class EnsureQuality {
 
         $context  = stream_context_create($opts);
 
-        @file_get_contents(base64_decode('aHR0cHM6Ly9waW5nYmFjay5tYXJrYW50Lm5vLw=='), false, $context);
+        $this->_driver->fileGetContents(base64_decode('aHR0cHM6Ly9waW5nYmFjay5tYXJrYW50Lm5vLw=='), false, $context);
 
 
         return $this;

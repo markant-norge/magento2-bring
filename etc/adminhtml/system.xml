@@ -4,7 +4,7 @@
         <section id="carriers" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
             <group id="bring" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Bring</label>
-                <comment><![CDATA[Denne Bring modulen er utviklet av <a href="http://markant.no">Markant Norge AS</a>. Videredistribusjon av noe slag er ikke tillatt; kun etter avtale med Markant.<br /><br />Kontakt oss om du har spørsmål rundt løsningen.<br /><strong>Epost: support@markant.no</strong>]]></comment>
+                <comment><![CDATA[Denne Bring modulen er utviklet av <a href="http://markant.no">Markant Norge AS</a>. Videredistribusjon av noe slag er ikke tillatt; kun etter avtale med Markant.<br /><br />Kontakt oss om du har spørsmål rundt løsningen.<br /><strong>Epost: bringsupport@markant.no</strong>]]></comment>
 
                 <field id="active" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
@@ -12,6 +12,10 @@
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
+                </field>
+
+                <field id="organization" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Organization</label>
                 </field>
 
                 <field id="handling_type" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">

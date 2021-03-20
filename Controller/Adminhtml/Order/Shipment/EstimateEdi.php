@@ -67,7 +67,6 @@ class EstimateEdi extends \Magento\Backend\App\Action
         $this->shipmentLoader->setShipmentId($this->getRequest()->getParam('shipment_id'));
         $shipment = $this->shipmentLoader->load();
 
-
         $weight = (float)$this->getRequest()->getParam('weight');
         $length = (float)$this->getRequest()->getParam('length');
         $width = (float)$this->getRequest()->getParam('width');
@@ -105,11 +104,16 @@ class EstimateEdi extends \Magento\Backend\App\Action
 
             $prices = $client->getPrices($priceRequest);
 
-            if (isset($prices['Product'])) {
-                $bringAlternative = $prices['Product'];
-                $response = ['error' => false, 'message' => $bringAlternative['Price']['PackagePriceWithAdditionalServices'], 'request' => $priceRequest->toArray()];
+            if (isset($prices['consignments'])) {
+                $bringAlternative = $prices['consignments'];
+                $bringPrices = $bringAlternative[0]['products'][0]['price']['listPrice']['priceWithAdditionalServices'];
+                $response = ['errsor' => false, 'message' => $bringPrices, 'request' => $priceRequest->toArray()];
             } else {
-                $response = ['error' => true, 'message' => implode("<br/>", $prices['TraceMessages'])];
+                $tmessage="";
+                if(isset($prices['traceMessages']) && !empty($prices['traceMessages'])){
+                    $tmessage=implode("<br/>", $prices['traceMessages']);
+                }
+                $response = ['error' => true, 'message' => $tmessage];
             }
         } catch (\ContractValidationException $e) {
             $response = ['error' => true, 'message' => $e->getMessage(), 'type' => 'ContractValidationException'];
@@ -119,7 +123,7 @@ class EstimateEdi extends \Magento\Backend\App\Action
             $response = ['error' => true, 'message' => $e->getMessage()];
         }
 
-
+        //$response['message'];
         $response = $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($response);
         $this->getResponse()->representJson($response);
 
