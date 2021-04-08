@@ -4,7 +4,7 @@
 $shipment = $block->getShipment();
 $order = $block->getOrder();
 
-/** @var array $shippingMethod  [carrier_code] => bring [method] => 5600 */
+/** @var array $shippingMethod  [carrier_code] => bring [method] => PA_DOREN */
 $shippingMethod = $order->getShippingMethod(true);
 $shippingMethodCurrent = $shippingMethod ? $shippingMethod->getMethod() : null;
 

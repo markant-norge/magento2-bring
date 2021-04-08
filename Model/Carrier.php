@@ -347,7 +347,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                 $methods[$item['shipping_method']] = array (
                     'price' => ceil($shippingPrice),
                     'cost' => $shippingPrice,
-                    'expected_days' => null // Unknown if not API is used..
+                    'expected_days' => true // Unknown if not API is used..
                 );
             }
         }
@@ -402,6 +402,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     $priceRequest
                         ->setWeightInGrams($container->getWeight() * 1000)
                         ->setEdi($this->getConfig('edi'))
+                        ->setEstimatedDeliveryTime(true)
                         ->setFromCountry(strtoupper($data['fromCountry']))
                         ->setFrom($data['from'])
                         ->setToCountry(strtoupper($data['toCountry']))

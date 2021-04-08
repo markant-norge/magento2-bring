@@ -67,7 +67,7 @@
 
                 <field id="free_shipping_method_enabled_discount_amount" translate="label" type="text" sortOrder="71" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Free shipping - Discount base amount</label>
-                    <comment>When free shipping is activated by a cart rule, give [x] amount of discount to the shipping methods, except for those who are already free. This is only enabled once a free shipping alternative appears. Configure what free alternatives that are possible above. E.g. set this field to 119 if you want to offer Pakke til hentested for free.</comment>
+                    <comment>When free shipping is activated by a cart rule, give [x] amount of discount to the shipping methods, except for those who are already free. This is only enabled once a free shipping alternative appears. Configure what free alternatives that are possible above. E.g. set this field to 119 if you want to offer SERVICEPAKKE for free.</comment>
                 </field>
 
 
@@ -104,7 +104,7 @@
                     <field id="posting_at_post_office" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Posting at post office</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment>Flag that tells whether the parcel is delivered at a post office when it is shipped. A surcharge will be applied for the following products: Pakke til hentested and BPAKKE_DOR-DOR (Bedriftspakke)</comment>
+                        <comment>Flag that tells whether the parcel is delivered at a post office when it is shipped. A surcharge will be applied for the following products: SERVICEPAKKE and BPAKKE_DOR-DOR (Bedriftspakke)</comment>
                     </field>
                     <field id="additional_services" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Additional Services</label>

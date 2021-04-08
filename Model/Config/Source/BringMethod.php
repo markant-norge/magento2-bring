@@ -31,8 +31,8 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
         return [
             BringData::PRODUCT_SERVICEPAKKE => __('Pakke til hentested'),
             BringData::PRODUCT_PA_DOREN => __('Pakke levert hjem'),
-            BringData::PRODUCT_BPAKKE_DOR_DOR => __('Dør til dør'),
-            BringData::PRODUCT_EKSPRESS09 => __('Bedriftspakke Ekspress-Over natten 09'),
+            BringData::PRODUCT_BPAKKE_DOR_DOR => __('Pakke til bedrift'),
+            BringData::PRODUCT_EKSPRESS09 => __('Ekspress neste dag'),
             BringData::PRODUCT_PAKKE_I_POSTKASSEN => __('Pakke i postkassen'),
             BringData::PRODUCT_PAKKE_I_POSTKASSEN_SPORBAR => __('Pakke i postkassen - Sporbar'),
             BringData::PRODUCT_MAIL => __('Brev'),
@@ -42,7 +42,7 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
             BringData::PRODUCT_EXPRESS_INTERNATIONAL_1200 => __('Express International 12:00'),
             BringData::PRODUCT_EXPRESS_INTERNATIONAL => __('Express International'),
             BringData::PRODUCT_EXPRESS_ECONOMY => __('Express Economy'),
-            BringData::PRODUCT_CARGO_GROUPAGE => __('Cargo'),
+            BringData::PRODUCT_CARGO_GROUPAGE => __('Stykkgods til bedrift'),
 
             BringData::PRODUCT_BUSINESS_PARCEL => __('Business Parcel'),
             BringData::PRODUCT_PICKUP_PARCEL => __('PickUp Parcel'),
