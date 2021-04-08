@@ -92,6 +92,7 @@ class EstimateEdi extends \Magento\Backend\App\Action
             ->setEdi(true)
             ->setDate($shippingDateTimeObj)
             ->setTime($shippingDateTimeObj)
+            ->setEstimatedDeliveryTime(true)
             ->setFromCountry($this->getConfig('booking/origin/country_id'))
             ->setFrom($this->getConfig('booking/origin/postcode'))
             ->setToCountry(strtoupper($shippingAddress->getCountryId()))

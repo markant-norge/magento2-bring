@@ -2,7 +2,7 @@
   "name": "markantnorgeas/magento2-bring",
   "description": "Bring shipping integration for Magento 2",
   "type": "magento2-module",
-  "version": "2.0.25",
+  "version": "2.0.30",
   "license": [
   ],
   "require": {
