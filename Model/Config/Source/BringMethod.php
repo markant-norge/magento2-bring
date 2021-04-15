@@ -51,7 +51,28 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
             BringData::PRODUCT_COURIER_2H => __('Bud 2 timer'),
             BringData::PRODUCT_COURIER_4H => __('Bud 4 timer'),
             BringData::PRODUCT_COURIER_6H => __('Bud 6 timer'),
-            BringData::PRODUCT_OIL_EXPRESS => __('Oil Express')
+            BringData::PRODUCT_OIL_EXPRESS => __('Oil Express'),
+
+            BringData::PRODUCT_SINGLE_INDOOR => __('Single Indoor'),
+            BringData::PRODUCT_CURBSIDE => __('Curbside'),
+            BringData::PRODUCT_CURBSIDE_EXPRESS => __('Curbside Express'),
+            BringData::PRODUCT_CURBSIDE_WEEKEND => __('Curbside Weekend'),
+            BringData::PRODUCT_CURBSIDE_WEEKEND_EXPRESS => __('Curbside Weekend Express'),
+            BringData::PRODUCT_CURBSIDE_EVENING => __('Curbside Evening'),
+            BringData::PRODUCT_DOUBLE_INDOOR => __('Double Indoor'),
+            BringData::PRODUCT_SINGLE_INDOOR_EXPRESS => __('Single Indoor Express'),
+            BringData::PRODUCT_DOUBLE_INDOOR_EXPRESS => __('Double Indoor Express'),
+            BringData::PRODUCT_INDOOR_LIGHT_EXPRESS => __('Indoor Light Express'),
+            BringData::PRODUCT_SINGLE_INDOOR_WEEKEND => __('Single Indoor Weekend'),
+            BringData::PRODUCT_DOUBLE_INDOOR_WEEKEND => __('Double Indoor Weekend'),
+            BringData::PRODUCT_INDOOR_LIGHT_WEEKEND => __('Indoor Light Weekend'),
+            BringData::PRODUCT_SINGLE_INDOOR_WEEKEND_EXPRESS => __('Single Indoor Weekend Express'),
+            BringData::PRODUCT_DOUBLE_INDOOR_WEEKEND_EXPRESS => __('Double Indoor Weekend Express'),
+            BringData::PRODUCT_INDOOR_LIGHT_WEEKEND_EXPRESS => __('Indoor Light Weekend Express'),
+            BringData::PRODUCT_DOUBLE_INDOOR_NO => __('Double Indoor (NO)'),
+            BringData::PRODUCT_SINGLE_INDOOR_EVENING => __('Single Indoor Evening'),
+            BringData::PRODUCT_DOUBLE_INDOOR_EVENING => __('Double Indoor Evening'),
+            BringData::PRODUCT_INDOOR_LIGHT_EVENING => __('Indoor Light Evening')
 
         ];
     }
