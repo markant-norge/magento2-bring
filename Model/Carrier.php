@@ -298,6 +298,8 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         if ($request->getDestCountryId()) {
             $r['toCountry'] = $request->getDestCountryId();
+        }else{
+            $r['toCountry']='NO';
         }
         if (!$r['toCountry']) {
             $r['toCountry'] = $r['fromCountry'];
@@ -368,7 +370,9 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             if (!$this->getConfigFlag('active')) {
                 return false;
             }
-
+            if(strpos($customerNumber, "-")!==false){
+                $customerNumber= explode("-", $customerNumber)[1];    
+            }
             $this->_request = $request;
 
             /** @var \Magento\Shipping\Model\Rate\Result $result */
