@@ -8,7 +8,7 @@
   "require": {
     "php": "~5.5.0|~5.6.0|>=7.0.0",
     "magento/framework": ">=100.0.5",
-    "markant-norge/php-bring-api": "~1.0.17"
+    "markant-norge/php-bring-api": "~1.0.19"
   },
   "autoload": {
     "files": [
