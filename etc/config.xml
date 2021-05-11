@@ -7,12 +7,13 @@
                 <name>Bring</name>
                 <title>Bring</title>
                 <type>I</type>
-                <enabled_methods>5800,PA_DOREN,PAKKE_I_POSTKASSEN,PICKUP_PARCEL</enabled_methods>
+                <!-- <enabled_methods>5800,PA_DOREN,PAKKE_I_POSTKASSEN,PICKUP_PARCEL</enabled_methods> -->
+                <enabled_methods></enabled_methods>
                 <affected_free_shipping_methods>5800,MINIPAKKE,A-POST,B-POST</affected_free_shipping_methods>
                 <free_shipping_method_enabled_discount_amount>0</free_shipping_method_enabled_discount_amount>
                 <bring_client_url>http://example.com</bring_client_url>
-                <mybring_client_uid></mybring_client_uid>
-                <mybring_api_key></mybring_api_key>
+                <mybring_client_uid>ali.fareedi@markant.no</mybring_client_uid>
+                <mybring_api_key>d3e3e37f-d7e5-46c2-8317-351c78a4c392</mybring_api_key>
                 <calculation>
                     <posting_at_post_office>0</posting_at_post_office>
                     <edi>1</edi>
