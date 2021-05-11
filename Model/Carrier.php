@@ -298,8 +298,6 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
         if ($request->getDestCountryId()) {
             $r['toCountry'] = $request->getDestCountryId();
-        }else{
-            $r['toCountry']='NO';
         }
         if (!$r['toCountry']) {
             $r['toCountry'] = $r['fromCountry'];
@@ -370,9 +368,10 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             if (!$this->getConfigFlag('active')) {
                 return false;
             }
-            if(strpos($customerNumber, "-")!==false){
-                $customerNumber= explode("-", $customerNumber)[1];    
-            }
+            // if(strpos($customerNumber, "-")!==false){
+            //     $customerNumber= explode("-", $customerNumber)[1];    
+            // }
+            
             $this->_request = $request;
 
             /** @var \Magento\Shipping\Model\Rate\Result $result */
@@ -429,9 +428,15 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                     try {
 
-
+                        // $json='testing';
                         $json = $client->getPrices($priceRequest);
-
+                        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                        $directory = $objectManager->get('\Magento\Framework\Filesystem\DirectoryList');
+                        $rootPath  =  $directory->getRoot();
+                        $filehandle=fopen($rootPath."/magento_testing.txt", 'a');
+                        fwrite($filehandle, date("d M-Y")."\n\r");
+                        fwrite($filehandle, print_r($json,true));
+                        fclose($filehandle);
 
                         if (isset($json['consignments'][0]['products'])) {
 
