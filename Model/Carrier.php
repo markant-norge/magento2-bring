@@ -433,10 +433,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
                         $directory = $objectManager->get('\Magento\Framework\Filesystem\DirectoryList');
                         $rootPath  =  $directory->getRoot();
-                        $filehandle=fopen($rootPath."/magento_testing.txt", 'a');
-                        fwrite($filehandle, date("d M-Y")."\n\r");
-                        fwrite($filehandle, print_r($json,true));
-                        fclose($filehandle);
+                        
 
                         if (isset($json['consignments'][0]['products'])) {
 
@@ -514,13 +511,38 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
             $method->setCarrierTitle($this->getConfigData('title'));
             $method->setMethod($shipping_method);
             $productLabel = isset($products[$shipping_method]) ? $products[$shipping_method] : $shipping_method;
-
+            $addi_services=explode(',', $this->getConfig('additional_services'));
+            if(($shipping_method=='PAKKE_I_POSTKASSEN') && in_array(1081, $addi_services)){
+                //$productLabel .= " ( Pose på døren )";
+            }
+            if($shipping_method==5800){
+                foreach($json['consignments'][0]['products'] as $responseProduct){
+                    if($responseProduct['id']==5800){
+                        $pickup_location_ids=array();
+                        if(isset($responseProduct['estimatedDeliveryTimes'])){
+                            foreach($responseProduct['estimatedDeliveryTimes'] as $pickup_location_id){
+                                $pickup_location_ids[]=$pickup_location_id['pickupPointName'];
+                            }
+                            $productLabel .= " ( Pickup: ".implode(",", $pickup_location_ids).")";    
+                        }
+                        
+                    }
+                }    
+            }
+            
             if ($this->getConfig('show_estimated_delivery') && $info['expected_days']) {
                 $days = $info['expected_days'];
                 if ($days > 1) {
                     $label = new Phrase('%1 days', array($days));
                 } else {
                     $label = new Phrase('%1 day', array($days));
+                }
+                foreach($json['consignments'][0]['products'] as $responseProduct){
+                    if($responseProduct['id']==$shipping_method){
+                        if(isset($responseProduct['expectedDelivery'])){
+                           $label= $responseProduct['expectedDelivery']['formattedExpectedDeliveryDate'];
+                        }
+                    }
                 }
                 $productLabel .= " ($label)";
             }
