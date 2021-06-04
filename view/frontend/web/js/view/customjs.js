@@ -35,7 +35,7 @@ define(
                     
                     // console.log(method);
                     var default_title='Pakke i postkassen';
-                    if(selectedMethod == "PAKKE_I_POSTKASSEN"){
+                    if(selectedMethod == "3584"){
                         // method.method_title='Ali Fareedi';
                         setTimeout(function() { 
                             $("#simplified_delivery").show();
