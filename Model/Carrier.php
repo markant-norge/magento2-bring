@@ -529,6 +529,20 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     }
                 }    
             }
+
+            if($shipping_method==5600){
+                foreach($json['consignments'][0]['products'] as $responseProduct){
+                    if($responseProduct['id']==5600){
+                        $pickup_location_ids=array();
+                        if(isset($responseProduct['expectedDelivery']['expectedDeliveryDate']['timeSlots'])){
+                            $startTime=$responseProduct['expectedDelivery']['expectedDeliveryDate']['timeSlots'][0]['startTime']['hour'];
+                            $endTime=$responseProduct['expectedDelivery']['expectedDeliveryDate']['timeSlots'][0]['endTime']['hour'];
+                            $productLabel .= " ".$startTime."-".$endTime;    
+                        }
+                        
+                    }
+                }    
+            }
             
             if ($this->getConfig('show_estimated_delivery') && $info['expected_days']) {
                 $days = $info['expected_days'];
@@ -538,7 +552,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     $label = new Phrase('%1 day', array($days));
                 }
                 foreach($json['consignments'][0]['products'] as $responseProduct){
-                    if($responseProduct['id']==$shipping_method){
+                    if(($responseProduct['id']==$shipping_method) || ($responseProduct['id']==3584 && $shipping_method=='PAKKE_I_POSTKASSEN')){
                         if(isset($responseProduct['expectedDelivery'])){
                            $label= $responseProduct['expectedDelivery']['formattedExpectedDeliveryDate'];
                         }

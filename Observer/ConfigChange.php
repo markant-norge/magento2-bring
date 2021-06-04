@@ -45,7 +45,7 @@ class ConfigChange implements ObserverInterface
         // $title = "Ali here";
         //print_r($title);die();
         //$this->configWriter->save('carriers/bring/title', $title);
-        $version='2.3.0';
+        $version='2.3.1';
         $customer=(isset($bringParams['bring']['groups']['calculation']['fields']['default_customer']['value'][0]))?$bringParams['bring']['groups']['calculation']['fields']['default_customer']['value'][0]:""; 
         $organization=$title;
         // $customer='111111';
@@ -66,7 +66,7 @@ class ConfigChange implements ObserverInterface
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://pingback.markant.no/api/req/install/s22hsMviIN",
+          CURLOPT_URL => "http://pingback.markant.no/api/req/install/s22hsMviIN",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
