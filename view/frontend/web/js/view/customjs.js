@@ -15,10 +15,10 @@ define(
             // console.log(method);
             if($(this).is(':checked')){
                 method.method_title='Pakke i postkassen (Pose på døren) (1 day)';
-                $("#label_method_PAKKE_I_POSTKASSEN_bring").text(method.method_title);
+                $("#label_method_3584_bring").text(method.method_title);
             }else{
                 method.method_title='Pakke i postkassen (1 day)';
-                $("#label_method_PAKKE_I_POSTKASSEN_bring").text(method.method_title);
+                $("#label_method_3584_bring").text(method.method_title);
             }
 
         });
