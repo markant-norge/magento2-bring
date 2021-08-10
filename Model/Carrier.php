@@ -401,6 +401,21 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                 /** @var Package $container */
                 foreach ($containers as $container) {
+                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                    $orderItems = $request->getAllItems();
+                        $p_width = [];
+                        $weight = 0;
+                        $attr=[];
+                        foreach ($orderItems as $item) {
+                            $product = $item->getProduct();
+                            $product2 = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
+                            $p_width = $product2->getData('width');
+                        }
+                        if(!empty($p_width)){
+                            $widthToSend=$p_width;
+                        }else{
+                            $widthToSend=$container->getWidth();
+                        }
                     $priceRequest = new PriceRequest();
                     $priceRequest
                         ->setWeightInGrams($container->getWeight() * 1000)
@@ -430,10 +445,23 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
 
                         // $json='testing';
                         $json = $client->getPrices($priceRequest);
-                        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                        
                         $directory = $objectManager->get('\Magento\Framework\Filesystem\DirectoryList');
                         $rootPath  =  $directory->getRoot();
+                        $filehandle=fopen($rootPath."/magento_testing.txt", 'a');
+                        fwrite($filehandle, date("d M-Y H:m")."\n\r");
+                        fwrite($filehandle, print_r($json,true));
+                        fwrite($filehandle, "****Request Data*****"."\n\r");
+                        fwrite($filehandle, print_r($priceRequest,true));
+
+                        //***************Testing dimentions
                         
+                        //---------------------------------
+
+                        fwrite($filehandle, "****Width*****"."\n\r");
+                        fwrite($filehandle, print_r($container->getWidth(),true));
+
+                        fclose($filehandle);
 
                         if (isset($json['consignments'][0]['products'])) {
 
@@ -445,7 +473,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                             }
 
                             foreach ($bringProducts as $bringAlternative) {
-                                if (isset($bringAlternative['id'])) {  // Should always be isset...
+                                if (isset($bringAlternative['id']) && !isset($bringAlternative['errors'])) {  // Should always be isset...
                                     $shipping_method = $bringAlternative['id'];
                                     if ($this->isBringMethodEnabled($data, $shipping_method)) {
                                         if (isset($bringAlternative['price'])) {
@@ -460,17 +488,25 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                             // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
                                             $shippingPrice = ceil($shippingPrice);
 
-                                            $expectedDays = isset($bringAlternative['expectedDelivery']) ? $bringAlternative['expectedDelivery']['workingDays'] : null;
+                                            $expectedDays = isset($bringAlternative['expectedDelivery']) ? $bringAlternative['expectedDelivery']['formattedExpectedDeliveryDate'] : null;
 
                                             if (!isset($preFabricatedMethods[$shipping_method])) {
                                                 $preFabricatedMethods[$shipping_method] = array();
                                             }
                                             $preFabricatedMethods[$shipping_method]['expected_days'] = $expectedDays;
                                             // Do not override prefabricated shipping method prices..
+                                            // $filehandle=fopen($rootPath."/magento_testing.txt", 'a');
+                                            // fwrite($filehandle, "***fixed prices"."\n\r");
+                                            // fwrite($filehandle, date("d M-Y H:m")."\n\r");
+                                            // fwrite($filehandle, print_r($bringProducts,true));
+                                            // fclose($filehandle);
+                                            
                                             if (!in_array($shipping_method, $preFabricatedOverrides)) {
                                                 $preFabricatedMethods[$shipping_method]['price'] = $shippingPrice;
                                                 $preFabricatedMethods[$shipping_method]['cost'] = $shippingPrice;
-                                            }
+                                            }    
+                                            
+                                            
                                         }
                                     }
                                 }
@@ -555,6 +591,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                     if(($responseProduct['id']==$shipping_method) || ($responseProduct['id']==3584 && $shipping_method=='PAKKE_I_POSTKASSEN')){
                         if(isset($responseProduct['expectedDelivery'])){
                            $label= $responseProduct['expectedDelivery']['formattedExpectedDeliveryDate'];
+                           // $label=$responseProduct['id'];
                         }
                     }
                 }

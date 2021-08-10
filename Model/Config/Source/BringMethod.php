@@ -30,7 +30,7 @@ class BringMethod implements \Magento\Framework\Option\ArrayInterface
     static public function products () {
         return [
             BringData::PRODUCT_SERVICEPAKKE => __('Pakke til hentested'),
-            BringData::PRODUCT_PA_DOREN => __('Pakke levert hjem 17-22'),
+            BringData::PRODUCT_PA_DOREN => __('Pakke levert hjem'),
             BringData::PRODUCT_BPAKKE_DOR_DOR => __('Pakke til bedrift'),
             BringData::PRODUCT_EKSPRESS09 => __('Ekspress neste dag'),
             BringData::PRODUCT_PAKKE_I_POSTKASSEN => __('Pakke i postkassen'),

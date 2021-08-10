@@ -47,15 +47,18 @@ class AdvancedPackageManager
         $width = null;
         $height = null;
         $length = null;
-
+        
+        $product = $item->getProduct();
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $product2 = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
         if ($this->getAttributeWidthCode()) {
-            $width = $item->getData($this->getAttributeWidthCode());
+            $width = $product2->getData($this->getAttributeWidthCode());
         }
         if ($this->getAttributeHeightCode()) {
-            $height = $item->getData($this->getAttributeHeightCode());
+            $height = $product2->getData($this->getAttributeHeightCode());
         }
         if ($this->getAttributeLengthCode()) {
-            $length = $item->getData($this->getAttributeLengthCode());
+            $length = $product2->getData($this->getAttributeLengthCode());
         }
 
 
@@ -91,7 +94,10 @@ class AdvancedPackageManager
 
         /** @var \Magento\Quote\Model\Quote\Item  $item */
         foreach ($this->_items as $item) {
-            if ($shipAloneAttribute && $item->getData($shipAloneAttribute)) {
+            $product = $item->getProduct();
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $product2 = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
+            if ($shipAloneAttribute && $product2->getData($shipAloneAttribute)) {
                 $pack = new Package();
                 $pack->setItems([$item]);
                 $dimension = $this->getItemDimensions($item);
@@ -102,6 +108,7 @@ class AdvancedPackageManager
             } else {
                 // Package all items into one box!
                 $currentPackage->addItem($item);
+                
             }
         }
 
