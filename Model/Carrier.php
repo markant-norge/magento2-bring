@@ -448,20 +448,20 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                         
                         $directory = $objectManager->get('\Magento\Framework\Filesystem\DirectoryList');
                         $rootPath  =  $directory->getRoot();
-                        $filehandle=fopen($rootPath."/magento_testing.txt", 'a');
-                        fwrite($filehandle, date("d M-Y H:m")."\n\r");
-                        fwrite($filehandle, print_r($json,true));
-                        fwrite($filehandle, "****Request Data*****"."\n\r");
-                        fwrite($filehandle, print_r($priceRequest,true));
+                        // $filehandle=fopen($rootPath."/magento_testing.txt", 'a');
+                        // fwrite($filehandle, date("d M-Y H:m")."\n\r");
+                        // fwrite($filehandle, print_r($json,true));
+                        // fwrite($filehandle, "****Request Data*****"."\n\r");
+                        // fwrite($filehandle, print_r($priceRequest,true));
 
                         //***************Testing dimentions
                         
                         //---------------------------------
 
-                        fwrite($filehandle, "****Width*****"."\n\r");
-                        fwrite($filehandle, print_r($container->getWidth(),true));
+                        // fwrite($filehandle, "****Width*****"."\n\r");
+                        // fwrite($filehandle, print_r($container->getWidth(),true));
 
-                        fclose($filehandle);
+                        // fclose($filehandle);
 
                         if (isset($json['consignments'][0]['products'])) {
 
@@ -488,7 +488,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                             // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
                                             $shippingPrice = ceil($shippingPrice);
 
-                                            $expectedDays = isset($bringAlternative['expectedDelivery']) ? $bringAlternative['expectedDelivery']['formattedExpectedDeliveryDate'] : null;
+                                            $expectedDays = isset($bringAlternative['estimatedDeliveryTimes']) ? $bringAlternative['estimatedDeliveryTimes']['formattedExpectedDeliveryDate'] : null;
 
                                             if (!isset($preFabricatedMethods[$shipping_method])) {
                                                 $preFabricatedMethods[$shipping_method] = array();
@@ -570,9 +570,9 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                 foreach($json['consignments'][0]['products'] as $responseProduct){
                     if($responseProduct['id']==5600){
                         $pickup_location_ids=array();
-                        if(isset($responseProduct['expectedDelivery']['expectedDeliveryDate']['timeSlots'])){
-                            $startTime=$responseProduct['expectedDelivery']['expectedDeliveryDate']['timeSlots'][0]['startTime']['hour'];
-                            $endTime=$responseProduct['expectedDelivery']['expectedDeliveryDate']['timeSlots'][0]['endTime']['hour'];
+                        if(isset($responseProduct['estimatedDeliveryTimes'])){
+                            $startTime=$responseProduct['estimatedDeliveryTimes']['deliveryStartTime'];
+                            $endTime=$responseProduct['estimatedDeliveryTimes']['deliveryEndTime'];
                             $productLabel .= " ".$startTime."-".$endTime;    
                         }
                         
@@ -589,8 +589,8 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                 }
                 foreach($json['consignments'][0]['products'] as $responseProduct){
                     if(($responseProduct['id']==$shipping_method) || ($responseProduct['id']==3584 && $shipping_method=='PAKKE_I_POSTKASSEN')){
-                        if(isset($responseProduct['expectedDelivery'])){
-                           $label= $responseProduct['expectedDelivery']['formattedExpectedDeliveryDate'];
+                        if(isset($responseProduct['estimatedDeliveryTimes'])){
+                           $label= $responseProduct['estimatedDeliveryTimes']['formattedExpectedDeliveryDate'];
                            // $label=$responseProduct['id'];
                         }
                     }
