@@ -45,7 +45,7 @@ class ConfigChange implements ObserverInterface
         // $title = "Ali here";
         //print_r($title);die();
         //$this->configWriter->save('carriers/bring/title', $title);
-        $version='2.4.0';
+        $version='2.5.0';
         $customer=(isset($bringParams['bring']['groups']['calculation']['fields']['default_customer']['value'][0]))?$bringParams['bring']['groups']['calculation']['fields']['default_customer']['value'][0]:""; 
         $organization=$title;
         // $customer='111111';
