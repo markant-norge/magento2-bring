@@ -1,0 +1,33 @@
+{
+    "sales_shipment_edi": {
+        "column": {
+            "entity_id": true,
+            "parent_id": true,
+            "weight": true,
+            "length": true,
+            "height": true,
+            "width": true,
+            "order_id": true,
+            "title": true,
+            "created_at": true,
+            "updated_at": true,
+            "label_url": true,
+            "waybill": true,
+            "tracking": true,
+            "consignment_number": true,
+            "package_numbers": true,
+            "earliest_pickup": true,
+            "expected_delivery": true,
+            "return_label_url": true
+        },
+        "index": {
+            "SALES_SHIPMENT_EDI_PARENT_ID": true,
+            "SALES_SHIPMENT_EDI_ORDER_ID": true,
+            "SALES_SHIPMENT_EDI_CREATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SALES_SHIPMENT_EDI_PARENT_ID_SALES_SHIPMENT_ENTITY_ID": true
+        }
+    }
+}
