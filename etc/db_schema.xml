@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+  <table name="sales_shipment_edi" resource="default" engine="innodb" comment="Sales Flat Shipment EDI">
+    <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity Id"/>
+    <column xsi:type="int" name="parent_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Parent Id"/>
+    <column xsi:type="decimal" name="weight" scale="4" precision="12" unsigned="false" nullable="true" comment="Weight"/>
+    <column xsi:type="decimal" name="length" scale="4" precision="12" unsigned="false" nullable="true" comment="Length"/>
+    <column xsi:type="decimal" name="height" scale="4" precision="12" unsigned="false" nullable="true" comment="Height"/>
+    <column xsi:type="decimal" name="width" scale="4" precision="12" unsigned="false" nullable="true" comment="Width"/>
+    <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Order Id"/>
+    <column xsi:type="varchar" name="title" nullable="true" length="255" comment="Title"/>
+    <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+    <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+    <column xsi:type="text" name="label_url" nullable="true" comment="From bring: Label URL"/>
+    <column xsi:type="text" name="waybill" nullable="true" comment="From bring: Waybill"/>
+    <column xsi:type="text" name="tracking" nullable="true" comment="From bring: Tracking URL"/>
+    <column xsi:type="text" name="consignment_number" nullable="true" comment="From bring: Consignment number"/>
+    <column xsi:type="text" name="package_numbers" nullable="true" comment="From bring: Package numbers (serialized)"/>
+    <column xsi:type="datetime" name="earliest_pickup" on_update="false" nullable="true" comment="From bring: Earliest pickup"/>
+    <column xsi:type="datetime" name="expected_delivery" on_update="false" nullable="true" comment="From bring: Expected delivery"/>
+    <column xsi:type="text" name="return_label_url" nullable="true" comment="From bring: Return Label URL"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="entity_id"/>
+    </constraint>
+    <constraint xsi:type="foreign" referenceId="SALES_SHIPMENT_EDI_PARENT_ID_SALES_SHIPMENT_ENTITY_ID" table="sales_shipment_edi" column="parent_id" referenceTable="sales_shipment" referenceColumn="entity_id" onDelete="CASCADE"/>
+    <index referenceId="SALES_SHIPMENT_EDI_PARENT_ID" indexType="btree">
+      <column name="parent_id"/>
+    </index>
+    <index referenceId="SALES_SHIPMENT_EDI_ORDER_ID" indexType="btree">
+      <column name="order_id"/>
+    </index>
+    <index referenceId="SALES_SHIPMENT_EDI_CREATED_AT" indexType="btree">
+      <column name="created_at"/>
+    </index>
+  </table>
+</schema>
