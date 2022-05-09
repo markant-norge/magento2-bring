@@ -488,7 +488,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                                             // Support coupons codes giving free shipping.. If coupons is added that gives free shipping - price is free...
                                             $shippingPrice = ceil($shippingPrice);
 
-                                            $expectedDays = isset($bringAlternative['estimatedDeliveryTimes']) ? $bringAlternative['estimatedDeliveryTimes']['formattedExpectedDeliveryDate'] : null;
+                                            $expectedDays = isset($bringAlternative['estimatedDeliveryTimes']) ? $bringAlternative['estimatedDeliveryTimes'][0]['formattedExpectedDeliveryDate'] : null;
 
                                             if (!isset($preFabricatedMethods[$shipping_method])) {
                                                 $preFabricatedMethods[$shipping_method] = array();
@@ -590,7 +590,7 @@ class Carrier extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements
                 foreach($json['consignments'][0]['products'] as $responseProduct){
                     if(($responseProduct['id']==$shipping_method) || ($responseProduct['id']==3584 && $shipping_method=='PAKKE_I_POSTKASSEN')){
                         if(isset($responseProduct['estimatedDeliveryTimes'])){
-                           $label= $responseProduct['estimatedDeliveryTimes']['formattedExpectedDeliveryDate'];
+                           $label= $responseProduct['estimatedDeliveryTimes'][0]['formattedExpectedDeliveryDate'];
                            // $label=$responseProduct['id'];
                         }
                     }
